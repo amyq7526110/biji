@@ -1,0 +1,1013 @@
+	系统基本操作 & 软件工具操作  3-31
+
+常用便捷操作：
+	Ctrl+C		结束当前任务
+	Ctrl+Z		暂停当前任务并放至后台
+	Ctrl+Shift+T	新建终端页
+ 	Ctrl+Shift+V	粘贴
+	Ctrl+L		清屏
+	Ctrl+U		回删整行
+	Ctrl+W		回删一个单词
+	Tab			补全
+	！+任意命令开头	重复上一条以此开头的命令
+	Esc+ . 		粘贴上条命令的参数
+	?			匹配任意一个字符
+	*			匹配任意字串
+	[ ]			匹配包含在连续范围内的一个字符
+	{}			匹配包含在一组字串组内的字串
+	^+字串		匹配以该字串开头的所有字串
+	字串+$		匹配以该字串结尾的所有字串
+	^$			匹配空行
+	~ 、 . 、 ..		在路径中使用的符号
+	>、>>、<、2>、&>	重定向
+	|			管道
+	#			注释
+	#!			环境声明
+	$#			已加在的未知变量的个数（使用的未知变量总数）
+	$*			所有未知变量的值
+	$?			上一条命令的报错次数
+	$RANDOM		在0-32767范围内随机一个数字
+	$USER			登陆的用户名
+	$PATH			储存命令的搜寻路径
+	$HISTSIZE		历史命令的最大储存数
+	
+
+
+
+
+
+
+
+关于某些特定文件的常识：
+	/dev/null
+		空设备（黑洞设备），清理无意义的输出结果（释放空间）
+	/bin/bash
+		bash解释器的位置
+	/usr/bin/pathon
+		pathon解释器的位置
+	/sbin/nologin
+		空解释器的位置
+	/bin/false
+		新用户默认的登陆Shell
+	/etc/redhat-release
+		系统版本信息文件
+	/proc/meminfo
+		内存信息文件
+	/etc/hostname
+		主机名信息文件
+	/etc/passwd
+		用户信息文件
+	/etc/group
+		用户组信息文件
+	/etc/shadow
+		用户密码信息文件
+	/etc/default/useradd
+		新创建用户的默认信息文件（包括用户家目录、环境配置文件的目录、登入执行首个程序等）
+	/etc/skel
+		新创建用户的环境配置默认文件（新用户的家目录下的文件是从这里复制过去的）
+	/root/.bashrc
+		root用户的alias开机预定义配置文件，每次打开终端的时候即运行一遍
+	/etc/.bashrc
+		所有用户的alias开机预定义配置文件，每次打开终端的时候即运行一遍
+	/etc/sysconfig/network-scripts
+		网卡配置文件存放目录，里面的以“ifcfg-”开头、网卡名结尾的文件，就是每张网卡的配置文件
+	/etc/fstab
+		开机自动挂载配置文件
+	/etc/profile
+		开机第一个运行的系统设置文件
+	/etc/rc.local
+		开机运行的脚本
+
+
+
+
+常用控制命令：
+	init 5
+	poweroff
+	reboot
+	systemctl stop +服务名
+	systemctl start +服务名
+	systemctl status +服务名
+	systemctl restart +服务名
+	systemctl enable +服务名
+	systemctl disable +服务名
+	systemctl get-default
+	systemctl isolate multi-user.target
+	systemctl isolate graphical.target
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+常用查看命令（含修改）：
+	hostname、uname -n、hostname+参数
+		查看及设置主机名
+	lscpu
+		查看中央处理器（cpu）信息
+	ifconfig、ifconfig+网卡名、ifconfig+网卡名+up/down
+		查看网卡信息及启用、关闭网卡
+	route、route gateway
+		查看路由/网关信息
+	uname -a
+		查看内核、硬件架构、处理器、硬件平台、操作系统等信息
+	uname -r
+		查看内核版本
+	lsblk
+		查看本机识别硬盘
+	blkid
+		查看分区UUID及文件系统信息
+	df -h
+		查看所有挂载信息
+	pvs -a
+		显示物理卷的信息
+	lvs
+		显示逻辑卷的信息
+	vgs
+		显示卷组的信息
+	teamdctl+虚拟网卡名+state
+		显示虚拟网卡的信息
+	history、history -c
+		查看及清空历史命令
+
+
+
+
+常用小工具：
+	bc	计算器
+	ln	创建连接
+	man	帮助手册
+	vim	文本修改器
+	less	大型文本查看工具
+
+
+
+常用连接命令：
+	ping		-t	-a	-s	-c	-i	-W
+	ssh		-X	-Y
+	scp		-r
+	telnet
+	tarcert
+	nslookup
+	exit
+
+
+
+常用用户和组命令：
+	useradd	-d	-u	-g	-G	-s
+	groupadd
+	usermod	-d	-u	-g	-G	-s
+	userdel	-r
+	groupdel
+	gpasswd	-a	-d
+	passwd
+	su+用户名
+	su - +用户名
+
+  
+常用逻辑运算符（需在前后用带空格的[ ]括起来）：
+	-e A		A路径存在即为真
+	-d A		A路径存在且为目录即为真
+	-f A		A路径存在且为文件即为真
+	-r A		A路径存在且有读权限即为真
+	-w A		A路径存在且有写权限即为真
+	-x A		A路径存在且有执行权限即为真
+	A -eq B	A等于B即为真
+	A -ne B	A不等于B即为真
+	A -gt B	A大于B即为真
+	A -ge B	A大于等于B即为真
+	A -lt B	A小于B即为真
+	A -le B	A小于等于B即为真
+	A==B		A和B字符串一致即为真
+	A!=B		A和B字符串不一致即为真
+	!A		取[ not A ]的值
+	A&&B		取[ A and B ]的值
+	A||B		取[ A or B ]的值
+	
+
+非顺序结构：
+
+	选择结构：
+	if [ 逻辑表达式a ];
+	then 命令表达式A;
+	elif [ 逻辑表达式b ];
+	then 命令表达式B;
+	elif [ 逻辑表达式c ];
+	then 命令表达式C;
+	...
+	else 命令表达式N;
+	fi
+	
+	循环结构for：
+	for 变量名 in 值列表;
+	do 循环体;
+	done
+	
+	循环结构while：
+	while [ 逻辑表达式 ];
+	do 循环体;
+	done
+
+
+
+
+常用复杂命令：
+	cd
+	pwd
+	ls		-l	-A	-a	-d	-h	-Z
+	du		-s	-h
+	find		-type	-name	-size	-user	-maxdepth	-a	-o	-exec {} \;
+	touch		
+	mkdir		-p
+	rm		-r	-f
+	mv		-r
+	cp		-r
+	cat		-n
+	exit
+	echo		-n
+	read		-p
+	wc		-l
+	head		-num
+	tail		-num
+	grep		-v	-i
+	date		+%F	+%Y	+%m	+%d	+%H	+%M	-s
+	mount		-a	-o
+	umount
+	showmount	-e
+	wget		-r
+	alias
+	unalias
+	nslookup
+	host
+	rpm		-q	-ivh	-e	--import /dev/RPM-GPG-KEY-redhat-release
+	tar		-c	-x	-P	-C	-f	-t	-z	-j	-J
+	zip		-r
+	unzip		-d
+	chmod		-R
+	chown		-R
+	chcon		-R	--reference=模板目录 目标目录
+	【操作：set UID】
+	【操作：set GID】
+	【操作：Sticky Bit】
+	partprobe
+	vgcreate	-s
+	lvcreate	-n	-L	-l
+	lvextend	-L
+	resize2fs
+	xfs_growfs
+	vgextend
+	e2fsck	-f
+	lvreduce	-L
+	vgdisplay
+	vgchange	-s
+	lvremove
+	vgremove
+	pvremove
+	swapon	-s	-a
+	swapoff
+	cifscreds	add	-u
+	elinks	-dump
+	【操作：安装源码包】
+
+
+
+
+
+
+
+
+系统自带软件工具操作：
+
+	nmcli：
+		常用命令：
+			nmcli connection modify+网卡名
+				ipv4.method
+				ipv4.addresses
+				(ipv4.geteway)
+				ipv4.dns
+				connection.autoconnect
+				autoconnect
+				ipv6.method
+				ipv6.addresses
+			nmcli connection up+网卡名
+			nmcli connection delete+网卡名
+			nmcii connection show
+			nm-config-manager
+			nmcli connection add+网卡名
+				con-name							配置文件名
+				ifname							ifconfig显示的名字
+				type ethernet						以太网接口类型
+				type team							虚拟网卡类型
+				type team-slave						虚拟网卡的奴隶设备类型
+				config '{"runner":{"name":"acrivebackup"}}'	热备份配置
+				master							加入的组
+		主要作用：通过命令的方式，对网卡配置进行查询、修改、激活等操作
+		使用步骤：
+			一、配置地址
+			1.修改网卡的配置文件
+			2.激活网卡新的配置
+			3.完成
+			二、配置聚合链路（虚拟网卡）
+			1.创建虚拟网卡
+			2.创建虚拟网卡的奴隶设备
+			3.配置组地址等信息
+			4.激活虚拟网卡和其奴隶设备
+			5.完成（可以查看虚拟网卡进行验证）
+			
+	
+
+	fdisk：
+		常用命令：
+			fdisk+设备路径
+				命令n：创建新的分区
+				命令p：查看分区表
+				命令d：删除分区
+				命令w：保存并退出
+		主要作用：管理设备的分区
+		使用步骤：
+			1.使用fdisk+设备路径，打开fdisk工具
+			2.输入“n”命令创建新的分区
+			3.Partition type默认使用p类型（直接回车）
+			4.分区号默认按顺序依次使用1-4（直接回车）
+			5.起始扇区默认按可用储存空间地址顺序使用默认值（直接回车）
+			6.Last扇区，可以写最末储存地址具体为多少，也可以“+n”格式写从起始算起加多少空间，以决定分区的空间大小（要写单位）
+			7.输入“w”命令保存并退出
+			8.完成（可以进入/dev目录查看验证分区，或者通过lsblk、blkid、pvs -a等命令进行验证）
+
+
+
+
+	GPT：
+		常用命令：
+			parted+设备路径
+			mktable gpt
+			print
+			mkpart
+			unit MB
+			unit GB
+			quit
+		主要作用：设备分区
+		使用步骤：
+			1.使用parted+设备路径，打开parted工具
+			2.输入mktable gpt命令，设置分区模式为GPT
+			3.使用mkpart命令创建新的分区
+			4.输入分区名称
+			5.输入文件系统类型
+			6.输入储存空间的起始点
+			7.输入储存空间的结束点
+			8.使用quit命令退出parted工具（可以使用print命令验证分区）
+			9.完成（可以进入/dev目录查看验证分区，或者通过lsblk、blkid、pvs -a等命令进行验证）
+
+
+
+
+	ISCSI：
+		软件名：targetcli（服务端）、iscsi-initiator-utils（客户端）、iscsi-initiator-utils.i686（客户端）
+		服务名：target（服务端）、iscsid（客户端）、iscsi（客户端）
+		配置文件：/etc/iscsi/initiatorname.iscsi（客户端）
+				InitiatorName=访问服务端时声称的名字
+		常用命令：
+			targetcli
+			/backstores/block create 服务端储存名 实际设备路径
+			/iscsi/ create 磁盘组的IQN名称				（IQN名称：iqn.年份-月份.逆序域名）
+			/iscsi/磁盘组IQN名/tpg1/luns create 服务端储存路径
+			/iscsi/磁盘组IQN名/tpg1/portals create 服务端IP地址
+			/iscsi/磁盘组IQN名/tgp1/acls create 客户端声称的名字
+			ls
+			exit
+			iscsiadm
+				--mode discoverydb
+				--type sendtargets
+				--portail 服务端IP地址
+				--discover 服务端IP地址:3260端口,1 客户端声称的名字
+		主要作用：虚拟磁盘空间提供
+		使用步骤：
+			一、服务端共享磁盘空间
+			1.安装targetcli
+			2.使用targetcli命令运行软件
+			3.使用“/backstores/block create 服务端储存名 实际设备路径”命令建立服务端储存
+			4.使用“/iscsi/ create 磁盘组的IQN名称”命令建立磁盘组
+			5.使用“/iscsi/磁盘组IQN名/tpg1/luns create 服务端储存路径”命令将共享的分区放入磁盘组
+			6.使用“/iscsi/磁盘组IQN名/tpg1/portals create 服务端IP地址”命令指定提供服务的ip地址
+			7.使用“/iscsi/磁盘组IQN名/tgp1/acls create 客户端声称的名字”命令设置访问控制
+			8.使用exit命令退出软件（退出前，可以在软件内使用ls命令验证磁盘组）
+			9.重启服务
+			10.完成
+			二、客户端连接磁盘
+			1.安装iscsi-initiator-utils和iscsi-initiator-utils.i686
+			2.修改配置文件设置访问时声称的名字
+			3.使用systemctl daemon-reload命令？？？？？？？
+			4.重启iscsid服务刷新声称的名字
+			5.使用iscsiadm命令？？？？？？？？
+			6.重启iscsi服务加载共享储存
+			7.完成（可以进入/dev目录查看验证分区，或者通过lsblk、blkid、pvs -a等命令进行验证）
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+	mkfs：
+		常用命令：
+			mkfs.ext3+(-f)+设备路径
+			mkfs.ext4+(-f)+设备路径
+			mkfs.xfs+(-f)+设备路径
+			mkfs.vfat -F 32+(-f)+设备路径
+		主要作用：格式化设备
+		使用步骤：
+			1.选择目标格式对应的命令对设备进行分区
+			2.完成（可以使用ls -lh命令验证设备格式）
+
+
+
+
+	acl：
+		常用命令：
+			getfacl 文档
+			setfacl -m u:用户名:权限类别  文档
+			setfacl -m g:组名:权限类别  文档
+			setfacl -x u:用户名  文档
+			setfacl -x g:组名  文档
+			setfacl -b 文档
+		主要作用：对特定用户或组进行访问控制
+		使用步骤：
+			1.使用对应命令对文档或者目录进行访问控制设置
+			2.完成（可以使用getfacl验证权限）
+
+
+
+
+	SELinux：
+		配置文件：/etc/selinux/config
+				SELINUX=模式类型
+
+		常用命令：
+			getenforce
+			setenforce 0
+			setenforce 1
+			getsebool -a
+			setsebool (-P) 服务名 on/off
+			semanage port -l
+			semanage port -a -t 服务名 -p 协议 端口号
+		主要作用：
+			针对用户、进程、目录和文件提供了预设的保护策略
+		使用步骤：
+			一、利用SELinux进行保护
+			1.使用相应命令或者修改配置文件对SELinux的模式进行设置
+			2.如果将SELinux模式设置为default，则需要重启系统使设置生效
+			3.完成（可以使用getenforce查看SELinux模式进行enforcing或permissive两种模式的验证）
+			二、利用SELinux实现系统服务的开关
+			1.使用“getsebool -a”查看SELinux可以控制的所有服务及状态
+			2.找到想要开关的服务，使用“setsebool (-P) 服务名 on/off”开关服务
+			3.完成（可以再次使用“getsebool -a |grep 服务名”进行验证）
+			三、利用SELinux开放端口号
+			1.使用semanage port -l命令查看全部系统服务使用的端口号
+			2.找到想要开放新端口的系统服务，使用“semanage port -a -t 服务名 -p 协议 端口号”开放端口
+			3.重启该系统服务
+			4.完成
+			
+
+
+
+
+
+
+
+	firewall：
+		服务名：firewalld
+		常用命令：
+			firewall-cmd
+				--get-default-zone=
+					public	仅允许访问本机的sshd等少数几个服务
+					trusted	允许任何访问
+					block		阻塞任何访问
+					drop		丢弃任何访问
+				--reload
+				--permanent
+				--zone=
+				--list-all
+				--add-service=
+				--add-source=
+				--add-forward-port=
+					port		原端口
+					proto		传输层协议
+					toport	目标端口
+			firewall-config
+		主要作用：隔离、过滤访问请求
+		使用步骤：
+			一、利用防火墙进行访问限制
+			1.使用相应的命令对防火墙进行设置
+			2.重新加载所有防火墙配置
+			3.完成
+			二、利用防火墙进行端口转发
+			1.firewall-cmd --add-forward-port=port=原端口:proto=tcp/udp:toport=目标端口
+			2.重新加载所有防火墙配置
+			3.完成
+
+
+
+
+
+
+
+
+
+	yum：
+		配置文件：/etc/yum.repos.d/*.repo
+				[  库名  ]
+				name=库名解释
+				baseurl=库源地址
+					ftp://	http://	file:///
+				enabled=1
+				gpgcheck=0
+		常用命令：
+			yum repolist
+			yum clean all
+			yum (-y) install
+			yum (-y) update
+			yum (-y) remove
+                   yum  provides */pxelinux.0                  #查询仓库中那个软件包产生该文件
+			yum-config-manager --add=库源地址		（注意添加的配置文件没有“gpgcheck=0”）
+		主要作用：解决逻辑关系安装软件
+		使用步骤：
+			1.修改配置文件以指定库源
+			2.使用yum -y install +软件名 安装软件
+			3.完成
+
+
+
+
+
+	cron：
+		软件名：cronie、crontabs
+		服务名：crond
+		配置文件：/var/spool/cron/*		（以用户名字命名的文件即是该用户的cron配置）
+				*(分)  *(时)  *(日)  *(月)  *(周) +命令表达式N
+					*：代表任意该项时间点
+					,：用于分隔多个不连续的该项时间点
+					-：用于表示连续的该项时间点
+					/num：指定频率，每num的该项时间点
+		日志文件：/var/log/crond
+		常用命令：
+			crontab -e (-u 用户名)
+		主要作用：定时执行任务
+		使用步骤：
+			1.使用crontab -e 进入当前用户配置文件修改配置文件
+			2.重启服务
+			3.完成
+
+
+
+
+	LDAP服务：
+		前提：服务端己经搭建好LDAP共享服务。
+		软件名：sssd（客户端）、authconfig-gtk（客户端）
+		服务名：sssd（客户端）
+		常用命令：
+			authconfig-gtk
+		主要作用：登陆系统时可以使用来自服务端的系统用户
+		使用步骤：
+			1.安装客户端软件sssd
+			2.安装客户端图形工具authconfig-gtk
+			3.用authconfig-gtk命令打开图形工具
+			4.身份&验证选项卡中，“用户账户配置”-->“用户账户数据库”一项，选择“LDAP”
+			5.在“LDAP搜索基础DN”一栏中填入“dc=example,dc=com”（指定服务端域名）
+			6.在“LDAP服务器”一栏中填入“classroom.example.com”（指定服务端主机名）
+			7.勾选“用TLS加密连接”
+			8.点击“下载CA证书”，在弹出的窗口中“证书URL”一栏中填入“http://classroom.example.com/pub/example-ca.crt”
+			9.重启服务
+			10.完成（可以使用su命令登陆服务端的用户进行验证）
+
+
+
+
+
+
+	chrony服务：
+		前提：服务端已经搭建好NTP服务。
+		软件名：chrony（客户端）
+		服务名：chronyd（客户端）
+		配置文件：/etc/chrony.conf（客户端）
+				server 0.rhel.pool.ntp.org iburst
+				server 1.rhel.pool.ntp.org iburst
+				server 2.rhel.pool.ntp.org iburst
+				server 3.rhel.pool.ntp.org iburst
+				默认使用红帽系统在网上送的4台免费的NTP服务端地址，将它们注释掉，添加自己想用的NTP服务端地址，格式是
+				server 地址 iburst
+		主要作用：隔一会儿就自动同步系统时间
+		使用步骤：
+			1.安装客户端软件chrony
+			2.修改配置文件以指定服务端位置
+			3.重启服务
+			4.完成（可以使用date -s命令修改时间，等待chrony服务自动同步时间进行验证）
+
+
+
+
+	Mail服务：
+		软件名：postfix
+		服务名：postfix
+		配置文件：/etc/postfix/main.cf
+			取消注释并修改域名（默认补全域名后缀）：
+				【99行】	myorigin = 域名			
+			取消注释：
+				【113行】	inet_interfaces = all		（允许所有网络接口）
+			注释掉：
+				【116行】	inet_interfaces = localhost	（注释掉“仅允许本机地址”）
+			修改描述信息：
+				【164行】	mydestination = 描述信息		（标识本域邮件）
+		常用命令：
+			mail -s '邮件标题' -r 发件用户[@收件域] 收件用户[@收件域]
+			mail -u 发件用户
+		使用步骤：
+			1.安装postfix
+			2.修改配置文件
+			3.重启服务
+			4.完成
+		
+
+
+
+
+
+	Web服务：
+		软件名：httpd（服务端）、mod_ssl（服务端）
+		服务名：httpd（服务端）
+		配置文件：/etc/httpd/conf/httpd.conf		（httpd主配置文件）
+				【95行】	ServerName 域名:端口号		（默认80端口）
+				【119行】	DocumentRoot "网页文件存放地址"
+		配置文件：/etc/httpd/conf/*.conf			（httpd调用配置文件）
+		配置文件：/etc/httpd/conf.d/ssl.conf		（mod_ssl配置文件）
+				【59行】	DocumentRoot "网页文件存放地址"
+				【60行】	ServerName 域名:端口号		（默认443端口）
+				【100行】	SSLCertificateFile 网站证书路径	（.crt文件，营业执照）
+				【107行】	SSLCertificateKeyFile 密钥路径	（.key文件）
+				【122行】	SSLCACertificateFile 根证书路径	（.crt文件，公安局信息、颁发证书的服务器信息）
+		主要作用：使其他终端用http：//访问本机地址时，可以访问本机部署的网页文件
+		使用步骤：
+			一、部署网页文件
+			1.安装httpd
+			2.修改主配置文件，取消ServerName的注释
+			3.将网页文件放入DocumentRoot指示的目录下，默认是/var/www/html
+			4.重启服务
+			5.完成（可以用浏览器访问“http：//自身的地址”进行验证）
+			二、搭建虚拟Web主机
+			1.安装httpd
+			2.创建一个调用配置文件，任意命名即可
+			3.根据虚拟主机的类型，修改调用配置文件如下
+				（Listen 端口号）			（修改端口号的话就要侦听新的端口号，并要在SELinux策略中开放端口）
+				<VirtualHost ip地址:端口号>
+					ServerName 域名
+					DocumentRoot 网页文件路径
+				</VirtualHost>
+			4.将网页文件分别放入每个虚拟主机所指示的路径下
+			5.重启服务
+			6.完成（可以用浏览器访问“http：//ip地址:端口号”或对应域名进行验证）
+			三、配置Web服务访问控制
+			1.安装httpd
+			2.创建一个调用配置文件，任意命名即可
+			3.修改调用配置文件如下
+				<Directory 目录绝对路径>
+					或者Require ip +允许访问的ip地址
+					或者Require all denied
+					或者Require all granted
+				</Directory>
+			4.重启服务
+			5.完成
+			四、修改DocumentRoot到/var/www外
+			1.安装httpd
+			2.修改主配置或调用配置文件中其中一个DocumentRoot指向目标目录
+			3.使用“chcon -R --reference=/var/www +目标目录”命令对目标目录进行属性重设处理
+			4.重启服务
+			5.完成（可以使用“ls -Z +目标目录”验证目标目录的属性）
+			五、部署用动态网站
+			1.安装httpd
+			2.创建一个调用配置文件，任意命名即可
+			3.修改调用配置文件如下
+				<VirtualHost ip地址:端口号>
+					ServerName 域名
+					DocumentRoot 网页文件路径
+					Alias  /  动态网站主页文件路径
+				</VirtualHost>
+			4.重启服务
+			5.完成
+			六、翻译Python页面
+			前提：客户端存在可以识别Python代码的软件，例如mod_wsgi
+			1.安装httpd
+			2.创建一个调用配置文件，任意命名即可
+			3.修改调用配置文件如下
+				<VirtualHost ip地址:端口号>
+					ServerName 域名
+					DocumentRoot 网页文件路径
+					WsgiScriptAlias  /  动态网站主页文件路径
+				</VirtualHost>
+			4.重启服务
+			5.完成
+			七、搭建安全网站
+			1.安装httpd和mod_ssl
+			2.修改mod_ssl的配置文件
+			3.重启服务
+			4.完成
+
+
+
+	DNS服务：
+		软件名：bind（服务端）、bind-chroot（服务端）
+		服务名：named（服务端）
+		配置文件：/etc/named.conf				（主配置文件）
+				重写整个文件如下：
+					options {
+						directory "/var/named";
+					};
+					zone "地址库名" {
+						type master;
+						file "地址库文件名";
+					};
+		配置文件：/etc/named/*				（地址库文件）
+				
+		常用命令：
+			name-checkconf
+			name-checkzone 地址库名 地址库文件绝对路径
+		使用步骤：
+			一、搭建DNS服务器：
+			1.安装bind和bind-chroot
+			2.修改主配置文件
+			3.到相应目录下创建地址库文件，对应主配置文件中的地址库文件名进行命名
+			4.修改地址库文件如下
+				从named.localhost获取头文件内容
+				在最后增加：
+					@		NS	域名
+					www		A	地址a
+					svr7		A	地址b
+					pc207		A	地址c
+			5.重启服务
+			6.完成（可以在客户机先使用nmcli工具配置dns服务器地址，再使用“host+域名”验证DNS服务）
+			二、实现DNS轮询（负载均衡）：
+			1.安装bind和bind-chroot
+			2.修改主配置文件
+			3.到相应目录下创建地址库文件，对应主配置文件中的地址库文件名进行命名
+			4.修改地址库文件如下
+				从named.localhost获取头文件内容
+				在最后增加：
+					@		NS	域名
+					www		A	地址a
+					www		A	地址b
+					www		A	地址c
+			5.重启服务
+			6.完成（可以在客户机先使用nmcli工具配置dns服务器地址，再多次使用“host+域名”验证DNS轮询）
+			三、实现泛域名解析：
+			1.安装bind和bind-chroot
+			2.修改主配置文件
+			3.到相应目录下创建地址库文件，对应主配置文件中的地址库文件名进行命名
+			4.修改地址库文件如下
+				从named.localhost获取头文件内容
+				在最后增加：
+					@		NS	域名
+					*		A	地址
+			5.重启服务
+			6.完成（可以在客户机先使用nmcli工具配置dns服务器地址，再多次使用“host+任意前缀+域名”验证泛域名解析）
+			四、搭建缓存DNS服务：
+			1.安装bind和bind-chroot
+			2.用pkill命令停用与DNS服务冲突的其他服务（如dnsmasq）
+			3.修改主配置文件如下
+				重写整个文件如下:
+					options {
+						forwarders { 公共DNS服务器地址; };
+					};
+			4.重启服务
+			5.完成（可以在客户机先使用nmcli工具配置dns服务器地址，再使用“host+常用公共网站”验证缓存DNS服务）
+
+
+
+
+
+	FTP服务：
+		软件名：vsftpd（服务端）、lftp（客户端）
+		服务名：vsftpd（服务端）
+		主要作用：使其他终端用ftp：//访问本机地址时，可以访问本机共享在/var/ftp中的文件
+		使用步骤：
+			1.安装vsftpd
+			2.将要共享文件放入/var/ftp目录下
+			3.重启服务
+			4.完成（可以用浏览器访问“ftp：//自身的地址”进行验证）
+
+
+
+
+	Samba服务：
+		软件名：samba（服务端）、samba-client（客户端）
+		服务名：smb（服务端）
+		配置文件：/etc/samba/smb.conf（服务端）
+				[global]一栏中修改：
+					workgroup = STAFF
+				在最后增加：
+					[ 共享名 ]
+					path = 实际共享路径
+					(write list = samba帐号)
+		常用命令：
+			pdbedit -a +用户名
+			pdbedit -x +用户名
+			pdbedit -L
+			smbclient -U 用户名 //服务端ip地址/共享名
+			smbclient -L +服务端ip地址
+		主要作用：共享文件
+		使用步骤：
+			一、服务端搭建samba服务
+			1.安装samba
+			2.建立samba共享使用的用户帐号（可以使用pdbedit -L命令验证samba帐号）
+			3.修改配置文件
+			4.重启服务
+			5.检查并修改SELinux中samba_export_all_ro和samba_export_all_rw的设置
+			5.完成
+			二、客户端访问服务端共享的文件
+			前提：客户端存在支持samba挂载的软件，例如cifs-utils
+			1.安装samba-client
+			2.使用“smbclient -U 用户名 //服务端ip地址/共享名”连接到共享文件夹
+			3.使用mount -o user=samba帐号,pass=密码(,_netdev,multiuser,sec=ntlmssp) //服务端ip地址/共享名 +目标挂载点
+			4.完成（可以使用df -h验证挂载情况）
+
+
+
+	NFS服务：
+		软件名：nfs-utils（服务端）
+		服务名：nfs-server（服务端）
+		配置文件：/etc/exports
+				共享路径+客户端地址(客户端权限）
+		主要作用：共享文件
+		使用步骤：
+			1.安装服务端软件nfs-utils
+			2.修改配置文件
+			3.重启服务
+			4.完成
+
+
+
+
+	MariaDB：
+		软件名：mariadb-server
+		服务名：mariadb
+		配置文件：/etc/my.cnf
+		常用命令：
+			mysql
+			mysql -u 用户名 -p密码
+			mysqladmin -u 用户名 (-p旧密码) password '新密码'
+			show databases;
+			create database +库名;
+			drop database +库名;
+			use +库名;
+			show tables;
+			desc 表名;
+			select 查找字段 from 表名;
+			select * from 库1,库2 where 库1.表1='查找字段1' and 库2.表2='查找字段2';
+			insert 库名 values (数据ID，'表1数据'，'表2数据'...'表N数据')
+			delete from 库名 where 表1='查找字段1';
+			grant 权限类型 on 库名.表名 to 用户名@用户登陆的ip地址 identified by '密码';
+			flush privileges;
+			exit
+		主要作用：数据库
+		使用步骤：
+			1.安装mariadb-server
+			2.重启服务
+			3.用mysqladmin命令设置数据库管理员root的密码
+			4.完成（可以用mysql -u root -p密码登陆数据库进行验证
+			
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

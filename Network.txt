@@ -1,0 +1,1006 @@
+计算机网络概述什么是计算机网络
+                         • 什么是计算机网络
+                             – 硬件方面:通过线缆将网络设备和计算机连接起来
+                             – 软件方面:操作系统,应用软件,应用程序通过通信
+                                线路互连
+                             – 实现资源共享、信息传递计算机网络的功能
+                         • 数据通信
+                         • 资源共享
+                         • 增加可靠性
+                         • 提高系统处理能力
+计算机网络发展阶段
+                         • 60年代
+                             – 分组交换
+                         • 70-80年代
+                       – TCP/IP
+                         • 90代年后
+                       – Web技术网络标准
+                         • 标准化组织
+                       – ISO(国际标准化组织)
+                       – ANSI(美国国家标准化局)
+                       – ITU-T(国际电信联盟-电信标准部)
+                       – IEEE(电气和电子工程师学会)
+WAN与LAN
+                         • 广域网(Wide-Area Network)
+                             – 范围:几十到几千千米
+                             – 作用:用于连接
+                             远距离的计算机网络
+                             – 典型应用:Internet
+
+                         • 局域网(Local-Area Network)
+                             – 范围:1km左右
+                             – 作用:用于连接较短
+                             距离内的计算机
+                             – 典型应用:企业网,校园网
+
+网络设备及拓扑网络设备生产厂商
+                         • 网络设备生产厂商
+                       – Cisco(思科)
+                             – 华为路由交换设备
+                         • 路由交换设备
+                         Cisco 2911路由器
+                         Cisco 3560交换机
+ 
+网络拓扑结构
+                         • 线缆连接计算机和网络设备的布局
+                             – 点对点
+                             – 星型及扩展的星型
+                             – 网状网络拓扑结构(续1)
+                         • 点对点拓扑结构
+                             – 两台设备之间有一条单独的连接
+                             – 专用的广域网中电路连接的两台路由器网络拓扑结构(续2)
+                         • 星型拓扑
+                             – 优点
+                                易于实现
+                                易于网络扩展
+                                易于故障排查
+                             – 缺点
+                                中心节点压力大
+                                组网成本较高
+                                ......
+                                ......
+                                ......
+                                ......网络拓扑结构(续3)
+                         • 网状拓扑结构
+                              – 一个节点与其他多个节点相连
+                              – 提供冗余性和容错性
+                              – 可靠性高
+                              – 组网成本高
+
+OSI 参考模型计算机网络的功能
+                         • 数据通信         Data
+
+                               网络分层
+                         • 网络通信的过程很复杂
+
+                              – 数据以电子信号的形式穿越介质到达正确的计算机,
+                                 然后转换成最初的形式,以便接收者能够阅读
+                              – 为了降低网络设计的复杂性,将协议进行了分层设计邮局实例
+
+                              写信人           收信人              
+                              邮局             邮局
+                              运输部门
+                              甲地             乙地
+
+OSI 协议模型
+                      • OSI的七层框架
+                               应用层
+                               表示层
+                               会话层
+                               传输层
+                               网络层
+                               数据链路层
+                               物理层OSI 协议模型(续1)
+                      • OSI的七层框架功能
+                               应用层 网络服务与最终用户的一个接口
+                               表示层 数据的表示、安全、压缩
+                               会话层 建立、管理、中止会话
+                               传输层 定义传输数据的协议端口号,以及流控和差错校验
+                               网络层 进行逻辑地址寻址,实现不同网络之间的路径选择
+                               数据链路层 建立逻辑连接、进行硬件地址寻址、差错校验等功能
+                               物理层 建立、维护、断开物理连接
+TCP/IP模型OSI模型 、 TCP/IP模型
+                      • TCP/IP五层模型、
+                      OSI七层模型 
+                               应用层
+                               表示层
+                               会话层
+                               传输层
+                               网络层
+                               数据链路层
+                               物理层
+                      TCP/IP 5层模型
+                               应用层
+                               传输层
+                               网络层
+                               数据链路层
+                               物理层
+OSI 7层模型TCP/IP协议族的组成
+                               应用层                HTTP SMTP FTP TFTP SNMP DNS
+                               传输层                TCP UDP
+                               网络层                IP
+                               数据链路层            ICMP IGMPARP RARP
+                               物理层                由底层网络定义的协议什么是协议
+
+• 什么是协议?
+
+                             – 为了使数据可以在网络上从源传递到目的地,网络上
+                                所有设备需要“讲”相同的“语言”
+                             – 描述网络通信中“语言”规范的一组规则就是协议协议数据单元(PDU)
+                                
+                                应用层               上层数据                      
+                                传输层               TCP头部 上层数据 数据段
+                                网络层               IP头部 TCP头部 上层数据 数据包
+                                数据链路层           MAC头部 IP头部 TCP头部 上层数据 数据帧
+                                物理层               比特流设备与层的对应关系
+                                
+                                应用层 计算机
+                                传输层 防火墙
+                                网络层 路由器
+                                数据链路层 交换机
+                                物理层 网卡
+
+物理层以太网接口
+                        • RJ-45
+                        – RJ是描述公用电信网络的接口,常用的有RJ-11和RJ-45
+                           • 光纤接口
+                               – 用以稳定地但并不是永久地连接两根或多根光纤的无源组件
+                          FC 圆形带螺纹光纤接头
+                          ST 卡接式圆形光纤接头
+                          SC 方型光纤接头
+                          LC 窄体方形光纤接头
+                          MT-RJ 收发一体的方型光纤接头双绞线
+                           • 双绞线TP是目前使用最广,价格相对便宜的一种传输介质
+                           • 由两根绝缘铜导线相互缠绕组成,以减少对邻近线对的电气干扰
+                           • 由若干对双绞线构成的电缆被称为双绞线电缆双绞线(续1)
+                           • 非屏蔽双绞线UTP和屏蔽双绞线STP
+双绞线的标准
+
+                               类型
+                             cat5
+                             cat5e
+                             cat6
+                             cat7
+                              传输速率
+                             100Mbps
+                             100Mbps
+                             1000Mbps(1Gbps)
+                             10000Mbps(10Gbps)
+
+线缆的连接
+                        • T568A:白绿、绿、白橙、蓝、白蓝、橙、白棕、棕
+                        • T568B:白橙、橙、白绿、蓝、白蓝、绿、白棕、棕
+
+线缆的连接(续1)
+                           • 线缆的连接
+                                  
+                               – 标准网线
+
+                               – 交叉网线
+
+                               – 全反线
+
+                           • 例外情况:版本较新设备可以随意使用标准与交叉网线而不受限制,设备本身具备自动识别功能。
+物理层的设备
+                           • 网络接口卡
+
+                                 连接计算机和网络硬件
+                                 有一个惟一的网络节点地址
+                                 按照速率可分为10/100M、100/1000M自适应网卡
+                                 按照扩展类型可分为USB网卡、PCI网卡
+                                 按照提供的线缆接口类型可分为RJ-45接口网卡、光纤
+
+网卡等物理层的设备(续1)
+                          • 中继器
+                              – 放大信号
+
+                              – 延长网络传输距离Packet Tracer软件Packet Tracer软件简介
+
+Cisco Packet Tracer软件
+
+                        – Cisco Packet Tracer 是由Cisco公司发布的一个辅助学
+                                 习工具,为学习思科网络课程的初学者去设计、配置、
+                                 排除网络故障提供了网络模拟环境。用户可以在软件
+                                 的图形用户界面上直接使用拖曳方法建立网络拓扑,
+                                 并可提供数据包在网络中行进的详细处理过程,观察
+                                 网络实时运行情况。可以学习IOS的配置、锻炼故障排
+                                 查能力。Packet Tracer软件使用
+
+• Cisco交换机的命令行
+
+
+                                特权模式(一般用于查看配置信息)
+                         Switch>enable
+                         Switch#
+                                全局配置模式(所做的配置对整个设备生效)
+                         Switch#configure terminal
+                         Switch(config)#交换机的命令行模式(续2)
+
+
+                                接口模式
+                          Switch(config)#interface fastEthernet 0/1
+                          Switch(config-if)#
+                         – interface:关键字
+                         – fastethernet:接口类型
+                             – 0/1:“0”表示模块号,“1”表示端口号模式间的转换
+                            • 模式间转换
+                       – exit命令
+
+                       – end命令
+                             – 快捷键
+                         switch(config-if)#exit
+                         switch(config)#exit
+                         switch#disable
+                         switch>
+                        <Ctrl-Z>退出到特权模式
+                         switch(config-if)#end
+                         switch#
+                         switch(config)#end
+                         switch#
+                         switch(config)#int f 0/1
+                         switch(config-if)#^Z
+                         switch#
+                         switch(config)#^Z
+                         switch# 
+案例:交换机基本命令模式
+                           • 交换机访问及命令模式
+                             – 通过的Console线缆访问交换机
+
+                             – 交换机工作模式的进入与退出
+                         Switch>用户模式
+                         Switch>enable
+                         Switch#特模模式
+                         Switch#configure terminal
+                         Switch(config)#全局配置模式
+                         Switch(config)#interface fastEthernet 0/1
+                         Switch(config-if)#接口模式交换机命令行配置配置主机名
+                          • 配置主机名
+                       – Switch>en
+
+                       – Switch#conf t
+                       – Switch(config)# hostname Tarena-sw1
+                       – Tarena-sw1(config)#查看交换机的配置
+                       • tarena-sw1# show running-config
+                         version 12.1
+                         no service pad
+
+                         service timestamps debug uptime
+                         service timestamps log uptime
+                         no service password-encryption
+
+                         hostname Tarena-sw1案例:交换机命令行基本配置
+
+                         • 修改及查看交换机配置
+                            – 修改交换机主机名Switch(config)# hostname S1
+
+                            – 查看交换机配置信息Switch# show running-config配置enable明文口令
+                         • 配置enable明文口令
+                      – Tarena-sw1(config)#enable password cisco
+
+                      – Tarena-sw1(config)#exit
+                      – Tarena-sw1#show running-config
+                        version 12.1
+                        no service pad
+                        service timestamps debug uptime
+                        service timestamps log uptime
+                        no service password-encryption
+                               !
+                               密码以明文保存
+                        hostname Tarena-sw1
+                               !
+                        enable password cisco
+                               !
+                        ip subnet-zero配置enable明文口令(续1)
+                         • 检验enable口令的作用
+                        • Tarena-sw1# exit
+
+                        Press RETURN to get started.
+                        • Tarena-sw1>enable
+                        Password: cisco
+                      • Tarena-sw1#保存交换机的配置
+                        • Tarena-sw1# copy running-config startup-config
+
+                        • Tarena-sw1# write
+                        Building configuration...
+                        [OK]恢复设备出厂默认值
+                        • Tarena-sw1# erase startup-config
+
+                        Erasing the nvram filesystem will remove all
+                        configuration files! Continue? [confirm]
+                        [OK]
+                        Erase of nvram: complete
+                      • Tarena-sw1#reload
+                         Proceed with reload? [confirm]案例:交换机命令行基本配置
+
+                            – 配置控制台会话时间永不超时
+                      – Switch(config)#line console 0
+                      – Switch(config-line)#exec-timeout 0 0打断命令输入问题现象
+                         • 控制台消息打断输入的命令
+
+                        Switch(config)#interface fastEthe
+                       %LINK-5-CHANGED: Interface FastEthernet0/8, changed state to up
+                       %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/8,
+                        changed state to up原因分析
+                     
+                           – 输出日志消息会自动弹出
+
+                           – 配置输出日志同步
+                      – Switch(config)#line console 0
+                      – Switch(config-line)#logging synchronous禁用DNS查询问题现象
+
+                          – 在特权模式输入错误命令会发起解析请求
+
+                         • 解决方法
+                          – 配置禁用DNS查询
+                     – switch(config)#no ip domain-lookup打断命令输入问题现象
+                         • 控制台消息打断输入的命令
+
+                       Switch(config)#interface fastEthe
+                      %LINK-5-CHANGED: Interface FastEthernet0/8, changed state to up
+                      %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/8,
+                       changed state to up原因分析
+                  
+数据链路层以太网
+                        • 以太网MAC地址
+                           – 用来识别一个以太网上的某个单独的设备或一组设备
+
+                              |<-----  24比特（供应商标识） ------>|<-------    24比特（供应商对网卡的唯一编号）------>|
+                              [---------------------------------------------------------------------------------------------------------------------------]
+
+                              对于目的地址：
+                                           0-物理地址（单伯地址）
+                                           1-逻辑地址（组播地址）
+以太网(续1)
+                        • 以太网帧格式
+                              |<--目的地址-->|<--源地址-->|<--类型/长度-->|<----        数据        ---->|<--帧校验序列-->|
+                              [    6字节     ][   6字节    ][    2字节      ][        46~1500字节         ][     4字节      ]
+
+
+以太网交换机
+     什么是交换机
+
+                            交换机是用来连接局域网的主要设备
+                         – 交换机能够根据以太网帧中目标地址智能的转发数据,
+                            因此交换机工作在数据链路层
+交换机的工作原理
+                      • 交换机的转发原理
+                         – 初始状态
+
+                              对外面世界
+                              我一无所知
+                    1A 00-00-00-11-11-11
+                       2B 00-00-00-22-22-22
+                          3C 00-00-00-33-33-33
+
+交换机的工作原理
+
+                 • 交换机的转发原理
+                         – 初始状态
+                    – MAC地址学习
+                         – 广播未知数据帧
+                         – 接收方回应
+                         – 交换机实现单播通信
+
+                 • 交换机的工作原理
+
+                 • 学习
+                    – MAC地址表是交换机通过学习接收的数据帧的源MAC地址来形成的
+                 • 广播
+                         – 如果目标地址在MAC地址表中没有,交换机就向除接收到该数据帧的端口外的其他所有端口广播该数据帧
+                 • 转发
+                         – 交换机根据MAC地址表单播转发数据帧
+                 • 更新
+                         – 交换机MAC地址表的老化时间是300秒
+                         – 交换机如果发现一个帧的入端口和MAC地址表中源MAC地址的所在
+         
+                           端口不同,交换机将MAC 地址重新学习到新的端口
+                 
+查看MAC地址表
+                 • 查看MAC地址表
+               • Tarena-sw1#show mac-address-table
+
+                Mac Address Table
+                         -------------------------------------------
+                Vlan  Mac Address     Type    Ports
+                     ----       -----------             --------  -----
+                All  000d.28be.b640   STATIC  CPU
+              
+                Mac Addresses for this criterion: 1
+
+交换机的工作原理案例(1)
+
+                • 交换机A在接收到数据帧后,执行以下操作:
+                  – 交换机A查找MAC地址表
+                  – 交换机A学习主机11的MAC地址
+                  – 交换机A向其他所有端口发送广播
+
+交换机的工作原理案例(2)
+
+                • 交换机B在接收到数据帧后,执行以下操作:
+                  – 交换机B查看MAC地址表
+                  – 交换机B学习源MAC地址和端口号
+                  – 交换机B向所有端口广播数据包
+
+               • 主机22,查看数据包的目标MAC地址不是自己,丢弃数据包
+交换机的工作原理案例(4)
+
+                    主机33,丢弃数据帧
+                    主机44,接收数据帧
+
+交换机的工作原理案例(5)
+
+                    主机44给主机11回复
+                    数据帧:
+                    目标地址:11
+                    源地址: 44
+
+交换机的工作原理案例(6)
+
+               • 交换机B在接收到数据帧后,执行以下操作:
+                 – 交换机B学习源MAC地址和端口号
+                 – 交换机B查看MAC地址表,根据MAC地址表中的条目,
+                    单播转发数据到端口3
+
+交换机的工作原理案例(续7)
+
+                    交换机A在接收到数据帧后,执行以下操作:
+                  –交换机A学习源MAC地址和端口号
+                  –交换机A查看MAC地址表,根据MAC地址表中的条目,单播转发数据到端口1
+                    主机11,收到数据帧
+
+交换机的工作原理案例(续8)
+
+                    在这个过程中,交换机的MAC地址表
+                    中已经学到了需要的条目,交换机通过
+                    单播的方式,转发了数据帧
+
+交换机的工作原理案例(续9)
+                  • 交换机最终的MAC地址表
+
+广播域
+
+                  • 广播域指接收同样广播消息的节点的集合,如:在该
+                      集合中的任何一个节点传输一个广播帧,则所有其他
+                      能收到这个帧的节点都被认为是该广播帧的一部分
+                  • 交换机的所有端口默认属于同一个广播域
+                     . . . . . . . .
+广播
+广播域VLANVLAN概述
+• 什么是VLAN
+知
+识
+讲
+解
+– Virtual LAN(虚拟局域网)是物理设备上连接的不受
+物理位置限制的用户的一个逻辑组。
+• 为什么引入VLAN
+– 交换机的所有端口默认属于同一个广播域
+– 随着接入设备的增多,网络中广播增多,降低了网络
+的效率
+– 为了分割广播域,引入了VLANVLAN概述(续1)
+• VLAN分割广播域
+知
+识
+讲
+解
+广播
+广播域
+VLAN 1
+VLAN 2
+广播域VLAN概述(续2)
+• VLAN的作用
+– 广播控制
+知
+识
+讲
+解
+– 安全性
+– 带宽利用
+– 延迟VLAN概述(续3)
+• 基于端口划分的静态VLAN
+以太网交换机
+知
+识
+讲
+解
+VLAN表
+端 口
+port1
+port2 port10
+port7
+所属VLAN
+Port 1 VLAN 5
+Port 2 VLAN 10
+... ... ......
+Port 7 VLAN5
+Port 10 VLAN10
+... ... ......VLAN配置静态VLAN的配置
+• 配置VLAN的步骤
+– 创建VLAN
+知
+识
+讲
+解
+– 将端口加入到相应的VLAN中
+– 验证静态VLAN的配置(续1)
+• 在全局配置模式下创建VLAN
+• Switch(config)#vlan vlan-id
+知
+识
+讲
+解
+• Switch(config-vlan)#name vlan-name静态VLAN的配置(续2)
+• 删除已创建的VLAN
+• Switch(config)#no vlan 2
+知
+识
+讲
+解将端口加入VLAN
+知
+识
+讲
+解
+• Switch(config)# interface f0/1
+• Switch(config-if)# switchport access vlan vlan-id
+• Switch(config-if)# no switchport access vlan vlan-id
+• 也可以同时将多个端口添加到某个VLAN中:
+• Switch(config)# interface range f0/1 – 10验证VLAN的配置
+• Switch# show vlan brief
+知
+识
+讲
+解
+• Switch# show vlan id vlan-id查看VLAN配置
+• Switch#show vlan brief
+知
+识
+讲
+解
+VLAN Name
+Status
+Ports
+---- -------------------------------- --------- -----------------------
+1 default
+active
+Fa0/1, Fa0/2, Fa0/3,
+Fa0/4
+Fa0/11, Fa0/12,
+Fa0/13, Fa0/14
+Fa0/15, Fa0/16,
+Fa0/17, Fa0/18
+Fa0/19, Fa0/20,
+Fa0/21, Fa0/22
+Fa0/23, Fa0/24
+2 v2
+active
+Fa0/5, Fa0/6, Fa0/7,
+Fa0/8
+Fa0/9, Fa0/10
+1002 fddi-default
+active
+1003 token-ring-default
+active
+1004 fddinet-default
+active
+1005 trnet-default
+active案例:Vlan基本命令
+• 在交换机上创建vlan10,修改名称为web并查看vlan
+配置
+课
+堂
+练
+习
+• 删除vlan10,查看vlan配置
+• 创建vlan20,将f0/1端口加入此vlan,查看vlan配置
+• 将f0/1端口从vlan20中删除,查看vlan配置案例:Vlan的划分
+• 在交换机上创建以下vlan,按拓扑将端口加入到指定
+的vlan并配置服务器IP地址,实现同vlan主机的通信。
+课
+堂
+练
+习
+f0/1 f0/2 f0/3 f0/4
+vlan1
+192.168.1.0/24
+f0/5 f0/6
+vlan2
+192.168.2.0/24
+vlan3
+192.168.3.0/24案例:Vlan的划分
+• 通过配置交换机实现同vlan主机互通
+课
+堂
+练
+习
+f0/7
+f0/7
+s2
+s1
+f0/1 f0/2 f0/3 f0/4
+vlan1
+192.168.1.0/24
+f0/5 f0/6
+vlan2
+192.168.2.0/24
+f0/5 f0/6
+vlan3
+192.168.3.0/24
+vlan3
+192.168.3.0/24Trunk原理交换机之间的VLAN通信
+知
+识
+讲
+解
+人事部
+VLAN
+市场部
+VLAN
+销售部
+VLAN交换机之间的VLAN通信(续1)
+• 如何实现交换机之间的VLAN通信?
+– 每个VLAN一条链路?
+知
+识
+讲
+解
+VLAN 1
+VLAN 2
+VLAN 3
+VLAN 1
+VLAN 2
+VLAN 3交换机之间的VLAN通信(续2)
+• 如何实现交换机之间的VLAN通信?
+– 每个VLAN一条链路?
+知
+识
+讲
+解
+VLAN 1
+VLAN 1
+VLAN 2
+VLAN 2
+VLAN 3
+VLAN 3
+如果VLAN太多呢?交换机之间的VLAN通信(续3)
+• 如何实现交换机之间的VLAN通信?
+– 只使用一条链路,那么来自多个VLAN的数据如何标识?
+知
+识
+讲
+解
+VLAN 1 VLAN 1
+VLAN 2 VLAN 2
+VLAN 3
+VLAN 3交换机之间的VLAN通信(续4)
+• 如何实现交换机之间的VLAN通信?
+– 只使用一条链路,那么来自多个VLAN的数据如何标识?
+知
+识
+讲
+解
+VLAN 1 VLAN 1
+VLAN 2 VLAN 2
+VLAN 3
+VLAN 3交换机之间的VLAN通信(续5)
+知
+识
+讲
+解
+• 例如:三个分别来自1、2、3班级的学生,到另一个
+学校去,分别要参观1、2、3班的上课情况,对方的
+学校怎么识别他们分别应该去哪个班级?
+3
+2
+1
+出发前加个标识,
+再把标识的方法
+告诉对方!VLAN标识
+• 交换机给每个去往其他交换机的数据帧打上VLAN标识
+VLAN 1
+知
+识
+讲
+解
+VLAN 1
+VLAN 1标记
+VLAN 2
+VLAN 2
+VLAN 3
+VLAN 3
+VLAN 3标记VLAN标识(续1)
+• 交换机给每个去往其他交换机的数据帧打上VLAN标识
+VLAN 1
+知
+识
+讲
+解
+VLAN 1
+接入链路(Access)
+中继链路(Trunk)
+VLAN 2
+VLAN 3
+VLAN 2
+VLAN 3VLAN标识的种类
+• 以太网上实现中继可用两种封装类型
+– ISL(Cisco私有协议)
+知
+识
+讲
+解
+– IEEE 802.1QVLAN标识的种类(续1)
+• IEEE802.1Q帧格式
+知
+识
+讲
+解
+接入链路
+中继链路
+802.1Q 标记 4字节VLAN标识的种类(续2)
+DA
+知
+识
+讲
+解
+SA
+Type
+Data
+CRC
+带有IEEE802.1Q
+标记的以太网帧
+标准以太网帧
+DA
+SA
+Tag
+Type
+Data
+CRCVLAN标识的种类(续3)
+• ISL帧格式
+知
+识
+讲
+解
+中继链路
+接入链路
+ISL头26字节
+CRC4字节VLAN标识的种类(续4)
+• ISL帧格式
+知
+识
+讲
+解
+4字节ISL尾
+26字节ISL头
+DA
+SA
+以太类型/长度
+数据
+CRCVLAN标识的种类(续5)
+• ISL和802.1Q 的异同
+• 相同点
+知
+识
+讲
+解
+– 都是显式标记,即帧被显式标记了VLAN的信息
+• 不同点
+– IEEE 802.1Q是公有的标记方式,ISL是Cisco私有的
+– ISL采用外部标记的方法,802.1Q采用内部标记的方法
+– ISL标记的长度为30字节,802.1Q标记的长度为4字节Trunk配置配置接口为Trunk模式
+Switch(config)# interface interface-id
+Switch(config-if)#switchport mode ?
+知
+识
+讲
+解
+access Set trunking mode to ACCESS unconditionally
+dynamic Set trunking mode to dynamically negotiate
+access or trunk mode
+trunk
+Set trunking mode to TRUNK unconditionally
+Switch(config-if)#switchport mode trunk恢复接口默认模式
+Switch(config)# interface interface-id
+Switch(config-if)#switchport mode dynamic auto
+知
+识
+讲
+解
+或
+Switch(config-if)#no switchport mode trunk查看接口模式
+Switch#show interface interface-id switchport
+Name: Fa0/1
+知
+识
+讲
+解
+Switchport: Enabled
+Administrative Mode: dynamic auto
+Operational Mode: static access
+Administrative Trunking Encapsulation: dot1q
+Operational Trunking Encapsulation: native
+Negotiation of Trunking: On
+Access Mode VLAN: 1 (default)
+......配置VLAN Trunk实例
+VLAN 1
+VLAN 1
+知
+识
+讲
+解
+VLAN 2
+Port 24
+Port 24
+VLAN 2
+Port 4-10
+VLAN 3
+SW1
+VLAN 3配置VLAN Trunk实例(续1)
+• 第一步:在交换机上创建VLAN
+• 第二步:将接口添加到相应的VLAN中
+知
+识
+讲
+解
+– SW1#config terminal
+– SW1(config)#interface range f0/4 - 10
+– SW1(config-if-range)#switchport access vlan 2
+– SW1(config)#interface range f0/11 - 23
+– SW1(config-if-range)#switchport access vlan 3配置VLAN Trunk实例(续2)
+• 第三步:配置交换机之间互联的端口为Trunk
+– SW1(config)#interface f0/24
+知
+识
+讲
+解
+– SW1(config-if)#switchport mode trunk配置VLAN Trunk实例(续3)
+VLAN 1
+知
+识
+讲
+解
+VLAN 1
+VLAN 2
+Port 24
+Port 24
+Port 2-10
+Port 4-10
+VLAN 3
+VLAN 2
+SW2
+VLAN 3配置VLAN Trunk实例(续4)
+• 查看端口状态
+知
+识
+讲
+解
+SW1#show interface f0/24 switchport
+Name: Fa0/24
+Switchport: Enabled
+Administrative Mode: trunk
+Operational Mode: trunk
+Administrative Trunking Encapsulation: dot1q
+Operational Trunking Encapsulation: dot1q
+Negotiation of Trunking: On
+Access Mode VLAN: 1 (default)
+Trunking Native Mode VLAN: 1 (default)
+Voice VLAN: none
+......配置VLAN Trunk实例(续5)
+• 配置结果验证,如果配置正确
+知
+识
+讲
+解
+– 连接在SW1上的属于VLAN 1、2、3主机能够ping通
+SW2上VLAN 1、2、3的主机案例:配置trunk中继链路
+配置s1的f0/1口为trunk模式,分别查看两台交换机
+f0/1端口状态
+课
+堂
+练
+习
+恢复s1的f0/1口为默认模式,分别查看两台交换机f0/1
+端口状态
+s1
+f0/1
+f0/1
+s2案例:配置trunk中继链路
+通过配置实现跨交换机的同vlan主机的通信。
+课
+堂
+练
+习
+s1
+f0/7
+f0/7
+f0/1 f0/2
+f0/1 f0/2
+f0/3 f0/4
+f0/3 f0/4
+f0/5 f0/6
+f0/5 f0/6
+vlan1
+192.168.1.0/24
+s2
+vlan2
+vlan3
+192.168.2.0/24 192.168.3.0/24
+vlan1
+192.168.1.0/24
+vlan2
+192.168.2.0/24
+vlan3
+192.168.3.0/24以太通道以太通道概述
+• 也称为以太端口捆绑、端口聚集或以太链路聚集。英
+文名EtherChannel
+知
+识
+讲
+解
+• 以太通道为交换机提供了端口捆绑的技术,允许两个
+交换机之间通过两个或多个端口并行连接,同时传输
+数据,以提供更高的带宽配置以太网通道
+• EtherChannel-以太通道
+– 多条线路负载均衡,带宽提高
+知
+识
+讲
+解
+– 容错,当一条线路失效时,其他线路通信,不会丢包
+配置为以太通道的接口,
+必须物理特性相同配置以太网通道(续1)
+要捆绑在一起的端口
+• 配置接口为以太通道模式
+知
+识
+讲
+解
+Switch(config)# interface range fastEthernet 0/1 – 2
+Switch(config-if-range)#channel-group 1 mode on
+Creating a port-channel interface Port-channel 1
+以太通道的组号
+f0/1
+f0/2
+f0/3
+f0/4配置以太网通道(续2)
+• 查看以太通道的配置
+知
+识
+讲
+解
+Switch# show etherchannel summary
+Flags: D - down
+P - in port-channel
+I - stand-alone s - suspended
+H - Hot-standby (LACP only)
+R - Layer3 S - Layer2
+U - in use f - failed to allocate aggregator
+u - unsuitable for bundling
+w - waiting to be aggregated
+d - default port
+Number of channel-groups in use: 1
+Number of aggregators:
+1
+Group Port-channel Protocol Ports
+------+-------------+-----------+-----------------------------------------------
+1 Po1(SU)
+-
+Fa0/3(P) Fa0/4(P)以太通道配置指导原则
+• 参与捆绑的端口必须属于同一个vlan,如果是在中继
+模式下,要求所有参加捆绑的端口都是在中继模式下
+知
+识
+讲
+解
+• 如果端口配置的是中继模式,那么应该在链路的两端
+将通道中的所有端口配置成中继模式案例:以太通道配置
+参照如下网络拓扑将交换机的f0/7-f0/9端口配置为以太
+网通道。
+课
+堂
+练
+习
+s1
+f0/7 f0/7
+f0/8
+f0/9 f0/8
+f0/9
+s2
