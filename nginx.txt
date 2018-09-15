@@ -1,2117 +1,2105 @@
-
-
-[root@localhost nginx-1.14.0]# ./configure --help           => 查看安装配置项
---help
-打印帮助信息。
-
---prefix=PATH
-设置软件安装目录路径。
-
---sbin-path=PATH
-设置可执行文件安装目录路径。
-
---modules-path=PATH
-设置模块安装目录路径。
-
---conf-path=PATH
-设置配置文件安装目录路径。
-
---error-log-path=PATH
-设置错误日志文件安装目录路径。
-
---pid-path=PATH
-设置进程文件安装目录路径。
-
---lock-path=PATH
-设置NGINX锁文件安装目录路径，当NGINX运行时会自动创建该文件，用于在一台服务器上只允许运行一个NGINX服务。
-
---user=USER
-设置运行进程时所使用的系统用户，如果没有指定，则默认为nobody，就算安装时不指定，后期也可以通过修改"nginx.conf"配置文件中的"user"项修改。
-
---group=GROUP
-设置运行进程时所使用的用户组。
-
---build=NAME
-设置编译名，一个描述，没有任何其他作用。
-
---builddir=DIR
-设置编译目录，会将编译后生成的文件写入到这个目录中。
-
---------------------------------------------------------------------------------
-
---with-select_module
---without-select_module
-启用或禁用select事件驱动模型。默认情况下在Linux2.6以上的内核版本中，Nginx支持使用Epoll高效的事件模型，我们可以在配置文件中使用"use epoll"指令开启它。
-
---with-poll_module     
---without-poll_module                                 
-启用或禁用poll事件驱动模型。默认情况下在Linux2.6以上的内核版本中，Nginx支持使用Epoll高效的事件模型，我们可以在配置文件中使用"use epoll"指令开启它。
-
---with-threads
---with-file-aio
-启用线程池功能。一般情况下主机有几核处理器在启动Nginx时就会创建几个Worker工作进程，进程创建线程处理每一个请求，当在CPU密集型计算、资源访问的环境下，很多请求都会开启对应的线程，可能会由于磁盘IO限制导致的线程处理请求时间变长，这不是我们期望看到的，我们就可以启用线程池功能，让请求排队等待处理，并且可以充分利用CPU提高处理效率。开启线程池需要AIO的支持。
-启用异步文件IO（AIO）支持。一般用于大文件传输的场景下。
-
---------------------------------------------------------------------------------
-
---with-http_ssl_module
-启用HTTP_SSL模块，用于构建HTTPS服务。默认情况下不构建此模块。
-
---with-http_v2_module
-启用HTTP_V2模块，新的HTTP协议，相比HTTP1更优更快。默认情况下不构建此模块。
-
---with-http_realip_module
-启用HTTP_Realip模块，用于修改客户端请求头中客户端IP地址值，一般用于反向代理中，将真实的客户端IP传送给后端的应用服务器。默认情况下不构建此模块。
-
---with-http_addition_module
-启用HTTP_Addition模块，用于在响应之前和之后添加文本。默认情况下不构建此模块。
-
---with-http_xslt_module 
---with-http_xslt_module=dynamic
-启用HTTP_Xslt模块，这个模块是一个过滤器，它可以通过XSLT模板转换成XML响应。需要ibxml2和libxslt库的支持。默认情况下不构建此模块。
-启用HTTP_Xslt动态模块，允许在配置文件中通过"load_module"指令手动启用和禁用模块的使用。默认情况下不构建此模块。
-
---with-http_image_filter_module
---with-http_image_filter_module=dynamic
-启用HTTP_Image_Filter模块，这个模块是一个集成图片处理器，我们可以使用它转换JPEG、GIF、PNG和WEBP格式的图像，验证这些格式图像的有效型（是不是此格式的图像），输出JSON格式的图像信息，旋转图像，按比例缩放图像，剪切图片等。默认情况下不构建此模块。
-启用HTTP_Image_Filter动态模块，允许在配置文件中通过"load_module"指令手动启用和禁用模块的使用。默认情况下不构建此模块。
-
---with-http_geoip_module
---with-http_geoip_module=dynamic
-启用HTTP_Geoip模块，这个模块用于处理不同地区的访问，当来自某一个区域的访问时将其重定向到对应的服务或者项目上，需要MaxMind GeoIP库的支持。默认情况下不构建此模块。
-启用HTTP_Geoip动态模块，允许在配置文件中通过"load_module"指令手动启用和禁用模块的使用。默认情况下不构建此模块。
-
---with-http_sub_module
-启用HTTP_Sub模块，这个模块是一个过滤器，用于修改响应的内容，可以将一个指定的字符串替换成另一个字符串。默认情况下不构建此模块。
-
---with-http_dav_module     
-启用HTTP_DAV模块，用于通过WEBDAV协议提供WEB的文件管理功能，类似于一个WEB的文件管理器，可以对服务器的文件进行管理。默认情况下不构建此模块。
-
---with-http_flv_module
---with-http_mp4_module
-启用HTTP_FLV模块，用于为Flash Video（FLV）文件提供伪流视频服务端支持，开启它则允许在网页上播放FLV格式的视频。默认情况下不构建此模块。
-启用HTTP_MP4模块，用于为MP4格式的视频文件提供伪流视频服务端支持，开启它则允许在网页上播放MP4格式的视频。默认情况下不构建此模块。
-
---with-http_gunzip_module
---with-http_gzip_static_module
-启用HTTP_Gunzip模块，用于为不支持"gzip"编码方式的客户端解压响应，有些浏览器不支持"gzip"编码格式的请求和响应传输，若服务器开启了内容传输压缩功能（Gzip），则需要开启此项，服务器会本地解压数据，将数据传送给浏览器客户端。默认情况下不构建此模块。
-启用HTTP_Gzip_Static模块，用于将静态内容压缩成".gz"为文件扩展名的预压缩文件，并缓存在本地，在响应时会将此文件发送以替代普通文件，运用此模块的好处就是不需要（Gzip）每次传输时都需要对文件进行处理压缩。在用于Squid+Nginx环境下，当Nginx启用（Gzip）内容传输压缩功能时，在使用Squid3.0以前版本搭建环境时会发现，Squid返回给客户端的并不是压缩状态，这就是由于没有启用此模块导致的。默认情况下不构建此模块。
-
---with-http_auth_request_module
-启用HTTP_Auth_Request模块，此模块是一个请求验证模块，可以使用外部服务器或服务对网站的每个请求进行身份验证，当用户访问时，Nginx会向用于验证请求的外部服务器发出验证请求，若返回的状态码为200，则通过允许访问，若返回401或403，则访问会被拒绝。默认情况下不构建此模块。
-
---with-http_random_index_module
-启用HTTP_Random_Index模块，随机主页模块，当用户访问时，随机响应一个主页，而并非由"index"指令定义的一个主页，而是从主页池中随机选中一个主页面返回。默认情况下不构建此模块。
-
---with-http_secure_link_module
-启用HTTP_Secure_Link模块，防盗链模块，用于检查请求链接的权限以及是否过期，多用于文件下载防盗链。默认情况下不构建此模块。
-
---with-http_degradation_module
-启用HTTP_Degradation模块，用于当主机剩余内存较低时，用户请求访问，Nginx会对某些"location"的请求返回204或444的响应码。默认情况下不构建此模块。
-
---with-http_slice_module
-启用HTTP_Slice模块，此模块是一个过滤器，用于将一个大的完整的文件分割成多个小块文件，分段传送给用户，一般用于大文件传输的场景下，使用它可以让用户快速的得到响应。默认情况下不构建此模块。
-
---with-http_stub_status_module
-启用HTTP_Stub_Status模块，状态信息统计模块，用于返回一个Nginx状态信息统计信息页面，管理员访问这个页面可以获取Nginx的请求处理、当前连接、等待连接等统计信息，一般用于监控Nginx的运行状态。默认情况下不构建此模块。
-
---------------------------------------------------------------------------------
-
---without-http_charset_module
-禁用HTTP_Charset模块，此模块用于将指定的字符集添加到"Content-Type"响应头字段中。此外此模块还可以将数据从一个字符集转换为另一个字符集，此模块用于字符集设置。不建议禁用。
-
---without-http_gzip_module
-禁用HTTP_Gzip模块，此模块用于HTTP响应内容传输压缩，可以将响应内存在传输时将其压缩成Gzip编码格式的响应传送给客户端，使用Gzip编码格式响应内容体积会变小，会提高传输效率。不建议禁用。
-
---without-http_ssi_module
-禁用HTTP_SSI模块，此模块是一个过滤器，用于处理通过它响应中的SSI（Server Side Includes）命令。目前支持的SSI命令列表并不完整，SSI指令是一种可以嵌入WEB页面的一种语法指令。
-
---without-http_userid_module
-禁用HTTP_Userid模块，此模块用于识别客户端的Cookie。可以使用嵌入变量"$uid_got"和"$uid_set"记录已接受和设置的Cookie。
-
---without-http_access_module
-禁用HTTP_Access模块，此模块用于限制对某些客户端地址的访问，Allow or Deny。不建议禁用。
-
---without-http_auth_basic_module
-禁用HTTP_Auth_Basic模块，该模块用于HTTP基本身份验证，使用用户名和密码来限制对资源的访问。
-
---without-http_mirror_module
-禁用HTTP_Mirror模块，该模块用于将正式环境的流量拷贝到镜像（测试）环境下，一般用于测试环境引入真实环境的流量实现对测试环境的压力测试。
-
---without-http_autoindex_module
-禁用HTTP_Autoindex模块，该模块用于在处理以斜杠字符（'/'）结尾的请求，并在找不到索引文件的情况下生成目录列表。
-
---without-http_geo_module
-禁用HTTP_Geo模块，该模块用于从指定变量中获取客户端的IP地址，并将其嵌入到另外一个变量中。默认情况下从"$remote_addr"变量中取得客户端的IP地址。我们可以通过它结合"HTTP_Upstream"实现对来源客户端的负载均衡，当来自不同的客户端请求时，将其负载均衡给后端的不同的服务器处理；还可以使用它结合"HTTP_Map"+"HTTP_Limit_Conn"模块实现对来源客户端的限速功能。
-
---without-http_map_module
-禁用HTTP_Map模块，该模块用于创建一个变量的映射表，结果变量可以是一个字符串也可以是另外一个变量。
-
---without-http_split_clients_module
-禁用HTTP_Splic_Clients模块，该模块用于创建适用于A/B测试的变量，AB测试也称之为拆分测试，也就是将一个项目的两个不同版本发布，看用户更喜欢用于那个版本，若版本A受欢迎则发布版本A。
-
---without-http_referer_module
-禁用HTTP_Referer模块，该模块用于防盗链，用于阻止对请求头部"referer"字段具有无效值的请求访问，可以设置一个白名单，非白名单的无效来源网址的连接则会拒绝请求，使用此模块我们还需考虑到，即使对于有效的请求，常规浏览器也可能不发送"referer"字段。不建议禁用。
-
---without-http_rewrite_module
-禁用HTTP_Rewerte模块，该模块用于地址重写，用于将来源请求地址重定向到指定的地址上，可以保护真实的地址，增加安全性，该模块需要PCRE库的支持。不建议禁用。
-
---without-http_proxy_module
---without-http_fastcgi_module
---without-http_uwsgi_module
---without-http_scgi_module
---without-http_grpc_module
-禁用HTTP_Proxy模块，该模块用于将请求代理传递到另外一台WEB服务器去处理，Nginx的核心模块。不建议禁用。
-禁用HTTP_FastCGI模块，该模块用于将请求代理传递到另外一台FastCGI服务器去处理，一般用于反代PHP。不建议禁用。
-禁用HTTP_UwSGI模块，该模块用于将请求代理传递给另外一台UwSGI服务器去处理。
-禁用HTTP_SCGI模块，该模块用于将请求代理传递给另外一台SCGI服务器去处理。
-禁用HTTP_Grpc模块，该模块用于将请求代理传递给另外一台Grpc服务器去处理。
-
---without-http_memcached_module
-禁用HTTP_Memcached模块，该模块用于Nginx从Memcached服务器获取响应内容。一般用于Nginx+后端服务器+Memcached的环境下，当用户第一请求时，Nginx去Memcached中读取缓存数据，若没有则就请求后端的服务器去处理，后端服务器将静态页面的数据写入到Memcached缓存服务器中并返回响应给Nginx传递给用户，当用户第二次请求时则Nginx直接从Memcached缓存服务器中获取缓存的静态页面内容，Memcached缓存服务器是基于内存的，所以可以减少磁盘IO的使用，提高响应效率。
-
---without-http_limit_conn_module
-禁用HTTP_Limit_Conn模块，该模块用于限制并发连接数量以及下载带宽限制。
-
---without-http_limit_req_module
-禁用HTTP_Limit_Req模块，该模块用于限制请求数量，可以限制请求的频率。
-
---without-http_empty_gif_module
-禁用HTTP_Empty_Gif模块，该模块会在内容中常驻的一个1X1的透明空白的GIF图像，当用户请求时，返回该图像，一般用于测试。
-
---without-http_browser_module
-禁用HTTP_Browser模块，该模块用于创建变量，变量的值取决于请求头中"user-agent"的值，一般用于区别新式或者旧式浏览器，若新式浏览器则将请求重定向到新式的WEB页面中，呈现新页面，若为旧式浏览器则将返回旧式的WEB页面。
-
---without-http_upstream_hash_module
---without-http_upstream_ip_hash_module
---without-http_upstream_least_conn_module
-禁用HTTP_Upstream_Hash模块，该模块提供了由"Upstream"指令定义的一组服务器的负载均衡方法"Hash"，该方法基于散列键值（hash），它会将客户端+服务端的映射关系存放到一个散列键值表中，当客户端第二次请求时则会匹配关系将请求转发至后端的同一台服务器上，实现会话保持功能。该模块提供指令"hash",在会话保持中，我们唯一能标识客户端的标志就是SessionID，所以我们可以使用指令"hash $cookie_jsession"实现会话保持功能。不建议禁用。
-禁用HTTP_Upstream_IP_Hash模块，该模块提供了由"Upstream"指令定义的一组服务器的负载均衡方法"ip_hash"，该方法也用于会话保持，不过它是基于客户端IP的Hash方法，由于用户可能是ADSL接入的网络，所以客户端可能受动态IP影响会发生变化，所以一般不建议采用这种方法。
-禁用HTTP_Upstream_Least_Conn模块，该模块提供了由"Upstream"指令定义的一组服务器的负载均衡方法"least_conn"，该方法用于将请求传递到具有最少活动连接、权重较高（性能最好）的后端服务器上去处理。
-
---without-http_upstream_keepalive_module
-禁用HTTP_Upstream_Keepalive模块，该模块可以为由"Upstream"指令定义的一组服务器提供保持长连接的功能，使用它则会为每个Worker工作进程与后端服务器保持空闲的长连接，连接数由"keepalive"指令指定，当空闲的长连接数量超过指定值时，将关闭最近最少使用的连接。
-
---without-http_upstream_zone_module
-禁用HTTP_Upstream_Zone模块，该模块可以将由"Upstream"指令定义的服务器组运行时的状态存储在共享内存区域中。
-
---------------------------------------------------------------------------------
-
---with-http_perl_module
---with-http_perl_module=dynamic
-启用HTTP_Perl模块，用于在Perl中实现位置和变量处理程序，并可以将Perl调用到SSI中。默认情况下不构建此模块。
-启用HTTP_Perl动态模块，允许在配置文件中通过"load_module"指定手动启用和禁用模块的使用。默认情况下不构建此模块。
-
---with-perl_modules_path=PATH
-设置一个用于保留Perl模块的目录路径。
-
---with-perl=PATH
-设置Perl可执行命令文件的路径。
-
---------------------------------------------------------------------------------
-
---http-log-path=PATH
-设置访问日志文件存放目录路径。安装后，可以在主配置文件中使用"access_log"指令修改。
-
---http-client-body-temp-path=PATH
-设置用于存储客户端请求主体的临时文件存放目录路径。安装后，可以在主配置文件中使用"client_body_temp_path"指令修改。
-
---http-proxy-temp-path=PATH
-设置用于存储从代理服务器接受的数据临时文件存放目录路径。安装后，可以在主配置文件中使用"proxy_temp_path"指令修改。
-
---http-fastcgi-temp-path=PATH
-设置用于存储从FastCGI服务器接受的数据临时文件存放目录路径。安装后，可以在主配置文件中使用"fastcgi_temp_path"指令修改。
-
---http-uwsgi-temp-path=PATH
-设置用于存储从UwSGI服务器接受的数据临时文件存放目录路径。安装后，可以在主配置文件中使用"uwsgi_temp_path"指令修改。
-
---http-scgi-temp-path=PATH
-设置用于存储从SCGI服务器接受的数据临时文件存放目录路径。安装后，可以在主配置文件中使用"scgi_temp_path"指令修改。
-
---------------------------------------------------------------------------------
-
---without-http
-禁用HTTP_Core模块，该模块为Nginx的核心模块，用于提供HTTP服务所有核心功能。
-
---without-http-cache
-禁用HTTP缓存。
-
---------------------------------------------------------------------------------
-
---with-mail
---with-mail=dynamic
-启用HTTP_Mail_Core模块，该模块为Nginx的核心模块，用于提供POP3/IMAP4/SMTP邮件代理服务。默认情况下不构建此模块。
-启用HTTP_Mail_Core动态模块，允许在配置文件中通过"load_module"指令手动启用和禁用模块的使用。默认情况下不构建此模块。
-
---with-mail_ssl_module
-启用Mail_SSL模块，用于邮件代理服务支持SSL/TLS协议，需要OpenSSL库的支持。默认情况下不构建此模块。
-
---without-mail_pop3_module
-禁用Mail_POP3模块，当启用HTTP_Mail_Core模块时，若你不想使用POP3协议，则可以考虑单独禁用此模块。不建议禁用。
-
---without-mail_imap_module
-禁用Mail_IMAP模块，当启用HTTP_Mail_Core模块时，若你不想使用IMAP4协议，则可以考虑单独禁用此模块。不建议禁用。
-
---without-mail_smtp_module
-禁用Mail_SMTP模块，当启用HTTP_Mail_Core模块时，若你不想使用SMTP协议，则可以考虑单独禁用此模块。不建议禁用。
-
---------------------------------------------------------------------------------
-
---with-stream
---with-stream=dynamic 
-启用Stream_Core模块，Nginx的核心模块，用于实现TCP/UDP代理和四层负载均衡功能。默认情况下不构建此模块。此模块自Nginx1.9.0版本开始可用。
-启用Stream_Core动态模块，允许在配置文件中通过"load_module"指令手动启用和禁用模块的使用。默认情况下不构建此模块。
-
---with-stream_ssl_module
-启用Stream_SSL模块，用于提供SSL/TLS协议支持，需要OpenSSL库的支持。该模块用于Nginx四层负载功能中使用，需要开启Stream_Core模块。默认情况下不构建此模块。
-
---with-stream_realip_module
-启用Stream_Realip模块，用于修改客户端请求头中客户端IP地址值，一般用于反向代理中，将真实的客户端IP传送给后端的应用服务器。该模块用于Nginx四层负载功能中使用，需要开启Stream_Core模块。默认情况下不构建此模块。
-
---with-stream_geoip_module
---with-stream_geoip_module=dynamic
-启用Stream_Geoip模块，用于处理不同地区的访问，当来自某一个区域的访问时将其重定向到对应的服务或者项目上，需要MaxMind GeoIP库的支持。该模块用于Nginx四层负载功能中使用，需要开启Stream_Core模块。默认情况下不构建此模块。
-启用Stream_Geoip动态模块，允许在配置文件中通过"load_module"指令手动启用和禁用模块的使用。默认情况下不构建此模块。
-
---with-stream_ssl_preread_module
-启用Stream_SSL_Preread模块，用于从客户端Hello消息中提取信息，而不会终止SSL/TLS。该模块用于Nginx四层负载功能中使用，需要开启Stream_Core模块。默认情况下不构建此模块。
-
---without-stream_limit_conn_module
-禁用Stream_Limit_Conn模块，该模块用于限制并发连接数量以及下载带宽限制功能。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。不建议禁用。
-
---without-stream_access_module
-禁用Stream_Access模块，该模块用于限制对某些客户端地址的访问。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。不建议禁用。
-
---without-stream_geo_module
-禁用Stream_Geo模块，该模块用于从指定变量中获取客户端的IP地址，并将其嵌入到另外一个变量中。默认情况下从"$remote_addr"变量中取得客户端的IP地址。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。不建议禁用。
-
---without-stream_map_module
-禁用Stream_Map模块，该模块用于创建一个变量的映射表，结果变量可以是一个字符串也可以是另外一个变量。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。不建议禁用。
-
---without-stream_split_clients_module
-禁用Stream_Splic_Clients模块，该模块用于创建适用于A/B测试的变量，AB测试也称之为拆分测试，也就是将一个项目的两个不同版本发布，看用户更喜欢用于那个版本，若版本A受欢迎则发布版本A。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。
-
---without-stream_return_module
-禁用Stream_Return模块，该模块用于向客户端发送指定值，然后关闭连接。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。不建议禁用。
-
---without-stream_upstream_hash_module
---without-stream_upstream_least_conn_module
-禁用Stream_Upstream_Hash模块，该模块提供四层负载均衡的一种调度方法，一般用于基于SessionID的会话保持场景下，当开启Stream_Core模块时自动开启此功能。不建议禁用。
-禁用Stream_Upstream_IP_Hash模块，该模块提供四层负载均衡的一种调度方法，基于来源IP的会话保持方法，由于来源IP的不稳定性，我们一般很少采用此种方法。当开启Stream_Core模块时自动开启此功能。
-
---without-stream_upstream_zone_module
-禁用Stream_Upstream_Zone模块，该模块可以将由"Upstream"指令定义的服务器组运行时的状态存储在共享内存区域中。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。
-
---------------------------------------------------------------------------------
-
---with-google_perftools_module
-启用Google_Perftools模块，用于可以使用Google Performance Tools分析Nginx的工作进程，分析程序性能瓶颈。该模块适用于Nginx开发人员，默认情况下不构建此模块。
-
---with-cpp_test_module
-启用Cpp_Test模块，用于C++测试。该模块适用于Nginx开发人员，默认情况下不构建此模块。
-
---add-module=PATH
---add-dynamic-module=PATH
-添加第三方模块，需要指定第三方模块所在目录路径。
-添加第三方动态模块，需要指定第三方动态模块所在目录路径。
-
---with-compat
-启用动态模块兼容性。
-
---with-cc=PATH
-设置GCC编译器所在目录路径。
-
---with-cpp=PATH
-设置GCC-C++编译器所在目录路径。
-
---with-cc-opt=OPTIONS
-设置将添加到CFLAGS变量的其他参数，若在FreeBSD系统下使用PCRE库时，应指定"--with-ccc-opt="-I /usr/local/include""。若你在使用select事件驱动模型时，还可以使用它设置可打开的最大文件描述符数量，突破1024的限制，比如"--with-ccc-opt="-D FD_SETSIZE=2048""
-
---with-ld-opt=OPTIONS
-设置将在连接期间使用的其他参数，若在FreeBSD系统下使用PCRE库时，应指定"--with-ccc-opt="-L /usr/local/lib""。
-
---with-cpu-opt=CPU
-设置CPU型号，为特定的CPU执行编译操作，有效的值：pentium, pentiumpro, pentium3, pentium4, athlon, opteron, sparc32, sparc64,ppc64。
-
---without-pcre
-禁用PCRE库的使用。
-
---with-pcre
-启用PCRE库的使用。PCRE库是一个Perl库，包含Perl兼容的正则表达式。
-
---with-pcre=DIR
-若你是源码安装的PCRE库，则需要通过此项设置PCRE库的所在目录路径。
-
---with-pcre-opt=OPTIONS
-为PCRE设置其他要编译的选项。
-
---with-pcre-jit
-启用"即时编译"的支持，开启此项，则会利用"pcre_jit"指令快速编译PCRE库。
-
---with-zlib=DIR
-若你是源码安装的Zlib库，则需要通过此项设置Zlib库的所在目录路径。当启用HTTP_Gzip模块的时候需要此库的支持。
-
---with-zlib-opt=OPTIONS
-为Zlib设置其他要编译的选项。
-
---with-zlib-asm=CPU
-为Zlib库的编译设置特定CPU，会加快编译速度，有效值：pentium, pentiumpro。
-
---with-libatomic
-启用Libatomic_Ops库的使用。
-
---with-libatomic=DIR
-若你是源码安装的Libatomic_Ops库，则需要通过此项设置Libatomic_Ops库的所在目录路径。
-
---with-openssl=DIR
-若你是源码安装的OpenSSL库，则需要通过此项设置OpenSSL库的所在目录路径。
-
---with-openssl-opt=OPTIONS
-为OpenSSL设置其他要编译的选项。
-
---with-debug
-启用调试级别的日志。也可以手动修改主配置文件，使用"error_log /path/to/log debug;"指令设置调试级别的日志。
-©著作权归作者所有：来自51CTO博客作者乘_风的原创作品，如需转载，请注明出处，否则将追究法律责任
-LinuxNginxWEB系统运维（服务应用）
-
-
-
-Active connections: 对后端发起的活动连接数.
-Server accepts handled requests: Nginx总共处理了38810620个连接,成功创建38810620次握手(证明中间没有失败的),总共处理了298655730个请求.
-Reading: Nginx 读取到客户端的Header信息数.
-Writing: Nginx 返回给客户端的Header信息数.
-Waiting: 开启keep-alive的情况下,这个值等于 active – (reading + writing),意思就是Nginx已经处理完成,正在等候下一次请求指令的驻留连接.
-所以,在访问效率高,请求很快被处理完毕的情况下,Waiting数比较多是正常的.如果reading +writing数较多,则说明并发访问量非常大,正在处理过程中.
-
-每天一个linux命令(44)--ss命令
-　　ss 是 socket statistics 的缩写。顾名思义，ss 命令可以用来获取socket 统计信息，它可以显示和netstat 类似的内容。但 ss 的优势在于它能够显示更多更详细的有关TCP和连接状态的信息，而且比netstat更快速更高效。
-
-　　当服务器的socket连接数量变得非常大时，无论是使用netstat命令还是 cat  /proc/net/tcp，执行速度都会很慢。可能你不会有切身的感受，但请相信我，当服务器维持的连接达到上万个的时候，使用 netstat 等于浪费生命，而用 ss才是 节省时间。
-
-　　天下武功唯快不破。ss快的秘诀在于，他利用了TCP协议栈中 tcp_diag.   tcp_diag 是一个用于分析统计的模块，可以获得Linux 内核中第一手的信息，这就确保了ss的快捷高效。当然，如果你的系统中没有 tcp_diag,ss也可以正常运行，只是效率会变得稍慢。（但仍然比  netstat 要快。）
-
-　　1.命令格式：
-
-　　　　ss [参数]
-
-　　　　ss [参数] [过滤]
-
-　　2.命令功能：
-
-　　　　ss（socket statistics 缩写），该命令可以用来获取  socket 的统计信息，此命令输出的结果类似于 netstat 输出的内容，但它能显示更多更详细的 TCP 连接状态的信息，且比 netstat 更快速高效。它使用了 TCP 协议栈中 tcp_diag（是一个用于分析统计的模块），能直接从获得第一手内核信息，这就使得 ss 命令快捷高效。在没有 tcp_diag,ss 也可以正常运行。
-
-　　3.命令参数：
-
-　　-n　　--numeric不解析服务名称
-
-　　-r　　--resolve　解析主机名
-
-　　-l　　--listening 显示监听状态的套接字（sockets）
-
-　　-a　　--all显示所有套接字
-
-　　-o　　--options　　显示计时器信息
-
-　　-e　　--extended　　显示详细的套接字（socket）的内存使用情况
-
-　　-p　　--processed　　显示使用套接字的进程
-
-　　-i　　--info 　　显示 tcp 内部信息
-
-　　-s　　--summary　　显示套接字（socket）使用概况
-
-　　-4　　--IPv4　　仅显示 IPv4的套接字
-
-　　-6
-
-　　-0（零）　　--packet　　显示 PACKET 套接字
-
-　　-t　　--tcp　　仅显示 TCP 套接字
-
-　　-u　　--udp　　仅显示  UDP套接字
-
-　　-d　　--dccp　　仅显示 DCCP 套接字
-
-　　-w　　--raw　　仅显示  RAW 套接字
-
-　　-x　　--Unix  仅显示 Unix 套接字
-
-　　-f　　--family=FAMILY　　显示 FAMILY 类型的套接字，FAMILY可选  Unix， inet, inet6, link ,  netlink　　
-
-　　-A　　--query=QUERY, --socket=QUERY
-
-　　　　　　　　QUERY  :=  {all| inet| tcp| udp | raw | unix | packet | netlink } [QUERY]
-
-　　-D　　--diag=FILE　　将原始TCP 套接字信息转储到文件
-
-　　-F　　--filter=FILE　　从文件中都去过滤信息
-
-　　　　　　　　FLITER　　　　:=  [ state  TCP-STATE ] [ EXPRESSION ]
-
-　　4使用实例：
-
-　　实例1：显示TCP连接
-
-　　命令：ss　　-t    -a
-
-　　实例2：显示 sockets  摘要
-
-　　命令：　　ss   -s
-
-　　　　列出当前的established、 closed、 orphaned  and  waiting  TCP sockets
-
-　　实例3：
-
-　　　　ss  -l
-
-　　实例4:查看进程使用的socket
-
-　　命令：
-
-　　　　ss  -pl
-
-　　实例5：找出打开套接字/端口应用程序
-
-　　命令：
-
-　　　　ss  -lp  |  grep  3306
-
-　　实例6：显示所有UDP  sockets
-
-　　命令：
-
-　　　　ss   -u  -a
-
-　　实例7：显示所有状态为 established  的 SMTP 连接
-
-　　命令：
-
-　　　　ss  -o　　state  established  `(  dport  =: smtp  or  sport  = : smtp )`
-
-　　实例8：显示所有状态为 Established 的 HTTP 连接
-
-　　命令：
-
-　　　　ss  -o  state  established  `(dport  =  :http  or  sport  =  :http)`　　
-
-　　实例9：列举出处于  FIN-WAIT-1 状态的源端口为   80 或者  443， 目标网络为  192.168.1 /24 的所有 tcp 套接字
-
-　　命令：　　
-
-　　　　ss  -o  state  fin-wait-1  `( sport  =  :http  or  sport  =  :https)`  dst  192.168.1/24
-
-　　实例10：用TCP 状态过滤 sockets：
-
-　　命令：
-
-　　　　ss  -4  state  FILTER-NAME-HERE
-
-　　　　ss  -6　state  FILTER-NAME-HERE
-
-　　FILTER-NAME-HERE 可以代表以下任何一个
-
-　　established
-
-　　syn-sent
-
-　　syn-recv
-
-　　fin-wait-1
-
-　　fin-wait-2
-
-　　time-wait
-
-　　closed
-
-　　close-wait
-
-　　last-ack
-
-　　listen
-
-　　closing
-
-　　all  所有以上状态
-
-　　connected   除了listen and closed 的所有状态
-
-　　synchronized 　　所有已连接的状态除了  syn-sent
-
-　　bucket　　显示状态为 maintained  as  minisockets, 如 time-wait 和 syn-recv.
-
-　　big　　和bucket 相反
-
-　　实例11：匹配远程地址和端口号
-
-　　命令：
-
-　　　　ss  dst  ADDERSS_PATTERN
-
-　　　　ss  dst  192.168.1.1
-
-　　　　ss　dst　192.168.1.1:8080
-
-　　实例12：匹配本地地址和端口号
-
-　　命令：　
-
-　　　　ss　　src  ADDRESS_PATTERN
-
-　　　　ss　　src　192.168.1.1
-
-　　　　ss　　src   192.168.1.1:80
-
-　　实例13：将本地或者远程端口和一个数比较　　
-
-　　命令：
-
-　　　　ss　　dport　　OP　　PORT　　远程端口和一个数比较； destination  port
-
-　　　　ss　　sport　　OP　　PORT　　本地端口和一个数比较；　source   port
-
-　　　　OP--OPTION：
-
-　　　　<=  or  le,　　>= or ge,　　==  or eq,
-
-　　　　!=  or  ne　　<  or gt  　　>   or   lt
-
-　　实例14： ss  和  netstat 效率对比
-
-　　命令：
-
-　　　　　time  netstat  -at
-
-　　　　　time  ss
-
-　　用 time 命令分别获取通过netstat 和 ss 命令获取程序占用资源所使用的时间。在服务器连接数比较多的时候，netstat 的效率完全没法和 ss 比。
-
-　　
-
- Linux 命令--SS
-2016年04月14日 19:24:42 阅读数：4923 标签： socket yum ipv4  更多
-个人分类： 常用网络命令
-ss是Socket Statistics的缩写。
-
-顾名思义，ss命令可以用来获取socket统计信息，它可以显示和netstat类似的内容。但ss的优势在于它能够显示更多更详细的有关TCP和连接状态的信息，而且比netstat更快速更高效。
-
-【和netstat说再见的原因】
-
-当服务器的socket连接数量变得非常大时，无论是使用netstat命令还是直接cat /proc/net/tcp，执行速度都会很慢。可能你不会有切身的感受，但请相信我，当服务器维持的连接达到上万个的时候，使用netstat等于浪费 生命，而用ss才是节省时间。
-
-天下武功唯快不破。ss快的秘诀在于，它利用到了TCP协议栈中tcp_diag。tcp_diag是一个用于分析统计的模块，可以获得Linux 内核中第一手的信息，这就确保了ss的快捷高效。当然，如果你的系统中没有tcp_diag，ss也可以正常运行，只是效率会变得稍慢。（但仍然比 netstat要快。）
-
-【用数据说话】
-
-为了让你更坚决的和netstat说再见，列举一些测试数据，以便证明ss的确名不虚传。
-
-当服务器维持3万个socket连接，Admin需要计算具体的连接数量时，不同情况的耗时如下：
-
-netstat -at | wc  耗时 15.60 秒
-ss -atr     | wc  耗时  5.40 秒（未利用tcp_diag）
-ss -atr     | wc  耗时  0.47 秒（利用tcp_diag）
-【好马配上好鞍】
-
-几乎所有的Linux系统都会默认包含netstat命令，但并非所有系统都会默认包含ss命令。netstat命令是net-tools工具集中的一员：
-
-#rpm -q net-tools
-net-tools-1.60-109.el6.i686
-而ss命令是iproute工具集中的一员：
-
-#rpm -qf /usr/sbin/ss
-iproute-2.6.32-17.el6.i686
-#rpm -q iproute
-iproute-2.6.32-17.el6.i686
-如果你无法使用ss命令，那么可能是缺少了iproute，需要安装一下：
-
-yum install iproute iproute-doc
-【前浪net-tools和后浪iproute】
-
-net-tools是一套标准的Unix网络工具，用于配置网络接口、设置路由表信息、管理ARP表、显示和统计各类网络信息等等，但是遗憾的是，这个工具自2001年起便不再更新和维护了。
-
-长江后浪推荐前浪。
-
-即将隆重登场的便是iproute，这是一套可以支持IPv4/IPv6网络的用于管理TCP/UDP/IP网络的工具集，这套工具由Stephen Hemminger负责维护和升级，目前的大版本号是2。我们来认识一下Stephen：
-
-
-
-从某种意义上说，iproute工具集几乎可以替代掉net-tools工具集，具体的替代方案是这样的：
-
-用途	net-tool（被淘汰）	iproute2
-地址和链路配置	ifconfig	ip addr, ip link
-路由表	route	ip route
-邻居	arp	ip neigh
-VLAN	vconfig	ip link
-隧道	iptunnel	ip tunnel
-组播	ipmaddr	ip maddr
-统计	netstat	ss
-【版本和帮助】
-
-想获得ss命令的帮助信息和版本信息，都非常简单，你应该可以猜到的：
-
-#ss -h //获得帮助信息，直接man ss会更全面
-#ss -V //取得版本号，-v也支持
-ss utility, iproute2-ss091226
-【ss选项统计】
-
-ss的选项既不多也不复杂，除去非功能性选项（-h/-v）外，ss共有22个选项。
-
-每一个选项都是既支持短选项（如-s），也支持长选项（如–summary）。
-
-我们不会在这里一一介绍，因为这样既枯燥又乏味，而且不出三分钟，你就会昏昏欲睡了。所以，我们会从实际需求和实际问题出发，这样效果会好些。
-
-【场景一：我想查看当前服务器的网络连接统计】
-
-$ ss -s
-Total: 295 (kernel 312)
-TCP:   48 (estab 1, closed 31, orphaned 0, synrecv 0, timewait 0/0), ports 13
-
-Transport Total     IP        IPv6
-*         312       -         -
-RAW       0         0         0
-UDP       2         2         0
-TCP       17        12        5
-INET      19        14        5
-FRAG      0         0         0
-在服务器产生大量sockets连接时，我们会使用这个命令在做宏观统计。
-
-【场景二：我想查看所有打开的网络端口】
-
-$ ss -l
-Recv-Q Send-Q           Local Address:Port               Peer Address:Port
-0      128                         :::webcache                      :::*
-0      128                         :::http                         :::*
-0      128                         :::snapenetio                      :::*
-0      128                          *:snapenetio                       *:*
-0      50                           *:8531                          *:*
-0      9                           :::ftp                          :::*
-0      9                            *:ftp                           *:*
-0      128                          *:ddi-tcp-1                       *:*
-0      100                        ::1:smtp                         :::*
-0      100                  127.0.0.1:smtp                          *:*
-0      128                          *:8541                          *:*
-0      128                  127.0.0.1:entextxid                       *:*
-0      50                           *:12421                         *:*
-0      10                           *:amqp                          *:*
-0      128                          *:12521                         *:*
-0      50                           *:mysql                         *:*
-如果使用-pl参数的话，则会列出具体的程序名称。你会在输出中看到类似于这样的内容：
-
-("nginx",15786,6)
-从中可以知道，某个socket连接是属于nginx程序的，nginx程序的PID是15786。
-
-【场景三：我想查看这台服务器上所有的socket连接】
-
-很简单，直接使用-a选项即可列出所有网络连接。
-
-#ss -a
-如果只想查看TCP sockets，那么使用-ta选项；
-如果只想查看UDP sockets，那么使用-ua选项；
-如果只想查看RAW sockets，那么使用-wa选项；
-如果只想查看UNIX sockets，那么使用-xa选项。
-
-【参考文献】
-
-1 http://en.wikipedia.org/wiki/Iproute2
-2 http://en.wikipedia.org/wiki/Netstat
-3 http://www.cyberciti.biz/files/ss.html
-4 http://it.toolbox.com/blogs/locutus/what-is-this-ss-program-thingy-14083
-5 http://www.cyberciti.biz/tips/linux-investigate-sockets-network-connections.html
-6 http://www.policyrouting.org/iproute2.doc.html
-
-
-
-
-  
-Logo
-首页
-文章
-关注
-订阅专栏
-专家
-网站导航
-注册
-登录
-手机阅读
-搜索
-写文章
-
-转载
-tcpsyncookies----常见内核参数的修改
-linanx0人评论125人阅读2018-06-29 19:19:30
-*tcpsyncookies
-
-是一个开关，是否打开SYN Cookie功能，该功能可以防止部分SYN×××。
-
-tcpsynackretries和tcpsynretries定义SYN的重试次数。
-
-YN Cookie是对TCP服务器端的三次握手做一些修改，专门用来防范SYN Flood×××的一种手段。它的原理是，在TCP服务器
-接收到TCP SYN包并返回TCP SYN + ACK包时，不分配一个专门的数据区，而是根据这个SYN包计算出一个cookie值。这个
-cookie作为将要返回的SYN ACK包的初始序列号。当客户端返回一个ACK包时，根据包头信息计算cookie，与返回的确认序列
-号(初始序列号 + 1)进行对比，如果相同，则是一个正常连接，然后，分配资源，建立连接。
-
-原理：在Tcp服务器收到Tcp Syn包并返回Tcp Syn+ack包时，不专门分配一个数据区，而是根据这个Syn包计算出一个cookie值。在收到Tcp ack包时，Tcp服务器在根据那个cookie值检查这个Tcp ack包的合法性。如果合法，再分配专门的数据区进行处理未来的TCP连接。 
-默认为0，1表示开启
-
-net.ipv4.tcpfintimeout
-
-修改timewait状的存在时间，默认的2MSL 
-注意：timewait存在且生存时间为2MSL是有原因的，见我上一篇博客为什么会有timewait状态的存在，所以修改它有一定的风险，还是根据具体的情况来分析。
-
-tcpretries1
-放弃回应一个TCP连接请求前﹐需要进行多少次重试。RFC 规定最低的数值是3﹐这也是默认值
-
-tcpretries2
-TCP失败重传次数,默认值15,意味着重传15次才彻底放弃.可减少到5,以尽早释放内核资源.
----------------------------------------------------------------------------------------------------------------------------------------------------------------
-nf_conntrack
-
-      该模块在kernel 2.6.15（2006-01-03发布） 被引入，支持ipv4和ipv6，取代只支持ipv4的ip_connktrack，用于跟踪连接的状态，供其他模块使用。
-
-最常见的使用场景是 iptables 的 nat 和 state 模块：
-nat 根据转发规则修改IP包的源/目标地址，靠nf_conntrack的记录才能让返回的包能路由到发请求的机器。
-state 直接用 nf_conntrack 记录的连接状态（NEW/ESTABLISHED/RELATED/INVALID）来匹配防火墙过滤规则。
-在服务器访问量大时，如果内核netfilter模块conntrack相关参数配置不合理，就会导致新连接被drop掉
-推荐bucket至少 262144，max至少 1048576，不够再继续加。
-
-net.netfilter.nf_conntrack_count 的数字持续超过 nf_conntrack_max 的 20% 就该考虑调高上限了；
-测试没问题后可以写入配置文件 vim   /etc/sysctl.d/90-conntrack.conf  :
-net.netfilter.nf_conntrack_buckets = 262144
-net.netfilter.nf_conntrack_max=1048576
-net.nf_conntrack_max=1048576
-net.netfilter.nf_conntrack_tcp_timeout_fin_wait=30
-net.netfilter.nf_conntrack_tcp_timeout_time_wait=30
-net.netfilter.nf_conntrack_tcp_timeout_close_wait=15
-net.netfilter.nf_conntrack_tcp_timeout_established=300
-#########################################################################################
-
-如何修改内核参数:::
-
-Linux在系统运行时修改内核参数(/proc/sys与/etc/sysctl.conf)，而不需要重新引导系统，这个功能是通过/proc虚拟文件系统实现的。
-在/proc/sys目录下存放着大多数的内核参数，并且设计成可以在系统运行的同时进行更改, 可以通过更改/proc/sys中内核参数对应的文件达到修改内核参数的目的(修改过后，保存配置文件就马上自动生效)，不过重新启动机器后之前修改的参数值会失效，所以只能是一种临时参数变更方案。(适合调试内核参数优化值的时候使用，如果设置值有问题，重启服务器还原原来的设置参数值了。简单方便。)
-
-但是如果调试内核参数优化值结束后，需要永久保存参数值，就要通过修改/etc/sysctl.conf内的内核参数来永久保存更改。但只是修改sysctl文件内的参数值，确认保存修改文件后，设定的参数值并不会马上生效，如果想使参数值修改马上生效，并且不重启服务器，可以执行下面的命令：
-#sysctl –p
-
-常用的内核参数：
-net.ipv4.tcpsyncookies = 1
-#表示开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN×××，默认为0，表示关闭；
-net.ipv4.tcptwreuse = 1
-#表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；
-net.ipv4.tcptwrecycle = 1
-#表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。
-net.ipv4.tcpfintimeout = 30
-#表示如果套接字由本端要求关闭，这个参数决定了它保持在FIN-WAIT-2状态的时间。
-net.ipv4.tcpkeepalivetime = 1200
-#表示当keepalive起用的时候，TCP发送keepalive消息的频度。缺省是2小时，改为20分钟。
-net.ipv4.iplocalportrange = 1024    65000
-#表示用于向外连接的端口范围。缺省情况下很小：32768到61000，改为1024到65000。
-net.ipv4.tcpmaxtwbuckets = 5000
-#表示系统同时保持TIMEWAIT套接字的最大数量，如果超过这个数字，
-#TIMEWAIT套接字将立刻被清除并打印警告信息。默认为180000，改为5000。
-#对于Apache、Nginx等服务器，上几行的参数可以很好地减少TIMEWAIT套接字数量，
-#但是对于Squid，效果却不大。此项参数可以控制TIMEWAIT套接字的最大数量，避免Squid服务器被大量的TIMEWAIT套接字拖死。*
--------------------------------------------------------------------------------------------------------------------------------------------------------------
-如何尽量处理TIMEWAIT过多
-sysctl改两个内核参数就行了，如下：
-net.ipv4.tcp_tw_reuse = 1
-net.ipv4.tcp_tw_recycle = 1
-简单来说，就是打开系统的TIMEWAIT重用和快速回收，至于怎么重用和快速回收，这个问题我没有深究，实际场景中这么做确实有效果。用netstat或者ss观察就能得出结论。
-还有些朋友同时也会打开syncookies这个功能，如下：
-net.ipv4.tcp_syncookies = 1
-打开这个syncookies的目的实际上是：“在服务器资源（并非单指端口资源，拒绝服务有很多种资源不足的情况）不足的情况下，尽量不要拒绝TCP的syn（连接）请求，尽量把syn请求缓存起来，留着过会儿有能力的时候处理这些TCP的连接请求”。
-如果并发量真的非常非常高，打开这个其实用处不大。
-
-
-
-
-SYN Flood
- 
-下面这段介绍引用自[1].
-SYN Flood是一种非常危险而常见的Dos攻击方式。到目前为止，能够有效防范SYN Flood攻击的手段并不多，
-SYN Cookie就是其中最著名的一种。
- 
-SYN Flood攻击是一种典型的拒绝服务(Denial of Service)攻击。所谓的拒绝服务攻击就是通过进行攻击，使受害主机或
-网络不能提供良好的服务，从而间接达到攻击的目的。
-SYN Flood攻击利用的是IPv4中TCP协议的三次握手(Three-Way Handshake)过程进行的攻击。
-TCP服务器收到TCP SYN request包时，在发送TCP SYN + ACK包回客户机前，TCP服务器要先分配好一个数据区专门
-服务于这个即将形成的TCP连接。一般把收到SYN包而还未收到ACK包时的连接状态称为半打开连接(Half-open Connection)。
-在最常见的SYN Flood攻击中，攻击者在短时间内发送大量的TCP SYN包给受害者。受害者(服务器)为每个TCP SYN包分配
-一个特定的数据区，只要这些SYN包具有不同的源地址(攻击者很容易伪造)。这将给TCP服务器造成很大的系统负担，最终
-导致系统不能正常工作。
- 
-SYN Cookie
- 
-SYN Cookie原理由D.J. Bernstain和Eric Schenk提出。
-SYN Cookie是对TCP服务器端的三次握手做一些修改，专门用来防范SYN Flood攻击的一种手段。它的原理是，在TCP服务器
-接收到TCP SYN包并返回TCP SYN + ACK包时，不分配一个专门的数据区，而是根据这个SYN包计算出一个cookie值。这个
-cookie作为将要返回的SYN ACK包的初始序列号。当客户端返回一个ACK包时，根据包头信息计算cookie，与返回的确认序列
-号(初始序列号 + 1)进行对比，如果相同，则是一个正常连接，然后，分配资源，建立连接。
-
-
-
-
-
-原
-TCP参数调优详解
-
-在TCP/IP协议中，TCP协议提供可靠的连接服务，采用三次握手建立一个连接。
-
-第一次握手：建立连接时，客户端发送syn包(syn=x)到服务器，并进入SYN_SEND状态，等待服务器确认；
-第二次握手：服务器收到syn包，必须确认客户的SYN（ack=x+1），同时自己也发送一个SYN包（syn=y），即SYN+ACK包，此时服务器进入SYN_RECV状态；
-第三次握手：客户端收到服务器的SYN＋ACK包，向服务器发送确认包ACK(ack=y+1)，此包发送完毕，客户端和服务器进入ESTABLISHED状态，完成三次握手。
-
-完成三次握手，客户端与服务器开始传送数据，在上述过程中，还有一些重要的概念：
-
-未连接队列：在三次握手协议中，服务器维护一个未连接队列，该队列为每个客户端的SYN包（syn=j）开设一个条目，该条目表明服务器已收到 SYN包，并向客户发出确认，正在等待客户的确认包。这些条目所标识的连接在服务器处于Syn_RECV状态，当服务器收到客户的确认包时，删除该条目， 服务器进入ESTABLISHED状态。
-Backlog参数：表示未连接队列的最大容纳数目。
-
-SYN-ACK 重传次数　服务器发送完SYN－ACK包，如果未收到客户确认包，服务器进行首次重传，等待一段时间仍未收到客户确认包，进行第二次重传，如果重传次数超 过系统规定的最大重传次数，系统将该连接信息从半连接队列中删除。注意，每次重传等待的时间不一定相同。
-
-半连接存活时间：是指半连接队列的条目存活的最长时间，也即服务从收到SYN包到确认这个报文无效的最长时间，该时间值是所有重传请求包的最长等待时间总和。有时我们也称半连接存活时间为Timeout时间、SYN_RECV存活时间。
-
-
-
-状态解释
-CLOSED: 表示初始状态。
-
-LISTEN:
-表示服务器端的某个SOCKET处于监听状态，可以接受连接
-
-SYN_RCVD:
-表示接受到了SYN报文，在正常情况下，这个状态是服务器端的SOCKET在建立TCP连接时的三次握手会话过程中的一个中间状态，很短暂，基本上用netstat你是很难看到这种状态的，除非你特意写了一个客户端测试程序，故意将三次TCP握手过程中最后一个ACK报文不予发送。因此这种状态时，当收到客户端的ACK报文后，它会进入到ESTABLISHED状态。
-
-SYN_SENT:
-这个状态与SYN_RCVD遥想呼应，当客户端SOCKET执行CONNECT连接时，它首先发送SYN报文，因此也随即它会进入到了SYN_SENT状态，并等待服务端的发送三次握手中的第2个报文。SYN_SENT状态表示客户端已发送SYN报文。
-
-ESTABLISHED：表示连接已经建立
-
-FIN_WAIT_1:
-FIN_WAIT_1和FIN_WAIT_2状态的真正含义都是表示等待对方的FIN报文。而这两种状态的区别是：FIN_WAIT_1状态实际上是当SOCKET在ESTABLISHED状态时，它想主动关闭连接，向对方发送了FIN报文，此时该SOCKET即进入到FIN_WAIT_1状态。而当对方回应ACK报文后，则进入到FIN_WAIT_2状态，当然在实际的正常情况下，无论对方何种情况下，都应该马上回应ACK报文，所以FIN_WAIT_1状态一般是比较难见到的，而FIN_WAIT_2状态还有时常常可以用netstat看到。
-
-FIN_WAIT_2:
-FIN_WAIT_2状态下的SOCKET，表示半连接，也即有一方要求close连接，但另外还告诉对方，我暂时还有点数据需要传送给你，稍后再关闭连接。
-
-TIME_WAIT:
-表示收到了对方的FIN报文，并发送出了ACK报文，就等2MSL后即可回到CLOSED可用状态了。如果FIN_WAIT_1状态下，收到了对方同时带FIN标志和ACK标志的报文时，可以直接进入到TIME_WAIT状态，而无须经过FIN_WAIT_2状态。
-
-CLOSING:
-正常情况下，发送FIN报文后，按理来说是应该先收到（或同时收到）对方的ACK报文，再收到对方的FIN报文。但是CLOSING状态表示你发送FIN报文后，并没有收到对方的ACK报文，反而却也收到了对方的FIN报文。什么情况下会出现此种情况呢？其实细想一下，也不难得出结论：那就是如果双方几乎在同时close一个SOCKET的话，那么就出现了双方同时发送FIN报文的情况，也即会出现CLOSING状态，表示双方都正在关闭SOCKET连接。
-
-CLOSE_WAIT:
-表示在等待关闭。怎么理解呢？当对方close一个SOCKET后发送FIN报文给自己，你系统毫无疑问地会回应一个ACK报文给对方，此时则进入到CLOSE_WAIT状态。接下来呢，实际上你真正需要考虑的事情是察看你是否还有数据发送给对方，如果没有的话，那么你也就可以 close这个SOCKET，发送FIN报文给对方，也即关闭连接。所以你在CLOSE_WAIT状态下，需要完成的事情是等待你去关闭连接。
-
-LAST_ACK:
-被动关闭一方在发送FIN报文后，最后等待对方的ACK报文。当收到ACK报文后，也即可以进入到CLOSED可用状态了。
-
-调优
-开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击，默认为0，表示关闭；
-net.ipv4.tcp_syncookies = 1
-
-开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；
-net.ipv4.tcp_tw_reuse = 1
-
-开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭；
-net.ipv4.tcp_tw_recycle = 1
-
-系统默认的TIMEOUT时间。
-net.ipv4.tcp_fin_timeout = 5
-
-当keepalive起用的时候，TCP发送keepalive消息的频度。缺省是2小时，改为20分钟(20*60s)
-net.ipv4.tcp_keepalive_time = 1200
-
-表示用于向外连接的端口范围。缺省情况下很小：32768到61000，改为10000到65000
-net.ipv4.ip_local_port_range = 10000 65000
-
-SYN队列的长度，默认为1024，加大队列长度为8192，可以容纳更多等待连接的网络连接数
-net.ipv4.tcp_max_syn_backlog = 8192
-
-系统同时保持TIME_WAIT的最大数量，如果超过这个数字，TIME_WAIT将立刻被清除并打印警告信息。默认为180000，改为5000
-net.ipv4.tcp_max_tw_buckets = 5000
-
-其他调优参数
-tcp_syn_retries ：INTEGER
-默认值是5
-对于一个新建连接，内核要发送多少个 SYN 连接请求才决定放弃。不应该大于255，默认值是5，对应于180秒左右时间。(对于大负载而物理通信良好的网络而言,这个值偏高,可修改为2.这个值仅仅是针对对外的连接,对进来的连接,是由tcp_retries1 决定的)
-
-tcp_synack_retries ：INTEGER
-默认值是5
-对于远端的连接请求SYN，内核会发送SYN ＋ ACK数据报，以确认收到上一个 SYN连接请求包。这是所谓的三次握手( threeway handshake)机制的第二个步骤。这里决定内核在放弃连接之前所送出的 SYN+ACK 数目。不应该大于255，默认值是5，对应于180秒左右时间。(可以根据上面的 tcp_syn_retries 来决定这个值)
-
-tcp_keepalive_time ：INTEGER
-默认值是7200(2小时)
-当keepalive打开的情况下，TCP发送keepalive消息的频率。(由于目前网络攻击等因素,造成了利用这个进行的攻击很频繁,曾经也有cu的朋友提到过,说如果2边建立了连接,然后不发送任何数据或者rst/fin消息,那么持续的时间是不是就是2小时,空连接攻击? tcp_keepalive_time就是预防此情形的.我个人在做nat服务的时候的修改值为1800秒)
-
-tcp_keepalive_probes：INTEGER
-默认值是9
-TCP发送keepalive探测以确定该连接已经断开的次数。(注意:保持连接仅在SO_KEEPALIVE套接字选项被打开是才发送.次数默认不需要修改,当然根据情形也可以适当地缩短此值.设置为5比较合适)
-
-tcp_keepalive_intvl：INTEGER
-默认值为75
-探测消息发送的频率，乘以tcp_keepalive_probes就得到对于从开始探测以来没有响应的连接杀除的时间。默认值为75秒，也就是没有活动的连接将在大约11分钟以后将被丢弃。(对于普通应用来说,这个值有一些偏大,可以根据需要改小.特别是web类服务器需要改小该值,15是个比较合适的值)
-
-tcp_retries1 ：INTEGER
-默认值是3
-放弃回应一个TCP连接请求前﹐需要进行多少次重试。RFC 规定最低的数值是3﹐这也是默认值﹐根据RTO的值大约在3秒 – 8分钟之间。(注意:这个值同时还决定进入的syn连接)
-
-tcp_retries2 ：INTEGER
-默认值为15
-在丢弃激活(已建立通讯状况)的TCP连接之前﹐需要进行多少次重试。默认值为15，根据RTO的值来决定，相当于13-30分钟(RFC1122规定，必须大于100秒).(这个值根据目前的网络设置,可以适当地改小,我的网络内修改为了5)
-
-tcp_orphan_retries ：INTEGER
-默认值是7
-在近端丢弃TCP连接之前﹐要进行多少次重试。默认值是7个﹐相当于 50秒 – 16分钟﹐视 RTO 而定。如果您的系统是负载很大的web服务器﹐那么也许需要降低该值﹐这类 sockets 可能会耗费大量的资源。另外参的考 tcp_max_orphans 。(事实上做NAT的时候,降低该值也是好处显著的,我本人的网络环境中降低该值为3)
-
-tcp_fin_timeout ：INTEGER
-默认值是 60
-对于本端断开的socket连接，TCP保持在FIN-WAIT-2状态的时间。对方可能会断开连接或一直不结束连接或不可预料的进程死亡。默认值为 60 秒。过去在2.2版本的内核中是 180 秒。您可以设置该值﹐但需要注意﹐如果您的机器为负载很重的web服务器﹐您可能要冒内存被大量无效数据报填满的风险﹐FIN-WAIT-2 sockets 的危险性低于 FIN-WAIT-1 ﹐因为它们最多只吃 1.5K 的内存﹐但是它们存在时间更长。另外参考 tcp_max_orphans。(事实上做NAT的时候,降低该值也是好处显著的,我本人的网络环境中降低该值为30)
-
-tcp_max_tw_buckets ：INTEGER
-默认值是180000
-系 统在同时所处理的最大 timewait sockets 数目。如果超过此数的话﹐time-wait socket 会被立即砍除并且显示警告信息。之所以要设定这个限制﹐纯粹为了抵御那些简单的 DoS 攻击﹐千万不要人为的降低这个限制﹐不过﹐如果网络条件需要比默认值更多﹐则可以提高它(或许还要增加内存)。(事实上做NAT的时候最好可以适当地增加该值)
-
-tcp_tw_recycle ：BOOLEAN
-默认值是0
-打开快速 TIME-WAIT sockets 回收。除非得到技术专家的建议或要求﹐请不要随意修改这个值。(做NAT的时候，建议打开它)
-
-tcp_tw_reuse：BOOLEAN
-默认值是0
-该文件表示是否允许重新应用处于TIME-WAIT状态的socket用于新的TCP连接(这个对快速重启动某些服务,而启动后提示端口已经被使用的情形非常有帮助)
-
-tcp_max_orphans ：INTEGER
-缺省值是8192
-系统所能处理不属于任何进程的TCP sockets最大数量。假如超过这个数量﹐那么不属于任何进程的连接会被立即reset，并同时显示警告信息。之所以要设定这个限制﹐纯粹为了抵御那些简单的 DoS 攻击﹐千万不要依赖这个或是人为的降低这个限制(这个值Redhat AS版本中设置为32768,但是很多防火墙修改的时候,建议该值修改为2000)
-
-tcp_abort_on_overflow ：BOOLEAN
-缺省值是0
-当守护进程太忙而不能接受新的连接，就象对方发送reset消息，默认值是false。这意味着当溢出的原因是因为一个偶然的猝发，那么连接将恢复状态。只有在你确信守护进程真的不能完成连接请求时才打开该选项，该选项会影响客户的使用。(对待已经满载的sendmail,apache这类服务的时候,这个可以很快让客户端终止连接,可以给予服务程序处理已有连接的缓冲机会,所以很多防火墙上推荐打开它)
-
-tcp_syncookies ：BOOLEAN
-默认值是0
-只有在内核编译时选择了CONFIG_SYNCOOKIES时才会发生作用。当出现syn等候队列出现溢出时象对方发送syncookies。目的是为了防止syn flood攻击。
-注意：该选项千万不能用于那些没有收到攻击的高负载服务器，如果在日志中出现synflood消息，但是调查发现没有收到synflood攻击，而是合法用户的连接负载过高的原因，你应该调整其它参数来提高服务器性能。参考:
-tcp_max_syn_backlog
-tcp_synack_retries
-tcp_abort_on_overflow
-syncookie严重的违背TCP协议，不允许使用TCP扩展，可能对某些服务导致严重的性能影响(如SMTP转发)。(注意,该实现与BSD上面使用的tcp proxy一样,是违反了RFC中关于tcp连接的三次握手实现的,但是对于防御syn-flood的确很有用.)
-
-tcp_stdurg ：BOOLEAN
-默认值为0
-使用 TCP urg pointer 字段中的主机请求解释功能。大部份的主机都使用老旧的 BSD解释，因此如果您在 Linux 打开它﹐或会导致不能和它们正确沟通。
-
-tcp_max_syn_backlog ：INTEGER
-对于那些依然还未获得客户端确认的连接请求﹐需要保存在队列中最大数目。对于超过 128Mb 内存的系统﹐默认值是 1024 ﹐低于 128Mb 的则为 128。如果服务器经常出现过载﹐可以尝试增加这个数字。警告﹗假如您将此值设为大于 1024﹐最好修改 include/net/tcp.h 里面的 TCP_SYNQ_HSIZE ﹐以保持 TCP_SYNQ_HSIZE*16<=tcp_max_syn_backlog ﹐并且编进核心之内。(SYN Flood攻击利用TCP协议散布握手的缺陷，伪造虚假源IP地址发送大量TCP-SYN半打开连接到目标系统，最终导致目标系统Socket队列资源耗 尽而无法接受新的连接。为了应付这种攻击，现代Unix系统中普遍采用多连接队列处理的方式来缓冲(而不是解决)这种攻击，是用一个基本队列处理正常的完 全连接应用(Connect()和Accept() )，是用另一个队列单独存放半打开连接。这种双队列处理方式和其他一些系统内核措施(例如Syn-Cookies/Caches)联合应用时，能够比较有效的缓解小规模的SYN Flood攻击(事实证明<1000p/s)加大SYN队列长度可以容纳更多等待连接的网络连接数，所以对Server来说可以考虑增大该值.)
-
-tcp_window_scaling ：INTEGER
-缺省值为1
-该 文件表示设置tcp/ip会话的滑动窗口大小是否可变。参数值为布尔值，为1时表示可变，为0时表示不可变。tcp/ip通常使用的窗口最大可达到 65535 字节，对于高速网络，该值可能太小，这时候如果启用了该功能，可以使tcp/ip滑动窗口大小增大数个数量级，从而提高数据传输的能力(RFC 1323)。（对普通地百M网络而言，关闭会降低开销，所以如果不是高速网络，可以考虑设置为0）
-
-tcp_timestamps ：BOOLEAN
-缺省值为1
-Timestamps 用在其它一些东西中﹐可以防范那些伪造的 sequence 号码。一条1G的宽带线路或许会重遇到带 out-of-line数值的旧sequence 号码(假如它是由于上次产生的)。Timestamp 会让它知道这是个 ‘旧封包’。(该文件表示是否启用以一种比超时重发更精确的方法（RFC 1323）来启用对 RTT 的计算；为了实现更好的性能应该启用这个选项。)
-
-tcp_sack ：BOOLEAN
-缺省值为1
-使 用 Selective ACK﹐它可以用来查找特定的遗失的数据报— 因此有助于快速恢复状态。该文件表示是否启用有选择的应答（Selective Acknowledgment），这可以通过有选择地应答乱序接收到的报文来提高性能（这样可以让发送者只发送丢失的报文段）。(对于广域网通信来说这个选项应该启用，但是这会增加对 CPU 的占用。)
-
-tcp_fack ：BOOLEAN
-缺省值为1
-打开FACK拥塞避免和快速重传功能。(注意，当tcp_sack设置为0的时候，这个值即使设置为1也无效)
-
-tcp_dsack ：BOOLEAN
-缺省值为1
-允许TCP发送”两个完全相同”的SACK。
-
-
-
-
-
-Linux常用网络工具：Http压力测试之ab
-ab的全称是Apache Bench，是Apache自带的网络压力测试工具，相比于LR、JMeter，是我所知道的 Http 压力测试工具中最简单、最通用的。
-
-ab命令对发出负载的计算机要求很低，不会占用很高CPU和内存，但也能给目标服务器产生巨大的负载，能实现基础的压力测试。
-
-在进行压力测试时，最好与服务器使用交换机直连，以获取最大的网络吞吐量。
-
-ab的安装很简单，安装Apache会自动安装，如果要单独安装ab，可以使用yum安装：
-
-yum -y install httpd-tools
-ab命令选项
-
-ab命令最基本的参数是-n和-c：
-
--n 执行的请求数量
--c 并发请求个数
-其他参数：
-
--t 测试所进行的最大秒数
--p 包含了需要POST的数据的文件
--T POST数据所使用的Content-type头信息
--k 启用HTTP KeepAlive功能，即在一个HTTP会话中执行多个请求，默认时，不启用KeepAlive功能
-命令示例：
-
-ab -n 1000 -c 100 http://www.baidu.com/
-ab性能指标
-
-使用ab命令测试的结果，可以参考其中的中文解释：
-
-复制代码
-Document Path:          /  ###请求的资源
-Document Length:        50679 bytes  ###文档返回的长度，不包括相应头
-
-
-Concurrency Level:      3000   ###并发个数
-Time taken for tests:   30.449 seconds   ###总请求时间
-Complete requests:      3000     ###总请求数
-Failed requests:        0     ###失败的请求数
-Write errors:           0
-Total transferred:      152745000 bytes
-HTML transferred:       152037000 bytes
-Requests per second:    98.52 [#/sec] (mean)      ###平均每秒的请求数
-Time per request:       30449.217 [ms] (mean)     ###平均每个请求消耗的时间
-Time per request:       10.150 [ms] (mean, across all concurrent requests)  ###上面的请求除以并发数
-Transfer rate:          4898.81 [Kbytes/sec] received   ###传输速率
-
-
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:        2   54  27.1     55      98
-Processing:    51 8452 5196.8   7748   30361
-Waiting:       50 6539 5432.8   6451   30064
-Total:         54 8506 5210.5   7778   30436
-
-
-Percentage of the requests served within a certain time (ms)
-  50%   7778   ###50%的请求都在7778Ms内完成
-  66%  11059
-  75%  11888
-  80%  12207
-  90%  13806
-  95%  18520
-  98%  24232
-  99%  24559
- 100%  30436 (longest request)
-复制代码
-对压力测试的结果重点关注吞吐率（Requests per second）、用户平均请求等待时间（Time per request）指标：
-
-1、吞吐率（Requests per second）：
-
-服务器并发处理能力的量化描述，单位是reqs/s，指的是在某个并发用户数下单位时间内处理的请求数。某个并发用户数下单位时间内能处理的最大请求数，称之为最大吞吐率。
-
-记住：吞吐率是基于并发用户数的。这句话代表了两个含义：
-
-a、吞吐率和并发用户数相关
-
-b、不同的并发用户数下，吞吐率一般是不同的
-
-计算公式：总请求数/处理完成这些请求数所花费的时间，即
-
-Request per second=Complete requests/Time taken for tests
-
-必须要说明的是，这个数值表示当前机器的整体性能，值越大越好。
-
-2、用户平均请求等待时间（Time per request）：
-
-计算公式：处理完成所有请求数所花费的时间/（总请求数/并发用户数），即：
-
-Time per request=Time taken for tests/（Complete requests/Concurrency Level）
-
-3、服务器平均请求等待时间（Time per request:across all concurrent requests）：
-
-计算公式：处理完成所有请求数所花费的时间/总请求数，即：
-
-Time taken for/testsComplete requests
-
-可以看到，它是吞吐率的倒数。
-
-同时，它也等于用户平均请求等待时间/并发用户数，即
-
-Time per request/Concurrency Level。
-
- 
-
-
-
-
-
-安装nginx-1.10.3版本时，需要使用如下参数：
---with-http_ssl_module：提供SSL加密功能
---user：指定账户
---group：指定组
-1.3 步骤
-
-实现此案例需要按照如下步骤进行。
-步骤一：构建Nginx服务器
-
-1）使用源码包安装nginx软件包
-  yum -y install gcc pcre-devel openssl-devel        //安装依赖包
- useradd -s /sbin/nologin nginx
- tar  -xf   nginx-1.10.3.tar.gz
-  cd  nginx-1.10.3
-  ./configure   \
-> --prefix=/usr/local/nginx   \                //指定安装路径
-> --user=nginx   \                            //指定用户
-> --group=nginx  \                            //指定组
-> --with-http_ssl_module                        //开启SSL加密功能
-  .. ..
-nginx path prefix: "/usr/local/nginx"
-  nginx binary file: "/usr/local/nginx/sbin/nginx"
-  nginx configuration prefix: "/usr/local/nginx/conf"
-  nginx configuration file: "/usr/local/nginx/conf/nginx.conf"
-  nginx pid file: "/usr/local/nginx/logs/nginx.pid"
-  nginx error log file: "/usr/local/nginx/logs/error.log"
-  nginx http access log file: "/usr/local/nginx/logs/access.log"
-  nginx http client request body temporary files: "client_body_temp"
-  nginx http proxy temporary files: "proxy_temp"
-  nginx http fastcgi temporary files: "fastcgi_temp"
-  nginx http uwsgi temporary files: "uwsgi_temp"
-  nginx http scgi temporary files: "scgi_temp"
-  make && make install    //编译并安装
-2）nginx命令的用法
-  /usr/local/nginx/sbin/nginx                    //启动服务
-  /usr/local/nginx/sbin/nginx -s stop            //关闭服务
-  /usr/local/nginx/sbin/nginx -s reload        //重新加载配置文件
-  /usr/local/nginx/sbin/nginx –V                //查看软件信息
-   ln -s /usr/local/nginx/sbin/nginx /sbin/        //方便后期使用
-
-netstat命令可以查看系统中启动的端口信息，该命令常用选项如下：
--a显示所有端口的信息
--n以数字格式显示端口号
--t显示TCP连接的端口
--u显示UDP连接的端口
--l显示服务正在监听的端口信息，如httpd启动后，会一直监听80端口
--p显示监听端口的服务名称是什么（也就是程序名称）
-nginx服务默认通过TCP 80端口监听客户端请求：
-                    netstat  -anptu  |  grep nginx
-tcp        0        0 0.0.0.0:80        0.0.0.0:*        LISTEN        10441/nginx
-3）设置防火墙与SELinux
-  firewall-cmd --set-default-zone=trusted
-  setenforce 0
-4）测试首页文件
-Nginx Web服务默认首页文档存储目录为/usr/local/nginx/html/，在此目录下默认有一个名为index.html的文件，使用客户端访问测试页面：
-  curl http://192.168.4.5
-<html>
-<head>
-<title>Welcome to nginx!</title>
-</head>
-<body bgcolor="white" text="black">
-<center><h1>Welcome to nginx!</h1></center>
-</body>
-</html>
-步骤二：升级Nginx服务器
-
-1）编译新版本nginx软件
-  tar  -zxvf   nginx-1.12.2.tar.gz
-  cd nginx-1.12.2
-  ./configure   \
-> --prefix=/usr/local/nginx   \ 
-> --user=nginx   \ 
-> --group=nginx  \ 
-> --with-http_ssl_module
-[root@proxy nginx-1.12.2]# make            
-2) 备份老的nginx主程序，并使用编译好的新版本nginx替换老版本
-  mv /usr/local/nginx/sbin/nginx  \
->/usr/local/nginx/sbin/nginxold
-  cp objs/nginx  /usr/local/nginx/sbin/         //拷贝新版本
-  make upgrade                            //升级
-/usr/local/nginx/sbin/nginx -t
-nginx: the configuration file /usr/local/nginx/conf/nginx.conf syntax is ok
-nginx: configuration file /usr/local/nginx/conf/nginx.conf test is successful
-kill -USR2 `cat /usr/local/nginx/logs/nginx.pid`
-sleep 1
-test -f /usr/local/nginx/logs/nginx.pid.oldbin
-kill -QUIT `cat /usr/local/nginx/logs/nginx.pid.oldbin`
-  /usr/local/nginx/sbin/nginx –v                //查看版本
-步骤三：客户端访问测试
-
-1）分别使用浏览器和命令行工具curl测试服务器页面
-  firefox http://192.168.4.5
-  curl http://192.168.4.5
-2 案例2：用户认证
-2.1 问题
-
-沿用练习一，通过调整Nginx服务端配置，实现以下目标：
-访问Web页面需要进行用户认证
-用户名为：tom，密码为：123456
-2.2 方案
-
-模板配置文件框架如下：
-  vim  /usr/local/nginx/conf/nginx.conf
-全局配置（用户名,日志,进程)
-http{
-    server{
-        listen 80;
-        server_name localhost;
-        root html;
-       }
-       server{
-        listen 80;
-        server_name www.xyz.com;
-        root www;
-       }
-}
-通过Nginx实现Web页面的认证，需要修改Nginx配置文件，在配置文件中添加auth语句实现用户认证。最后使用htpasswd命令创建用户及密码即可。
-2.3 步骤
-
-实现此案例需要按照如下步骤进行。
-步骤一：修改Nginx配置文件
-
-1）修改/usr/local/nginx/conf/nginx.conf
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-server {
-        listen       80;
-        server_name  localhost;
-        auth_basic "Input Password:";                        //认证提示符
-        auth_basic_user_file "/usr/local/nginx/pass";        //认证密码文件
-        location / {
-            root   html;
-            index  index.html index.htm;
-        }
-  }
-2）生成密码文件，创建用户及密码
-使用htpasswd命令创建账户文件，需要确保系统中已经安装了httpd-tools。
-[root@proxy ~]# yum -y install  httpd-tools
-[root@proxy ~]# htpasswd -c /usr/local/nginx/pass   tom        //创建密码文件
-New password: 
-Re-type new password: 
-Adding password for user tom
-[root@proxy ~]# htpasswd  /usr/local/nginx/pass   jerry      //追加用户，不使用-c选项
-New password: 
-Re-type new password: 
-Adding password for user jerry
-[root@proxy ~]# cat /usr/local/nginx/pass
-3）重启Nginx服务
-[root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload    //重新加载配置文件    
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-步骤二：客户端测试
-
-1）登录192.168.4.100客户端主机进行测试
-[root@client ~]# firefox http://192.168.4.5                    //输入密码后可以访问
-3 案例3：基于域名的虚拟主机
-3.1 问题
-
-沿用练习二，配置基于域名的虚拟主机，实现以下目标：
-实现两个基于域名的虚拟主机，域名分别为www.a.com和www.b.com
-对域名为www.a.com的站点进行用户认证，用户名称为tom，密码为123456
-3.2 方案
-
-修改Nginx配置文件，添加server容器实现虚拟主机功能；对于需要进行用户认证的虚拟主机添加auth认证语句。
-虚拟主机一般可用分为：基于域名、基于IP和基于端口的虚拟主机。
-3.3 步骤
-
-实现此案例需要按照如下步骤进行。
-步骤一：修改配置文件
-
-1）修改Nginx服务配置，添加相关虚拟主机配置如下
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-server {
-        listen       80;                                      //端口
-        server_name  www.a.com;                                //域名
-auth_basic "Input Password:";                        //认证提示符
-        auth_basic_user_file "/usr/local/nginx/pass";        //认证密码文件
-location / {
-            root   html;                                    //指定网站根路径
-            index  index.html index.htm;
-       }
-       
-}
-… …
-    server {
-        listen  80;                                        //端口
-        server_name  www.b.com;                                //域名
-location / { 
-root   www;                                 //指定网站根路径
-index  index.html index.htm;
-}
-}
-2）创建网站根目录及对应首页文件
-[root@proxy ~]# mkdir /usr/local/nginx/www
-[root@proxy ~]# echo "www" > /usr/local/nginx/www/index.html
-3）重启nginx服务
-[root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-步骤二：客户端测试
-
-1）修改客户端主机192.168.4.100的/etc/hosts文件，进行域名解析
-[root@client ~]# vim /etc/hosts
-192.168.4.5    www.a.com  www.b.com
-2）登录192.168.4.100客户端主机进行测试
-注意：请先关闭真实机的firefox，SSH –X远程连接调用虚拟机的firefox。
-[root@client ~]# firefox http://www.a.com            //输入密码后可以访问
-[root@client ~]# firefox http://www.b.com            //直接访问
-扩展其他虚拟主机：
-1.基于端口的虚拟主机（参考模板）
-server {
-        listen       8080;              //端口
-        server_name  web1.example.com;          //域名
-        ......
-}
-    server {
-        listen       8000;
-        server_name  web1.example.com;
-      .......
-}
-2.基于IP的虚拟主机（参考模板）
-server {
-        listen       192.168.0.1:80;          //端口
-        server_name  web1.example.com;          //域名
-  ... ...
-}
-    server {
-        listen       192.168.0.2:80;
-        server_name  web1.example.com;
-... ...
-}
-4 案例4：SSL虚拟主机
-4.1 问题
-
-沿用练习三，配置基于加密网站的虚拟主机，实现以下目标：
-域名为www.c.com
-该站点通过https访问
-通过私钥、证书对该站点所有数据加密
-4.2 方案
-
-源码安装Nginx时必须使用--with-http_ssl_module参数，启用加密模块，对于需要进行SSL加密处理的站点添加ssl相关指令（设置网站需要的私钥和证书）。
-加密算法一般分为对称算法、非对称算法、信息摘要。
-对称算法有：AES、DES，主要应用在单机数据加密。
-非对称算法有：RSA、DSA，主要应用在网络数据加密。
-信息摘要：MD5、sha256，主要应用在数据完整性校验、数据秒传等。
-4.3 步骤
-
-实现此案例需要按照如下步骤进行。
-步骤一：配置SSL虚拟主机
-1）生成私钥与证书
-[root@proxy ~]# cd /usr/local/nginx/conf
-[root@proxy ~]# openssl genrsa > cert.key                            //生成私钥
-[root@proxy ~]# openssl req -new -x509 -key cert.key > cert.pem      //生成证书
-2）修改Nginx配置文件，设置加密网站的虚拟主机
-[root@proxy ~]# vim  /usr/local/nginx/conf/nginx.conf
-… …    
-server {
-        listen       443 ssl;
-        server_name            www.c.com;
-        ssl_certificate      cert.pem;         #这里是证书文件
-        ssl_certificate_key  cert.key;         #这里是私钥文件
-        ssl_session_cache    shared:SSL:1m;
-        ssl_session_timeout  5m;
-        ssl_ciphers  HIGH:!aNULL:!MD5;
-        ssl_prefer_server_ciphers  on;
-        location / {
-            root   html;
-            index  index.html index.htm;
-        }
-    }
-3）重启nginx服务
-[root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-步骤二：客户端验证
-1）修改客户端主机192.168.4.100的/etc/hosts文件，进行域名解析
-[root@client ~]# vim /etc/hosts
-192.168.4.5    www.c.com  www.a.com   www.b.com
-2）登录192.168.4.100客户端主机进行测试
-[root@client ~]# firefox https://www.c.com            //信任证书后可以访问
-
-
-
-
-
-
-
-Top
-NSD OPERATION DAY02
-
-案例1：部署LNMP环境
-案例2：构建LNMP平台
-案例3：地址重写
-1 案例1：部署LNMP环境
-1.1 问题
-
-安装部署Nginx、MariaDB、PHP环境
-安装部署Nginx、MariaDB、PHP、PHP-FPM；
-启动Nginx、MariaDB、FPM服务；
-并测试LNMP是否工作正常。
-1.2 方案
-
-LNMP（Linux、Nginx、MySQL、PHP）
-在RHEL7系统中，源码安装Nginx，使用RPM包安装MariaDB、PHP、PHP-FPM软件。
-操作过程中需要安装的软件列表如下：
-nginx
-mariadb、mariadb-server、mariadb-devel
-php、php-fpm、php-mysql
-1.3 步骤
-
-实现此案例需要按照如下步骤进行。
-步骤一：安装软件
-
-1）使用yum安装基础依赖包
-[root@proxy ~]# yum -y install gcc openssl-devel pcre-devel zlib-devel
-2）源码安装Nginx（如果前面课程中已经安装Nginx，则忽略这一步）
-[root@proxy ~]# useradd -s /sbin/nologin  nginx
-[root@proxy ~]# tar -xvf nginx-1.12.2.tar.gz
-[root@proxy ~]# cd nginx-1.12.2
-[root@proxy nginx-1.12.2]# ./configure   \
-> --user=nginx   --group=nginx \
-> --with-http_ssl_module
-[root@proxy ~]# make && make install
-.. ..
-3）安装MariaDB
-Mariadb在新版RHEL7光盘中包含有该软件，配置yum源后可以直接使用yum安装：
-[root@proxy ~]# yum -y install   mariadb   mariadb-server   mariadb-devel
-4）php和php-fpm(该软件包在lnmp_soft中提供)
-[root@proxy ~]# yum -y  install  php   php-mysql
-[root@proxy ~]# yum -y  install php-fpm-5.4.16-42.el7.x86_64.rpm
-步骤二：启动服务
-
-1）启动Nginx服务（如果已经启动nginx，则可以忽略这一步）
-这里需要注意的是，如果服务器上已经启动了其他监听80端口的服务软件（如httpd），则需要先关闭该服务，否则会出现冲突。
-[root@proxy ~]# systemctl stop httpd                //如果该服务存在则关闭该服务
-[root@proxy ~]# /usr/local/nginx/sbin/nginx             //启动Nginx服务
-[root@proxy ~]# netstat -utnlp | grep :80
-tcp    0    0 0.0.0.0:80        0.0.0.0:*        LISTEN        32428/nginx         
-2）启动MySQL服务
-[root@proxy ~]# systemctl start  mariadb           //启动服务器
-[root@proxy ~]# systemctl status mariadb           //查看服务状态
-[root@proxy ~]# systemctl enable mariadb           //设置开机启动
-3）启动PHP-FPM服务
-[root@proxy ~]# systemctl start php-fpm           //启动服务
-[root@proxy ~]# systemctl status php-fpm          //查看服务状态
-[root@proxy ~]# systemctl enable php-fpm          //设置开机启动
-4）设置防火墙与SELinux
-[root@proxy ~]# firewall-cmd --set-default-zone=trusted
-[root@proxy ~]# setenforce 0
-2 案例2：构建LNMP平台
-2.1 问题
-
-沿用练习一，通过调整Nginx服务端配置，实现以下目标：
-配置Fast-CGI支持PHP网页
-创建PHP测试页面，测试使用PHP连接数据库的效果
-2.2 方案
-
-使用2台RHEL7虚拟机，其中一台作为LNMP服务器（192.168.4.5）、另外一台作为测试用的Linux客户机（192.168.4.100），如图-1所示。
-
-图-1
-Nginx结合FastCGI技术即可支持PHP页面架构，如图-2所示。
-
-图-2
-因此本案例，需要延续练习一的实验内容，通过修改Nginx及php-fpm配置文件实现对PHP页面的支持。
-注意，FastCGI的内存消耗问题，一个PHP-FPM解释器将消耗约25M的内存。
-2.3 步骤
-
-实现此案例需要按照如下步骤进行。
-步骤一： php-fpm配置文件
-
-1）查看php-fpm配置文件（实验中不需要修改该文件）
-[root@proxy etc]# vim /etc/php-fpm.d/www.conf
-[www]
-listen = 127.0.0.1:9000            //PHP端口号
-pm.max_children = 32                //最大进程数量
-pm.start_servers = 15                //最小进程数量
-pm.min_spare_servers = 5            //最少需要几个空闲着的进程
-pm.max_spare_servers = 32            //最多允许几个进程处于空闲状态
-步骤二：修改Nginx配置文件并启动服务
-
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-location / {
-            root   html;
-            index  index.php  index.html   index.htm;
-#设置默认首页为index.php，当用户在浏览器地址栏中只写域名或IP，不说访问什么页面时，服务器会把默认首页index.php返回给用户
-        }
- location  ~  \.php$  {
-            root           html;
-            fastcgi_pass   127.0.0.1:9000;    #将请求转发给本机9000端口，PHP解释器
-            fastcgi_index  index.php;
-            #fastcgi_param   SCRIPT_FILENAME  $document_root$fastcgi_script_name;
-            include        fastcgi.conf;
-        }
-[root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-步骤三：创建PHP页面，测试LNMP架构能否解析PHP页面
-
-1）创建PHP测试页面1，可以参考lnmp_soft/php_scripts/test.php：
-[root@proxy ~]# vim /usr/local/nginx/html/test1.php
-<?php
-$i="This is a test Page";
-echo $i;
-?>
-2）创建PHP测试页面,连接并查询MariaDB数据库。
-可以参考lnmp_soft/php_scripts/mysql.php:
-[root@proxy ~]# vim /usr/local/nginx/html/test2.php
-<?php
-$mysqli = new mysqli('localhost','root','密码','mysql');
-//注意：root为mysql账户名称，密码需要修改为实际mysql密码，无密码则留空即可
-if (mysqli_connect_errno()){
-    die('Unable to connect!'). mysqli_connect_error();
-}
-$sql = "select * from user";
-$result = $mysqli->query($sql);
-while($row = $result->fetch_array()){
-    printf("Host:%s",$row[0]);
-    printf("</br>");
-    printf("Name:%s",$row[1]);
-    printf("</br>");
-}
-?>
-3）客户端使用浏览器访问服务器PHP首页文档，检验是否成功：
-[root@client ~]# firefox http://192.168.4.5/test1.php
-[root@client ~]# firefox http://192.168.4.5/test2.php
-4）LNMP常见问题
-Nginx的默认访问日志文件为/usr/local/nginx/logs/access.log
-Nginx的默认错误日志文件为/usr/local/nginx/logs/error.log
-PHP默认错误日志文件为/var/log/php-fpm/www-error.log
-如果动态网站访问失败，可用参考错误日志，查找错误信息。
-3 案例3：地址重写
-3.1 问题
-
-沿用练习二，通过调整Nginx服务端配置，实现以下目标：
-所有访问a.html的请求，重定向到b.html;
-所有访问192.168.4.5的请求重定向至www.tmooc.cn；
-所有访问192.168.4.5/下面子页面，重定向至www.tmooc.cn/下相同的页面；
-实现firefox与curl访问相同页面文件，返回不同的内容。
-3.2 方案
-
-关于Nginx服务器的地址重写，主要用到的配置参数是rewrite：
-rewrite regex replacement flag
-rewrite 旧地址 新地址 [选项]
-3.3 步骤
-
-实现此案例需要按照如下步骤进行。
-步骤一：修改配置文件(访问a.html重定向到b.html)
-
-1）修改Nginx服务配置：
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-server {
-        listen       80;
-        server_name  localhost;
-location / {
-    root   html;
-index  index.html index.htm;
-rewrite /a.html  /b.html;            
-}
-}
-[root@proxy ~]# echo "BB" > /usr/local/nginx/html/b.html
-2）重新加载配置文件
-[root@proxy ~]# /usr/local/nginx/sbin/nginx  -s  reload
-3）客户端测试
-[root@client ~]# firefox  http://192.168.4.5/a.html
-步骤二：访问a.html重定向到b.html（跳转地址栏）
-
-1）修改Nginx服务配置：
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-server {
-        listen       80;
-        server_name  localhost;
-location / {
-    root   html;
-index  index.html index.htm;
-rewrite /a.html  /b.html  redirect;            
-}
-}
-2）重新加载配置文件
-[root@proxy ~]# /usr/local/nginx/sbin/nginx  -s  reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-3）客户端测试（仔细观察浏览器地址栏的变化）
-[root@client ~]# firefox  http://192.168.4.5/a.html
-步骤三：修改配置文件(访问192.168.4.5的请求重定向至www.tmooc.cn)
-
-1) 修改Nginx服务配置
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-server {
-        listen       80;
-        server_name  localhost;
-rewrite ^/ http://www.tmooc.cn/;
-location / {
-    root   html;
-index  index.html index.htm;
-# rewrite /a.html  /b.html  redirect;
-}
-}
-2）重新加载配置文件
-[root@proxy ~]# /usr/local/nginx/sbin/nginx  -s  reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-3）客户端测试（真实机测试，真实机才可以连接tmooc）
-[root@room9pc01 ~]# firefox  http://192.168.4.5
-步骤四：修改配置文件(访问192.168.4.5/下面子页面，重定向至www.tmooc.cn/下相同的页面)
-
-1) 修改Nginx服务配置
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-server {
-        listen       80;
-        server_name  localhost;
-rewrite ^/(.*)$ http://www.tmooc.cn/$1;
-location / {
-    root   html;
-index  index.html index.htm;
-# rewrite /a.html  /b.html  redirect;
-}
-}
-2）重新加载配置文件
-[root@proxy ~]# /usr/local/nginx/sbin/nginx  -s  reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-3）客户端测试（真实机测试，真实机才可以连接tmooc）
-[root@room9pc01 ~]# firefox  http://192.168.4.5
-[root@room9pc01 ~]# firefox  http://192.168.4.5/test
-步骤五：修改配置文件(实现curl和火狐访问相同链接返回的页面不同)
-1) 创建网页目录以及对应的页面文件：
-[root@proxy ~]# echo "I am Normal page" > /usr/local/nginx/html/test.html
-[root@proxy ~]# mkdir  -p  /usr/local/nginx/html/firefox/
-[root@proxy ~]# echo "firefox page" > /usr/local/nginx/html/firefox/test.html
-2) 修改Nginx服务配置
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-server {
-        listen       80;
-        server_name  localhost;
-location / {
-    root   html;
-index  index.html index.htm;
-}
-#这里，~符号代表正则匹配，*符号代表不区分大小写
-if ($http_user_agent ~* firefox) {            //识别客户端firefox浏览器
-rewrite ^(.*)$ /firefox/$1;
-}
-}
-3）重新加载配置文件
-[root@proxy ~]# /usr/local/nginx/sbin/nginx  -s  reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-4）客户端测试
-[root@client ~]# firefox  http://192.168.4.5/test.html
-[root@client ~]# curl     http://192.168.4.5/test.html
-5）地址重写格式【总结】
-rewrite 旧地址 新地址 [选项];
-last 不再读其他rewrite
-break 不再读其他语句，结束请求
-redirect 临时重定向
-permament 永久重定向
-
-
-Top
-NSD Operation DAY03
-
-案例1：Nginx反向代理
-案例2：Nginx的TCP/UDP调度器
-案例3：Nginx常见问题处理
-1 案例1：Nginx反向代理
-1.1 问题
-
-使用Nginx实现Web反向代理功能，实现如下功能：
-后端Web服务器两台，可以使用httpd实现
-Nginx采用轮询的方式调用后端Web服务器
-两台Web服务器的权重要求设置为不同的值
-最大失败次数为1，失败超时时间为30秒
-1.2 方案
-
-使用4台RHEL7虚拟机，其中一台作为Nginx代理服务器，该服务器需要配置两块网卡，IP地址分别为192.168.4.5和192.168.2.5，两台Web服务器IP地址分别为192.168.2.100和192.168.2.200。客户端测试主机IP地址为192.168.4.100。如图-1所示。
-
-图-1
-1.3 步骤
-
-实现此案例需要按照如下步骤进行。
-步骤一：部署实施后端Web服务器
-
-1）部署后端Web1服务器
-后端Web服务器可以简单使用yum方式安装httpd实现Web服务，为了可以看出后端服务器的不同，可以将两台后端服务器的首页文档内容设置为不同的内容。
-[root@web1 ~]# yum  -y  install  httpd
-[root@web1 ~]# echo "192.168.2.100" > /var/www/html/index.html
-[root@web1 ~]# systemctl restart httpd
-[root@web1 ~]# firewall-cmd --set-default-zone=trusted
-[root@web1 ~]# setenforce 0
-2）部署后端Web2服务器
-[root@web2 ~]# yum  -y  install  httpd
-[root@web2 ~]# echo "192.168.2.200" > /var/www/html/index.html
-[root@web2 ~]# systemctl restart httpd
-[root@web2 ~]# firewall-cmd --set-default-zone=trusted
-[root@web2 ~]# setenforce 0
-步骤二：配置Nginx服务器，添加服务器池，实现反向代理功能
-
-1）修改/usr/local/nginx/conf/nginx.conf配置文件
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-http {
-.. ..
-#使用upstream定义后端服务器集群，集群名称任意(如webserver)
-#使用server定义集群中的具体服务器和端口
-upstream webserver {
-                server 192.168.2.100:80;
-                server 192.168.2.200:80;
-        }
-.. ..
-server {
-        listen        80;
-        server_name  localhost;
-            location / {
-#通过proxy_pass将用户的请求转发给webserver集群
-            proxy_pass http://webserver;
-        }
-}
-2）重启nginx服务
-[root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-3）客户端使用浏览器访问代理服务器测试轮询效果
-[root@client ~]# curl http://192.168.4.5            //使用该命令多次访问查看效果
-[root@client ~]# curl http://192.168.4.5            //使用该命令多次访问查看效果
-步骤二：配置upstream服务器集群池属性
-
-1）设置失败次数，超时时间，权重
-weight可以设置后台服务器的权重，max_fails可以设置后台服务器的失败次数，fail_timeout可以设置后台服务器的失败超时时间。
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-http {
-.. ..
-upstream webserver {
-                server 192.168.2.100 weight=1 max_fails=1 fail_timeout=30;
-                server 192.168.2.200 weight=2 max_fails=2 fail_timeout=30;
-                server 192.168.2.101 down;
-        }
-#weight设置服务器权重值，默认值为1
-#max_fails设置最大失败次数
-#fail_timeout设置失败超时时间，单位为秒
-#down标记服务器已关机，不参与集群调度
-.. ..
-server {
-        listen        80;
-        server_name  localhost;
-            location / {
-            proxy_pass http://webserver;
-        }
-}
-2）重启nginx服务
-[root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-3）关闭一台后端服务器（如web1）
-[root@web1 ~]# systemctl stop httpd
-4）客户端使用浏览器访问代理服务器测试轮询效果
-[root@client ~]# curl http://192.168.4.5            //使用该命令多次访问查看效果
-5）再次启动后端服务器的httpd（如web1）
-[root@web1 ~]# systemctl start httpd
-6）客户端再次使用浏览器访问代理服务器测试轮询效果
-[root@client ~]# curl http://192.168.4.5            //使用该命令多次访问查看效果
-步骤三：配置upstream服务器集群的调度算法
-
-1）设置相同客户端访问相同Web服务器
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-http {
-.. ..
-upstream webserver {
-#通过ip_hash设置调度规则为：相同客户端访问相同服务器
-                 ip_hash;
-                server 192.168.2.100 weight=1 max_fails=2 fail_timeout=10;
-                server 192.168.2.200 weight=2 max_fails=2 fail_timeout=10;
-        }
-.. ..
-server {
-        listen        80;
-        server_name  www.tarena.com;
-            location / {
-            proxy_pass http://webserver;
-        }
-}
-2）重启nginx服务
-[root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-3）客户端使用浏览器访问代理服务器测试轮询效果
-[root@client ~]# curl http://192.168.4.5            //使用该命令多次访问查看效果
-2 案例2：Nginx的TCP/UDP调度器
-2.1 问题
-
-使用Nginx实现TCP/UDP调度器功能，实现如下功能：
-后端SSH服务器两台
-Nginx编译安装时需要使用--with-stream，开启ngx_stream_core_module模块
-Nginx采用轮询的方式调用后端SSH服务器
-2.2 方案
-
-使用4台RHEL7虚拟机，其中一台作为Nginx代理服务器，该服务器需要配置两块网卡，IP地址分别为192.168.4.5和192.168.2.5，两台SSH服务器IP地址分别为192.168.2.100和192.168.2.200。客户端测试主机IP地址为192.168.4.100。如图-2所示。
-
-图-2
-2.3 步骤
-
-实现此案例需要按照如下步骤进行。
-步骤一：部署支持4层TCP/UDP代理的Nginx服务器
-
-1）部署nginx服务器
-编译安装必须要使用--with-stream参数开启4层代理模块。
-[root@proxy ~]# yum –y install gcc pcre-devel openssl-devel        //安装依赖包
-[root@proxy ~]# tar  -xf   nginx-1.12.2.tar.gz
-[root@proxy ~]# cd  nginx-1.12.2
-[root@proxy nginx-1.12.2]# ./configure   \
-> --with-http_ssl_module                                //开启SSL加密功能
-> --with-stream                                       //开启4层反向代理功能
-[root@proxy nginx-1.12.2]# make && make install           //编译并安装
-步骤二：配置Nginx服务器，添加服务器池，实现TCP/UDP反向代理功能
-
-1）修改/usr/local/nginx/conf/nginx.conf配置文件
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-stream {
-            upstream backend {
-               server 192.168.2.100:22;            //后端SSH服务器的IP和端口
-               server 192.168.2.200:22;
-}
-            server {
-                listen 12345;                    //Nginx监听的端口
-                proxy_connect_timeout 1s;
-                proxy_timeout 3s;
-                 proxy_pass backend;
-             }
-}
-http {
-.. ..
-}
-2）重启nginx服务
-[root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-3）客户端使用访问代理服务器测试轮询效果
-[root@client ~]# ssh 192.168.4.5 -p 12345            //使用该命令多次访问查看效果
-3 案例3：Nginx常见问题处理
-3.1 问题
-
-本案例要求对Nginx服务器进行适当优化，解决如下问题，以提升服务器的处理性能：
-如果客户端访问服务器提示“Too many open files”如何解决
-如何解决客户端访问头部信息过长的问题
-如何让客户端浏览器缓存数据
-如何自定义返回给客户端的404错误页面
-如何查看服务器状态信息
-开启gzip压缩功能，提高数据传输效率
-开启文件缓存功能
-然后客户机访问此Web服务器验证效果：
-使用ab压力测试软件测试并发量
-编写测试脚本生成长头部信息的访问请求
-客户端访问不存在的页面，测试404错误页面是否重定向
-3.2 步骤
-
-实现此案例需要按照如下步骤进行。
-步骤一：构建Nginx服务器
-
-1）源码安装Nginx软件
-[root@proxy ~]# yum -y install gcc pcre-devel openssl-devel        //安装常见依赖包
-[root@proxy ~]# tar  -xf   nginx-1.12.2.tar.gz
-[root@proxy ~]# cd  nginx-1.12.2
-[root@proxy nginx-1.12.2]# ./configure   \
-> --with-http_ssl_module                                 //开启SSL加密功能
-> --with-stream                                        //开启TCP/UDP代理模块
-[root@proxy nginx-1.12.2]# make && make install         //编译并安装
-2）启用Nginx服务并查看监听端口状态
-ss命令可以查看系统中启动的端口信息，该命令常用选项如下：
--a显示所有端口的信息
--n以数字格式显示端口号
--t显示TCP连接的端口
--u显示UDP连接的端口
--l显示服务正在监听的端口信息，如httpd启动后，会一直监听80端口
--p显示监听端口的服务名称是什么（也就是程序名称）
-注意：在RHEL7系统中可以使用ss命令替代netstat命令，功能一样，选项一样。
-[root@proxy ~]# /usr/local/nginx/sbin/nginx
-[root@proxy ~]# netstat  -anptu  |  grep nginx
-tcp        0        0 0.0.0.0:80        0.0.0.0:*        LISTEN        10441/nginx
-[root@proxy ~]# ss  -anptu  |  grep nginx
-步骤二：优化Nginx并发量
-
-1）优化前使用ab高并发测试
-[root@proxy ~]# ab -n 2000 -c 2000 http://192.168.4.5/
-Benchmarking 192.168.4.5 (be patient)
-socket: Too many open files (24)                //提示打开文件数量过多
-2）修改Nginx配置文件，增加并发量
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-worker_processes  2;                    //与CPU核心数量一致
-events {
-worker_connections 65535;        //每个worker最大并发连接数
-use epoll;
-}
-.. ..
-[root@proxy ~]# nginx -s reload
-3）优化Linux内核参数（最大文件数量）
-[root@proxy ~]# ulimit -a                        //查看所有属性值
-[root@proxy ~]# ulimit -Hn 100000                //设置硬限制（临时规则）
-[root@proxy ~]# ulimit -Sn 100000                //设置软限制（临时规则）
-[root@proxy ~]# vim /etc/security/limits.conf
-    .. ..
-*               soft    nofile            100000
-*               hard    nofile            100000
-#该配置文件分4列，分别如下：
-#用户或组    硬限制或软限制    需要限制的项目   限制的值
-4）优化后测试服务器并发量（因为客户端没调内核参数，所以在proxy测试）
-[root@proxy ~]# ab -n 2000 -c 2000 http://192.168.4.5/
-步骤三：优化Nginx数据包头缓存
-
-1）优化前，使用脚本测试长头部请求是否能获得响应
-[root@proxy ~]# cat lnmp_soft/buffer.sh 
-#!/bin/bash
-URL=http://192.168.4.5/index.html?
-for i in {1..5000}
-do
-    URL=${URL}v$i=$i
-done
-curl $URL                                //经过5000次循环后，生成一个长的URL地址栏
-[root@proxy ~]# ./buffer.sh
-.. ..
-<center><h1>414 Request-URI Too Large</h1></center>        //提示头部信息过大
-2）修改Nginx配置文件，增加数据包头部缓存大小
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-http {
-client_header_buffer_size    1k;        //默认请求包头信息的缓存    
-large_client_header_buffers  4 4k;        //大请求包头部信息的缓存个数与容量
-.. ..
-}
-[root@proxy ~]# nginx -s reload
-3）优化后，使用脚本测试长头部请求是否能获得响应
-[root@proxy ~]#cat cat buffer.sh 
-#!/bin/bash
-URL=http://192.168.4.5/index.html?
-for i in {1..5000}
-do
-    URL=${URL}v$i=$i
-done
-curl $URL
-[root@proxy ~]# ./buffer.sh
-步骤四：浏览器本地缓存静态数据
-
-1）使用Firefox浏览器查看缓存
-以Firefox浏览器为例，在Firefox地址栏内输入about:cache将显示Firefox浏览器的缓存信息，如图-3所示，点击List Cache Entries可以查看详细信息。
-
-图-3
-2）清空firefox本地缓存数据，如图-4所示。
-
-
-图-4
-3）修改Nginx配置文件，定义对静态页面的缓存时间
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-server {
-        listen       80;
-        server_name  localhost;
-        location / {
-            root   html;
-            index  index.html index.htm;
-        }
-location ~* \.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
-expires        30d;            //定义客户端缓存时间为30天
-}
-}
-[root@proxy ~]# cp /usr/share/backgrounds/day.jpg /usr/local/nginx/html
-[root@proxy ~]# nginx -s reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-4）优化后，使用Firefox浏览器访问图片，再次查看缓存信息
-[root@client ~]# firefox http://192.168.4.5/day.jpg
-在Firefox地址栏内输入about:cache，查看本地缓存数据，查看是否有图片以及过期时间是否正确。
-步骤五：自定义报错页面
-
-1）优化前，客户端使用浏览器访问不存在的页面，会提示404文件未找到
-[root@client ~]# firefox http://192.168.4.5/xxxxx        //访问一个不存在的页面
-2）修改Nginx配置文件，自定义报错页面
-[root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
-.. ..
-error_page   404  /40x.html;    //自定义错误页面
-.. ..
-[root@proxy ~]# vim /usr/local/nginx/html/40x.html        //生成错误页面
-Oops,No NO no page …
-[root@proxy ~]# nginx -s reload
-#请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
-#[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
-3）优化后，客户端使用浏览器访问不存在的页面，会提示自己定义的40x.html页面
-[root@client ~]# firefox http://192.168.4.5/xxxxx        //访问一个不存在的页面
-4）常见http状态码
-常见http状态码可用参考表-1所示。
-表－1 主机列表
-
-步骤六：如何查看服务器状态信息
-
-1）编译安装时使用--with-http_stub_status_module开启状态页面模块
-[root@proxy ~]# yum -y install gcc pcre-devel openssl-devel        //安装常见依赖包
-[root@proxy ~]# tar  -zxvf   nginx-1.12.2.tar.gz
-[root@proxy ~]# cd  nginx-1.12.2
-[root@proxy nginx-1.12.2]# ./configure   \
-> --with-http_ssl_module                        //开启SSL加密功能
-> --with-stream                                //开启TCP/UDP代理模块
-> --with-http_stub_status_module                //开启status状态页面
-[root@proxy nginx-1.12.2]# make && make install    //编译并安装
-2）修改Nginx配置文件，定义状态页面
-[root@proxy ~]# cat /usr/local/nginx/conf/nginx.conf
-… …
-location /status {
-                stub_status on;
-        }
-… …
-[root@proxy ~]# nginx
-2）优化后，查看状态页面信息
-[root@proxy ~]# curl  http://192.168.4.5/status
-Active connections: 1 
-server accepts handled requests
- 10 10 3 
-Reading: 0 Writing: 1 Waiting: 0
-Active connections：当前活动的连接数量。
-Accepts：已经接受客户端的连接总数量。
-Handled：已经处理客户端的连接总数量（一般与accepts一致，除非服务器限制了连接数量）。
-Requests：客户端发送的请求数量。
-Reading：当前服务器正在读取客户端请求头的数量。
-Writing：当前服务器正在写响应信息的数量。
-Waiting：当前多少客户端在等待服务器的响应。
-步骤七：对页面进行压缩处理
-
-1）修改Nginx配置文件
-[root@proxy ~]# cat /usr/local/nginx/conf/nginx.conf
-http {
-.. ..
-gzip on;                            //开启压缩
-gzip_min_length 1000;                //小文件不压缩
-gzip_comp_level 4;                //压缩比率
-gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
-                                    //对特定文件压缩，类型参考mime.types
-.. ..
-}
-步骤八：服务器内存缓存
-
-1）如果需要处理大量静态文件，可以将文件缓存在内存，下次访问会更快。
-http { 
-open_file_cache          max=2000  inactive=20s;
-        open_file_cache_valid    60s;
-        open_file_cache_min_uses 5;
-        open_file_cache_errors   off;
-//设置服务器最大缓存2000个文件句柄，关闭20秒内无请求的文件句柄
-//文件句柄的有效时间是60秒，60秒后过期
-//只有访问次数超过5次会被缓存
-} 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                
+                
+                
+                安装nginx-1.10.3版本时，需要使用如下参数：
+                --with-http_ssl_module：提供SSL加密功能
+                --user：指定账户
+                --group：指定组
+                1.3 步骤
+                
+                实现此案例需要按照如下步骤进行。
+                步骤一：构建Nginx服务器
+                
+                1）使用源码包安装nginx软件包
+                  yum -y install gcc pcre-devel openssl-devel        //安装依赖包
+                 useradd -s /sbin/nologin nginx
+                 tar  -xf   nginx-1.10.3.tar.gz
+                  cd  nginx-1.10.3
+                  ./configure   \
+                > --prefix=/usr/local/nginx   \                //指定安装路径
+                > --user=nginx   \                            //指定用户
+                > --group=nginx  \                            //指定组
+                > --with-http_ssl_module                        //开启SSL加密功能
+             
+                  make && make install    //编译并安装
+                2）nginx命令的用法
+                  /usr/local/nginx/sbin/nginx                    //启动服务
+                  /usr/local/nginx/sbin/nginx -s stop            //关闭服务
+                  /usr/local/nginx/sbin/nginx -s reload        //重新加载配置文件
+                  /usr/local/nginx/sbin/nginx –V                //查看软件信息
+                   ln -s /usr/local/nginx/sbin/nginx /sbin/        //方便后期使用
+                
+                netstat命令可以查看系统中启动的端口信息，该命令常用选项如下：
+                -a显示所有端口的信息
+                -n以数字格式显示端口号
+                -t显示TCP连接的端口
+                -u显示UDP连接的端口
+                -l显示服务正在监听的端口信息，如httpd启动后，会一直监听80端口
+                -p显示监听端口的服务名称是什么（也就是程序名称）
+                nginx服务默认通过TCP 80端口监听客户端请求：
+                                    netstat  -anptu  |  grep nginx
+                tcp        0        0 0.0.0.0:80        0.0.0.0:*        LISTEN        10441/nginx
+                3）设置防火墙与SELinux
+                  firewall-cmd --set-default-zone=trusted
+                  setenforce 0
+                4）测试首页文件
+                Nginx Web服务默认首页文档存储目录为/usr/local/nginx/html/，在此目录下默认有一个名为index.html的文件，使用客户端访问测试页面：
+                  curl http://192.168.4.5
+                <html>
+                <head>
+                <title>Welcome to nginx!</title>
+                </head>
+                <body bgcolor="white" text="black">
+                <center><h1>Welcome to nginx!</h1></center>
+                </body>
+                </html>
+                步骤二：升级Nginx服务器
+                
+                1）编译新版本nginx软件
+                  tar  -zxvf   nginx-1.12.2.tar.gz
+                  cd nginx-1.12.2
+                  ./configure   \
+                > --prefix=/usr/local/nginx   \ 
+                > --user=nginx   \ 
+                > --group=nginx  \ 
+                > --with-http_ssl_module
+                [root@proxy nginx-1.12.2]# make            
+                2) 备份老的nginx主程序，并使用编译好的新版本nginx替换老版本
+                  mv /usr/local/nginx/sbin/nginx  \
+                >/usr/local/nginx/sbin/nginxold
+                  cp objs/nginx  /usr/local/nginx/sbin/         //拷贝新版本
+                  make upgrade                            //升级
+                /usr/local/nginx/sbin/nginx -t
+                nginx: the configuration file /usr/local/nginx/conf/nginx.conf syntax is ok
+                nginx: configuration file /usr/local/nginx/conf/nginx.conf test is successful
+                kill -USR2 `cat /usr/local/nginx/logs/nginx.pid`
+                sleep 1
+                test -f /usr/local/nginx/logs/nginx.pid.oldbin
+                kill -QUIT `cat /usr/local/nginx/logs/nginx.pid.oldbin`
+                  /usr/local/nginx/sbin/nginx –v                //查看版本
+                步骤三：客户端访问测试
+                
+                1）分别使用浏览器和命令行工具curl测试服务器页面
+                  firefox http://192.168.4.5
+                  curl http://192.168.4.5
+                2 案例2：用户认证
+                2.1 问题
+                
+                沿用练习一，通过调整Nginx服务端配置，实现以下目标：
+                访问Web页面需要进行用户认证
+                用户名为：tom，密码为：123456
+                2.2 方案
+                
+                模板配置文件框架如下：
+                  vim  /usr/local/nginx/conf/nginx.conf
+                全局配置（用户名,日志,进程)
+                http{
+                    server{
+                        listen 80;
+                        server_name localhost;
+                        root html;
+                       }
+                       server{
+                        listen 80;
+                        server_name www.xyz.com;
+                        root www;
+                       }
+                }
+                通过Nginx实现Web页面的认证，需要修改Nginx配置文件，在配置文件中添加auth语句实现用户认证。最后使用htpasswd命令创建用户及密码即可。
+                2.3 步骤
+                
+                实现此案例需要按照如下步骤进行。
+                步骤一：修改Nginx配置文件
+                
+                1）修改/usr/local/nginx/conf/nginx.conf
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                server {
+                        listen       80;
+                        server_name  localhost;
+                        auth_basic "Input Password:";                        //认证提示符
+                        auth_basic_user_file "/usr/local/nginx/pass";        //认证密码文件
+                        location / {
+                            root   html;
+                            index  index.html index.htm;
+                        }
+                  }
+                2）生成密码文件，创建用户及密码
+                使用htpasswd命令创建账户文件，需要确保系统中已经安装了httpd-tools。
+                [root@proxy ~]# yum -y install  httpd-tools
+                [root@proxy ~]# htpasswd -c /usr/local/nginx/pass   tom        //创建密码文件
+                New password: 
+                Re-type new password: 
+                Adding password for user tom
+                [root@proxy ~]# htpasswd  /usr/local/nginx/pass   jerry      //追加用户，不使用-c选项
+                New password: 
+                Re-type new password: 
+                Adding password for user jerry
+                [root@proxy ~]# cat /usr/local/nginx/pass
+                3）重启Nginx服务
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload    //重新加载配置文件    
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                步骤二：客户端测试
+                
+                1）登录192.168.4.100客户端主机进行测试
+                [root@client ~]# firefox http://192.168.4.5                    //输入密码后可以访问
+                3 案例3：基于域名的虚拟主机
+                3.1 问题
+                
+                沿用练习二，配置基于域名的虚拟主机，实现以下目标：
+                实现两个基于域名的虚拟主机，域名分别为www.a.com和www.b.com
+                对域名为www.a.com的站点进行用户认证，用户名称为tom，密码为123456
+                3.2 方案
+                
+                修改Nginx配置文件，添加server容器实现虚拟主机功能；对于需要进行用户认证的虚拟主机添加auth认证语句。
+                虚拟主机一般可用分为：基于域名、基于IP和基于端口的虚拟主机。
+                3.3 步骤
+                
+                实现此案例需要按照如下步骤进行。
+                步骤一：修改配置文件
+                
+                1）修改Nginx服务配置，添加相关虚拟主机配置如下
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                server {
+                        listen       80;                                      //端口
+                        server_name  www.a.com;                                //域名
+                auth_basic "Input Password:";                        //认证提示符
+                        auth_basic_user_file "/usr/local/nginx/pass";        //认证密码文件
+                location / {
+                            root   html;                                    //指定网站根路径
+                            index  index.html index.htm;
+                       }
+                       
+                }
+                … …
+                    server {
+                        listen  80;                                        //端口
+                        server_name  www.b.com;                                //域名
+                location / { 
+                root   www;                                 //指定网站根路径
+                index  index.html index.htm;
+                }
+                }
+                2）创建网站根目录及对应首页文件
+                [root@proxy ~]# mkdir /usr/local/nginx/www
+                [root@proxy ~]# echo "www" > /usr/local/nginx/www/index.html
+                3）重启nginx服务
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                步骤二：客户端测试
+                
+                1）修改客户端主机192.168.4.100的/etc/hosts文件，进行域名解析
+                [root@client ~]# vim /etc/hosts
+                192.168.4.5    www.a.com  www.b.com
+                2）登录192.168.4.100客户端主机进行测试
+                注意：请先关闭真实机的firefox，SSH –X远程连接调用虚拟机的firefox。
+                [root@client ~]# firefox http://www.a.com            //输入密码后可以访问
+                [root@client ~]# firefox http://www.b.com            //直接访问
+                扩展其他虚拟主机：
+                1.基于端口的虚拟主机（参考模板）
+                server {
+                        listen       8080;              //端口
+                        server_name  web1.example.com;          //域名
+                        ......
+                }
+                    server {
+                        listen       8000;
+                        server_name  web1.example.com;
+                      .......
+                }
+                2.基于IP的虚拟主机（参考模板）
+                server {
+                        listen       192.168.0.1:80;          //端口
+                        server_name  web1.example.com;          //域名
+                  ... ...
+                }
+                    server {
+                        listen       192.168.0.2:80;
+                        server_name  web1.example.com;
+                ... ...
+                }
+                4 案例4：SSL虚拟主机
+                4.1 问题
+                
+                沿用练习三，配置基于加密网站的虚拟主机，实现以下目标：
+                域名为www.c.com
+                该站点通过https访问
+                通过私钥、证书对该站点所有数据加密
+                4.2 方案
+                
+                源码安装Nginx时必须使用--with-http_ssl_module参数，启用加密模块，对于需要进行SSL加密处理的站点添加ssl相关指令（设置网站需要的私钥和证书）。
+                加密算法一般分为对称算法、非对称算法、信息摘要。
+                对称算法有：AES、DES，主要应用在单机数据加密。
+                非对称算法有：RSA、DSA，主要应用在网络数据加密。
+                信息摘要：MD5、sha256，主要应用在数据完整性校验、数据秒传等。
+                4.3 步骤
+                
+                实现此案例需要按照如下步骤进行。
+                步骤一：配置SSL虚拟主机
+                1）生成私钥与证书
+                [root@proxy ~]# cd /usr/local/nginx/conf
+                [root@proxy ~]# openssl genrsa > cert.key                            //生成私钥
+                [root@proxy ~]# openssl req -new -x509 -key cert.key > cert.pem      //生成证书
+                2）修改Nginx配置文件，设置加密网站的虚拟主机
+                [root@proxy ~]# vim  /usr/local/nginx/conf/nginx.conf
+                … …    
+                server {
+                        listen       443 ssl;
+                        server_name            www.c.com;
+                        ssl_certificate      cert.pem;         #这里是证书文件
+                        ssl_certificate_key  cert.key;         #这里是私钥文件
+                        ssl_session_cache    shared:SSL:1m;
+                        ssl_session_timeout  5m;
+                        ssl_ciphers  HIGH:!aNULL:!MD5;
+                        ssl_prefer_server_ciphers  on;
+                        location / {
+                            root   html;
+                            index  index.html index.htm;
+                        }
+                    }
+                3）重启nginx服务
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                步骤二：客户端验证
+                1）修改客户端主机192.168.4.100的/etc/hosts文件，进行域名解析
+                [root@client ~]# vim /etc/hosts
+                192.168.4.5    www.c.com  www.a.com   www.b.com
+                2）登录192.168.4.100客户端主机进行测试
+                [root@client ~]# firefox https://www.c.com            //信任证书后可以访问
+                
+                
+                
+                
+                
+                
+                
+                Top
+                NSD OPERATION DAY02
+                
+                案例1：部署LNMP环境
+                案例2：构建LNMP平台
+                案例3：地址重写
+                1 案例1：部署LNMP环境
+                1.1 问题
+                
+                安装部署Nginx、MariaDB、PHP环境
+                安装部署Nginx、MariaDB、PHP、PHP-FPM；
+                启动Nginx、MariaDB、FPM服务；
+                并测试LNMP是否工作正常。
+                1.2 方案
+                
+                LNMP（Linux、Nginx、MySQL、PHP）
+                在RHEL7系统中，源码安装Nginx，使用RPM包安装MariaDB、PHP、PHP-FPM软件。
+                操作过程中需要安装的软件列表如下：
+                nginx
+                mariadb、mariadb-server、mariadb-devel
+                php、php-fpm、php-mysql
+                1.3 步骤
+                
+                实现此案例需要按照如下步骤进行。
+                步骤一：安装软件
+                
+                1）使用yum安装基础依赖包
+                [root@proxy ~]# yum -y install gcc openssl-devel pcre-devel zlib-devel
+                2）源码安装Nginx（如果前面课程中已经安装Nginx，则忽略这一步）
+                [root@proxy ~]# useradd -s /sbin/nologin  nginx
+                [root@proxy ~]# tar -xvf nginx-1.12.2.tar.gz
+                [root@proxy ~]# cd nginx-1.12.2
+                [root@proxy nginx-1.12.2]# ./configure   \
+                > --user=nginx   --group=nginx \
+                > --with-http_ssl_module
+                [root@proxy ~]# make && make install
+                .. ..
+                3）安装MariaDB
+                Mariadb在新版RHEL7光盘中包含有该软件，配置yum源后可以直接使用yum安装：
+                [root@proxy ~]# yum -y install   mariadb   mariadb-server   mariadb-devel
+                4）php和php-fpm(该软件包在lnmp_soft中提供)
+                [root@proxy ~]# yum -y  install  php   php-mysql
+                [root@proxy ~]# yum -y  install php-fpm-5.4.16-42.el7.x86_64.rpm
+                步骤二：启动服务
+                
+                1）启动Nginx服务（如果已经启动nginx，则可以忽略这一步）
+                这里需要注意的是，如果服务器上已经启动了其他监听80端口的服务软件（如httpd），则需要先关闭该服务，否则会出现冲突。
+                [root@proxy ~]# systemctl stop httpd                //如果该服务存在则关闭该服务
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx             //启动Nginx服务
+                [root@proxy ~]# netstat -utnlp | grep :80
+                tcp    0    0 0.0.0.0:80        0.0.0.0:*        LISTEN        32428/nginx         
+                2）启动MySQL服务
+                [root@proxy ~]# systemctl start  mariadb           //启动服务器
+                [root@proxy ~]# systemctl status mariadb           //查看服务状态
+                [root@proxy ~]# systemctl enable mariadb           //设置开机启动
+                3）启动PHP-FPM服务
+                [root@proxy ~]# systemctl start php-fpm           //启动服务
+                [root@proxy ~]# systemctl status php-fpm          //查看服务状态
+                [root@proxy ~]# systemctl enable php-fpm          //设置开机启动
+                4）设置防火墙与SELinux
+                [root@proxy ~]# firewall-cmd --set-default-zone=trusted
+                [root@proxy ~]# setenforce 0
+                2 案例2：构建LNMP平台
+                2.1 问题
+                
+                沿用练习一，通过调整Nginx服务端配置，实现以下目标：
+                配置Fast-CGI支持PHP网页
+                创建PHP测试页面，测试使用PHP连接数据库的效果
+                2.2 方案
+                
+                使用2台RHEL7虚拟机，其中一台作为LNMP服务器（192.168.4.5）、另外一台作为测试用的Linux客户机（192.168.4.100），如图-1所示。
+                
+                图-1
+                Nginx结合FastCGI技术即可支持PHP页面架构，如图-2所示。
+                
+                图-2
+                因此本案例，需要延续练习一的实验内容，通过修改Nginx及php-fpm配置文件实现对PHP页面的支持。
+                注意，FastCGI的内存消耗问题，一个PHP-FPM解释器将消耗约25M的内存。
+                2.3 步骤
+                
+                实现此案例需要按照如下步骤进行。
+                步骤一： php-fpm配置文件
+                
+                1）查看php-fpm配置文件（实验中不需要修改该文件）
+                [root@proxy etc]# vim /etc/php-fpm.d/www.conf
+                [www]
+                listen = 127.0.0.1:9000            //PHP端口号
+                pm.max_children = 32                //最大进程数量
+                pm.start_servers = 15                //最小进程数量
+                pm.min_spare_servers = 5            //最少需要几个空闲着的进程
+                pm.max_spare_servers = 32            //最多允许几个进程处于空闲状态
+                步骤二：修改Nginx配置文件并启动服务
+                
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                location / {
+                            root   html;
+                            index  index.php  index.html   index.htm;
+                #设置默认首页为index.php，当用户在浏览器地址栏中只写域名或IP，不说访问什么页面时，服务器会把默认首页index.php返回给用户
+                        }
+                 location  ~  \.php$  {
+                            root           html;
+                            fastcgi_pass   127.0.0.1:9000;    #将请求转发给本机9000端口，PHP解释器
+                            fastcgi_index  index.php;
+                            #fastcgi_param   SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+                            include        fastcgi.conf;
+                        }
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                步骤三：创建PHP页面，测试LNMP架构能否解析PHP页面
+                
+                1）创建PHP测试页面1，可以参考lnmp_soft/php_scripts/test.php：
+                [root@proxy ~]# vim /usr/local/nginx/html/test1.php
+                <?php
+                $i="This is a test Page";
+                echo $i;
+                ?>
+                2）创建PHP测试页面,连接并查询MariaDB数据库。
+                可以参考lnmp_soft/php_scripts/mysql.php:
+                [root@proxy ~]# vim /usr/local/nginx/html/test2.php
+                <?php
+                $mysqli = new mysqli('localhost','root','密码','mysql');
+                //注意：root为mysql账户名称，密码需要修改为实际mysql密码，无密码则留空即可
+                if (mysqli_connect_errno()){
+                    die('Unable to connect!'). mysqli_connect_error();
+                }
+                $sql = "select * from user";
+                $result = $mysqli->query($sql);
+                while($row = $result->fetch_array()){
+                    printf("Host:%s",$row[0]);
+                    printf("</br>");
+                    printf("Name:%s",$row[1]);
+                    printf("</br>");
+                }
+                ?>
+                3）客户端使用浏览器访问服务器PHP首页文档，检验是否成功：
+                [root@client ~]# firefox http://192.168.4.5/test1.php
+                [root@client ~]# firefox http://192.168.4.5/test2.php
+                4）LNMP常见问题
+                Nginx的默认访问日志文件为/usr/local/nginx/logs/access.log
+                Nginx的默认错误日志文件为/usr/local/nginx/logs/error.log
+                PHP默认错误日志文件为/var/log/php-fpm/www-error.log
+                如果动态网站访问失败，可用参考错误日志，查找错误信息。
+                3 案例3：地址重写
+                3.1 问题
+                
+                沿用练习二，通过调整Nginx服务端配置，实现以下目标：
+                所有访问a.html的请求，重定向到b.html;
+                所有访问192.168.4.5的请求重定向至www.tmooc.cn；
+                所有访问192.168.4.5/下面子页面，重定向至www.tmooc.cn/下相同的页面；
+                实现firefox与curl访问相同页面文件，返回不同的内容。
+                3.2 方案
+                
+                关于Nginx服务器的地址重写，主要用到的配置参数是rewrite：
+                rewrite regex replacement flag
+                rewrite 旧地址 新地址 [选项]
+                3.3 步骤
+                
+                实现此案例需要按照如下步骤进行。
+                步骤一：修改配置文件(访问a.html重定向到b.html)
+                
+                1）修改Nginx服务配置：
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                server {
+                        listen       80;
+                        server_name  localhost;
+                location / {
+                    root   html;
+                index  index.html index.htm;
+                rewrite /a.html  /b.html;            
+                }
+                }
+                [root@proxy ~]# echo "BB" > /usr/local/nginx/html/b.html
+                2）重新加载配置文件
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx  -s  reload
+                3）客户端测试
+                [root@client ~]# firefox  http://192.168.4.5/a.html
+                步骤二：访问a.html重定向到b.html（跳转地址栏）
+                
+                1）修改Nginx服务配置：
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                server {
+                        listen       80;
+                        server_name  localhost;
+                location / {
+                    root   html;
+                index  index.html index.htm;
+                rewrite /a.html  /b.html  redirect;            
+                }
+                }
+                2）重新加载配置文件
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx  -s  reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                3）客户端测试（仔细观察浏览器地址栏的变化）
+                [root@client ~]# firefox  http://192.168.4.5/a.html
+                步骤三：修改配置文件(访问192.168.4.5的请求重定向至www.tmooc.cn)
+                
+                1) 修改Nginx服务配置
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                server {
+                        listen       80;
+                        server_name  localhost;
+                rewrite ^/ http://www.tmooc.cn/;
+                location / {
+                    root   html;
+                index  index.html index.htm;
+                # rewrite /a.html  /b.html  redirect;
+                }
+                }
+                2）重新加载配置文件
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx  -s  reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                3）客户端测试（真实机测试，真实机才可以连接tmooc）
+                [root@room9pc01 ~]# firefox  http://192.168.4.5
+                步骤四：修改配置文件(访问192.168.4.5/下面子页面，重定向至www.tmooc.cn/下相同的页面)
+                
+                1) 修改Nginx服务配置
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                server {
+                        listen       80;
+                        server_name  localhost;
+                rewrite ^/(.*)$ http://www.tmooc.cn/$1;
+                location / {
+                    root   html;
+                index  index.html index.htm;
+                # rewrite /a.html  /b.html  redirect;
+                }
+                }
+                2）重新加载配置文件
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx  -s  reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                3）客户端测试（真实机测试，真实机才可以连接tmooc）
+                [root@room9pc01 ~]# firefox  http://192.168.4.5
+                [root@room9pc01 ~]# firefox  http://192.168.4.5/test
+                步骤五：修改配置文件(实现curl和火狐访问相同链接返回的页面不同)
+                1) 创建网页目录以及对应的页面文件：
+                [root@proxy ~]# echo "I am Normal page" > /usr/local/nginx/html/test.html
+                [root@proxy ~]# mkdir  -p  /usr/local/nginx/html/firefox/
+                [root@proxy ~]# echo "firefox page" > /usr/local/nginx/html/firefox/test.html
+                2) 修改Nginx服务配置
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                server {
+                        listen       80;
+                        server_name  localhost;
+                location / {
+                    root   html;
+                index  index.html index.htm;
+                }
+                #这里，~符号代表正则匹配，*符号代表不区分大小写
+                if ($http_user_agent ~* firefox) {            //识别客户端firefox浏览器
+                rewrite ^(.*)$ /firefox/$1;
+                }
+                }
+                3）重新加载配置文件
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx  -s  reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                4）客户端测试
+                [root@client ~]# firefox  http://192.168.4.5/test.html
+                [root@client ~]# curl     http://192.168.4.5/test.html
+                5）地址重写格式【总结】
+                rewrite 旧地址 新地址 [选项];
+                last 不再读其他rewrite
+                break 不再读其他语句，结束请求
+                redirect 临时重定向
+                permament 永久重定向
+                
+                
+                Top
+                NSD Operation DAY03
+                
+                案例1：Nginx反向代理
+                案例2：Nginx的TCP/UDP调度器
+                案例3：Nginx常见问题处理
+                1 案例1：Nginx反向代理
+                1.1 问题
+                
+                使用Nginx实现Web反向代理功能，实现如下功能：
+                后端Web服务器两台，可以使用httpd实现
+                Nginx采用轮询的方式调用后端Web服务器
+                两台Web服务器的权重要求设置为不同的值
+                最大失败次数为1，失败超时时间为30秒
+                1.2 方案
+                
+                使用4台RHEL7虚拟机，其中一台作为Nginx代理服务器，该服务器需要配置两块网卡，IP地址分别为192.168.4.5和192.168.2.5，两台Web服务器IP地址分别为192.168.2.100和192.168.2.200。客户端测试主机IP地址为192.168.4.100。如图-1所示。
+                
+                图-1
+                1.3 步骤
+                
+                实现此案例需要按照如下步骤进行。
+                步骤一：部署实施后端Web服务器
+                
+                1）部署后端Web1服务器
+                后端Web服务器可以简单使用yum方式安装httpd实现Web服务，为了可以看出后端服务器的不同，可以将两台后端服务器的首页文档内容设置为不同的内容。
+                [root@web1 ~]# yum  -y  install  httpd
+                [root@web1 ~]# echo "192.168.2.100" > /var/www/html/index.html
+                [root@web1 ~]# systemctl restart httpd
+                [root@web1 ~]# firewall-cmd --set-default-zone=trusted
+                [root@web1 ~]# setenforce 0
+                2）部署后端Web2服务器
+                [root@web2 ~]# yum  -y  install  httpd
+                [root@web2 ~]# echo "192.168.2.200" > /var/www/html/index.html
+                [root@web2 ~]# systemctl restart httpd
+                [root@web2 ~]# firewall-cmd --set-default-zone=trusted
+                [root@web2 ~]# setenforce 0
+                步骤二：配置Nginx服务器，添加服务器池，实现反向代理功能
+                
+                1）修改/usr/local/nginx/conf/nginx.conf配置文件
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                http {
+                .. ..
+                #使用upstream定义后端服务器集群，集群名称任意(如webserver)
+                #使用server定义集群中的具体服务器和端口
+                upstream webserver {
+                                server 192.168.2.100:80;
+                                server 192.168.2.200:80;
+                        }
+                .. ..
+                server {
+                        listen        80;
+                        server_name  localhost;
+                            location / {
+                #通过proxy_pass将用户的请求转发给webserver集群
+                            proxy_pass http://webserver;
+                        }
+                }
+                2）重启nginx服务
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                3）客户端使用浏览器访问代理服务器测试轮询效果
+                [root@client ~]# curl http://192.168.4.5            //使用该命令多次访问查看效果
+                [root@client ~]# curl http://192.168.4.5            //使用该命令多次访问查看效果
+                步骤二：配置upstream服务器集群池属性
+                
+                1）设置失败次数，超时时间，权重
+                weight可以设置后台服务器的权重，max_fails可以设置后台服务器的失败次数，fail_timeout可以设置后台服务器的失败超时时间。
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                http {
+                .. ..
+                upstream webserver {
+                                server 192.168.2.100 weight=1 max_fails=1 fail_timeout=30;
+                                server 192.168.2.200 weight=2 max_fails=2 fail_timeout=30;
+                                server 192.168.2.101 down;
+                        }
+                #weight设置服务器权重值，默认值为1
+                #max_fails设置最大失败次数
+                #fail_timeout设置失败超时时间，单位为秒
+                #down标记服务器已关机，不参与集群调度
+                .. ..
+                server {
+                        listen        80;
+                        server_name  localhost;
+                            location / {
+                            proxy_pass http://webserver;
+                        }
+                }
+                2）重启nginx服务
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                3）关闭一台后端服务器（如web1）
+                [root@web1 ~]# systemctl stop httpd
+                4）客户端使用浏览器访问代理服务器测试轮询效果
+                [root@client ~]# curl http://192.168.4.5            //使用该命令多次访问查看效果
+                5）再次启动后端服务器的httpd（如web1）
+                [root@web1 ~]# systemctl start httpd
+                6）客户端再次使用浏览器访问代理服务器测试轮询效果
+                [root@client ~]# curl http://192.168.4.5            //使用该命令多次访问查看效果
+                步骤三：配置upstream服务器集群的调度算法
+                
+                1）设置相同客户端访问相同Web服务器
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                http {
+                .. ..
+                upstream webserver {
+                #通过ip_hash设置调度规则为：相同客户端访问相同服务器
+                                 ip_hash;
+                                server 192.168.2.100 weight=1 max_fails=2 fail_timeout=10;
+                                server 192.168.2.200 weight=2 max_fails=2 fail_timeout=10;
+                        }
+                .. ..
+                server {
+                        listen        80;
+                        server_name  www.tarena.com;
+                            location / {
+                            proxy_pass http://webserver;
+                        }
+                }
+                2）重启nginx服务
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                3）客户端使用浏览器访问代理服务器测试轮询效果
+                [root@client ~]# curl http://192.168.4.5            //使用该命令多次访问查看效果
+                2 案例2：Nginx的TCP/UDP调度器
+                2.1 问题
+                
+                使用Nginx实现TCP/UDP调度器功能，实现如下功能：
+                后端SSH服务器两台
+                Nginx编译安装时需要使用--with-stream，开启ngx_stream_core_module模块
+                Nginx采用轮询的方式调用后端SSH服务器
+                2.2 方案
+                
+                使用4台RHEL7虚拟机，其中一台作为Nginx代理服务器，该服务器需要配置两块网卡，IP地址分别为192.168.4.5和192.168.2.5，两台SSH服务器IP地址分别为192.168.2.100和192.168.2.200。客户端测试主机IP地址为192.168.4.100。如图-2所示。
+                
+                图-2
+                2.3 步骤
+                
+                实现此案例需要按照如下步骤进行。
+                步骤一：部署支持4层TCP/UDP代理的Nginx服务器
+                
+                1）部署nginx服务器
+                编译安装必须要使用--with-stream参数开启4层代理模块。
+                [root@proxy ~]# yum –y install gcc pcre-devel openssl-devel        //安装依赖包
+                [root@proxy ~]# tar  -xf   nginx-1.12.2.tar.gz
+                [root@proxy ~]# cd  nginx-1.12.2
+                [root@proxy nginx-1.12.2]# ./configure   \
+                > --with-http_ssl_module                                //开启SSL加密功能
+                > --with-stream                                       //开启4层反向代理功能
+                [root@proxy nginx-1.12.2]# make && make install           //编译并安装
+                步骤二：配置Nginx服务器，添加服务器池，实现TCP/UDP反向代理功能
+                
+                1）修改/usr/local/nginx/conf/nginx.conf配置文件
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                stream {
+                            upstream backend {
+                               server 192.168.2.100:22;            //后端SSH服务器的IP和端口
+                               server 192.168.2.200:22;
+                }
+                            server {
+                                listen 12345;                    //Nginx监听的端口
+                                proxy_connect_timeout 1s;
+                                proxy_timeout 3s;
+                                 proxy_pass backend;
+                             }
+                }
+                http {
+                .. ..
+                }
+                2）重启nginx服务
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx -s reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                3）客户端使用访问代理服务器测试轮询效果
+                [root@client ~]# ssh 192.168.4.5 -p 12345            //使用该命令多次访问查看效果
+                3 案例3：Nginx常见问题处理
+                3.1 问题
+                
+                本案例要求对Nginx服务器进行适当优化，解决如下问题，以提升服务器的处理性能：
+                如果客户端访问服务器提示“Too many open files”如何解决
+                如何解决客户端访问头部信息过长的问题
+                如何让客户端浏览器缓存数据
+                如何自定义返回给客户端的404错误页面
+                如何查看服务器状态信息
+                开启gzip压缩功能，提高数据传输效率
+                开启文件缓存功能
+                然后客户机访问此Web服务器验证效果：
+                使用ab压力测试软件测试并发量
+                编写测试脚本生成长头部信息的访问请求
+                客户端访问不存在的页面，测试404错误页面是否重定向
+                3.2 步骤
+                
+                实现此案例需要按照如下步骤进行。
+                步骤一：构建Nginx服务器
+                
+                1）源码安装Nginx软件
+                [root@proxy ~]# yum -y install gcc pcre-devel openssl-devel        //安装常见依赖包
+                [root@proxy ~]# tar  -xf   nginx-1.12.2.tar.gz
+                [root@proxy ~]# cd  nginx-1.12.2
+                [root@proxy nginx-1.12.2]# ./configure   \
+                > --with-http_ssl_module                                 //开启SSL加密功能
+                > --with-stream                                        //开启TCP/UDP代理模块
+                [root@proxy nginx-1.12.2]# make && make install         //编译并安装
+                2）启用Nginx服务并查看监听端口状态
+                ss命令可以查看系统中启动的端口信息，该命令常用选项如下：
+                -a显示所有端口的信息
+                -n以数字格式显示端口号
+                -t显示TCP连接的端口
+                -u显示UDP连接的端口
+                -l显示服务正在监听的端口信息，如httpd启动后，会一直监听80端口
+                -p显示监听端口的服务名称是什么（也就是程序名称）
+                注意：在RHEL7系统中可以使用ss命令替代netstat命令，功能一样，选项一样。
+                [root@proxy ~]# /usr/local/nginx/sbin/nginx
+                [root@proxy ~]# netstat  -anptu  |  grep nginx
+                tcp        0        0 0.0.0.0:80        0.0.0.0:*        LISTEN        10441/nginx
+                [root@proxy ~]# ss  -anptu  |  grep nginx
+                步骤二：优化Nginx并发量
+                
+                1）优化前使用ab高并发测试
+                [root@proxy ~]# ab -n 2000 -c 2000 http://192.168.4.5/
+                Benchmarking 192.168.4.5 (be patient)
+                socket: Too many open files (24)                //提示打开文件数量过多
+                2）修改Nginx配置文件，增加并发量
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                worker_processes  2;                    //与CPU核心数量一致
+                events {
+                worker_connections 65535;        //每个worker最大并发连接数
+                use epoll;
+                }
+                .. ..
+                [root@proxy ~]# nginx -s reload
+                3）优化Linux内核参数（最大文件数量）
+                [root@proxy ~]# ulimit -a                        //查看所有属性值
+                [root@proxy ~]# ulimit -Hn 100000                //设置硬限制（临时规则）
+                [root@proxy ~]# ulimit -Sn 100000                //设置软限制（临时规则）
+                [root@proxy ~]# vim /etc/security/limits.conf
+                    .. ..
+                *               soft    nofile            100000
+                *               hard    nofile            100000
+                #该配置文件分4列，分别如下：
+                #用户或组    硬限制或软限制    需要限制的项目   限制的值
+                4）优化后测试服务器并发量（因为客户端没调内核参数，所以在proxy测试）
+                [root@proxy ~]# ab -n 2000 -c 2000 http://192.168.4.5/
+                步骤三：优化Nginx数据包头缓存
+                
+                1）优化前，使用脚本测试长头部请求是否能获得响应
+                [root@proxy ~]# cat lnmp_soft/buffer.sh 
+                #!/bin/bash
+                URL=http://192.168.4.5/index.html?
+                for i in {1..5000}
+                do
+                    URL=${URL}v$i=$i
+                done
+                curl $URL                                //经过5000次循环后，生成一个长的URL地址栏
+                [root@proxy ~]# ./buffer.sh
+                .. ..
+                <center><h1>414 Request-URI Too Large</h1></center>        //提示头部信息过大
+                2）修改Nginx配置文件，增加数据包头部缓存大小
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                http {
+                client_header_buffer_size    1k;        //默认请求包头信息的缓存    
+                large_client_header_buffers  4 4k;        //大请求包头部信息的缓存个数与容量
+                .. ..
+                }
+                [root@proxy ~]# nginx -s reload
+                3）优化后，使用脚本测试长头部请求是否能获得响应
+                [root@proxy ~]#cat cat buffer.sh 
+                #!/bin/bash
+                URL=http://192.168.4.5/index.html?
+                for i in {1..5000}
+                do
+                    URL=${URL}v$i=$i
+                done
+                curl $URL
+                [root@proxy ~]# ./buffer.sh
+                步骤四：浏览器本地缓存静态数据
+                
+                1）使用Firefox浏览器查看缓存
+                以Firefox浏览器为例，在Firefox地址栏内输入about:cache将显示Firefox浏览器的缓存信息，如图-3所示，点击List Cache Entries可以查看详细信息。
+                
+                图-3
+                2）清空firefox本地缓存数据，如图-4所示。
+                
+                
+                图-4
+                3）修改Nginx配置文件，定义对静态页面的缓存时间
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                server {
+                        listen       80;
+                        server_name  localhost;
+                        location / {
+                            root   html;
+                            index  index.html index.htm;
+                        }
+                location ~* \.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
+                expires        30d;            //定义客户端缓存时间为30天
+                }
+                }
+                [root@proxy ~]# cp /usr/share/backgrounds/day.jpg /usr/local/nginx/html
+                [root@proxy ~]# nginx -s reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                4）优化后，使用Firefox浏览器访问图片，再次查看缓存信息
+                [root@client ~]# firefox http://192.168.4.5/day.jpg
+                在Firefox地址栏内输入about:cache，查看本地缓存数据，查看是否有图片以及过期时间是否正确。
+                步骤五：自定义报错页面
+                
+                1）优化前，客户端使用浏览器访问不存在的页面，会提示404文件未找到
+                [root@client ~]# firefox http://192.168.4.5/xxxxx        //访问一个不存在的页面
+                2）修改Nginx配置文件，自定义报错页面
+                [root@proxy ~]# vim /usr/local/nginx/conf/nginx.conf
+                .. ..
+                error_page   404  /40x.html;    //自定义错误页面
+                .. ..
+                [root@proxy ~]# vim /usr/local/nginx/html/40x.html        //生成错误页面
+                Oops,No NO no page …
+                [root@proxy ~]# nginx -s reload
+                #请先确保nginx是启动状态才可以执行命令成功，否则报错,报错信息如下：
+                #[error] open() "/usr/local/nginx/logs/nginx.pid" failed (2: No such file or directory)
+                3）优化后，客户端使用浏览器访问不存在的页面，会提示自己定义的40x.html页面
+                [root@client ~]# firefox http://192.168.4.5/xxxxx        //访问一个不存在的页面
+                4）常见http状态码
+                常见http状态码可用参考表-1所示。
+                表－1 主机列表
+                
+                步骤六：如何查看服务器状态信息
+                
+                1）编译安装时使用--with-http_stub_status_module开启状态页面模块
+                [root@proxy ~]# yum -y install gcc pcre-devel openssl-devel        //安装常见依赖包
+                [root@proxy ~]# tar  -zxvf   nginx-1.12.2.tar.gz
+                [root@proxy ~]# cd  nginx-1.12.2
+                [root@proxy nginx-1.12.2]# ./configure   \
+                > --with-http_ssl_module                        //开启SSL加密功能
+                > --with-stream                                //开启TCP/UDP代理模块
+                > --with-http_stub_status_module                //开启status状态页面
+                [root@proxy nginx-1.12.2]# make && make install    //编译并安装
+                2）修改Nginx配置文件，定义状态页面
+                [root@proxy ~]# cat /usr/local/nginx/conf/nginx.conf
+                … …
+                location /status {
+                                stub_status on;
+                        }
+                … …
+                [root@proxy ~]# nginx
+                2）优化后，查看状态页面信息
+                [root@proxy ~]# curl  http://192.168.4.5/status
+                Active connections: 1 
+                server accepts handled requests
+                 10 10 3 
+                Reading: 0 Writing: 1 Waiting: 0
+                Active connections：当前活动的连接数量。
+                Accepts：已经接受客户端的连接总数量。
+                Handled：已经处理客户端的连接总数量（一般与accepts一致，除非服务器限制了连接数量）。
+                Requests：客户端发送的请求数量。
+                Reading：当前服务器正在读取客户端请求头的数量。
+                Writing：当前服务器正在写响应信息的数量。
+                Waiting：当前多少客户端在等待服务器的响应。
+                步骤七：对页面进行压缩处理
+                
+                1）修改Nginx配置文件
+                [root@proxy ~]# cat /usr/local/nginx/conf/nginx.conf
+                http {
+                .. ..
+                gzip on;                            //开启压缩
+                gzip_min_length 1000;                //小文件不压缩
+                gzip_comp_level 4;                //压缩比率
+                gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+                                                    //对特定文件压缩，类型参考mime.types
+                .. ..
+                }
+                步骤八：服务器内存缓存
+                
+                1）如果需要处理大量静态文件，可以将文件缓存在内存，下次访问会更快。
+                http { 
+                open_file_cache          max=2000  inactive=20s;
+                        open_file_cache_valid    60s;
+                        open_file_cache_min_uses 5;
+                        open_file_cache_errors   off;
+                //设置服务器最大缓存2000个文件句柄，关闭20秒内无请求的文件句柄
+                //文件句柄的有效时间是60秒，60秒后过期
+                //只有访问次数超过5次会被缓存
+                } 
+                
+                
+                
+                
+                                
+                
+           ./configure --help           => 查看安装配置项
+                	--help
+                	打印帮助信息。
+                
+                	--prefix=PATH
+                	设置软件安装目录路径。
+                
+                	--sbin-path=PATH
+                设置可执行文件安装目录路径。
+                
+                --modules-path=PATH
+                设置模块安装目录路径。
+                
+                --conf-path=PATH
+                设置配置文件安装目录路径。
+                
+                --error-log-path=PATH
+                设置错误日志文件安装目录路径。
+                
+                --pid-path=PATH
+                设置进程文件安装目录路径。
+                
+                --lock-path=PATH
+                设置NGINX锁文件安装目录路径，当NGINX运行时会自动创建该文件，用于在一台服务器上只允许运行一个NGINX服务。
+                
+                --user=USER
+                设置运行进程时所使用的系统用户，如果没有指定，则默认为nobody，就算安装时不指定，后期也可以通过修改"nginx.conf"配置文件中的"user"项修改。
+                
+                --group=GROUP
+                设置运行进程时所使用的用户组。
+                
+                --build=NAME
+                设置编译名，一个描述，没有任何其他作用。
+                
+                --builddir=DIR
+                设置编译目录，会将编译后生成的文件写入到这个目录中。
+                
+                --------------------------------------------------------------------------------
+                
+                --with-select_module
+                --without-select_module
+                启用或禁用select事件驱动模型。默认情况下在Linux2.6以上的内核版本中，Nginx支持使用Epoll高效的事件模型，我们可以在配置文件中使用"use epoll"指令开启它。
+                
+                --with-poll_module     
+                --without-poll_module                                 
+                启用或禁用poll事件驱动模型。默认情况下在Linux2.6以上的内核版本中，Nginx支持使用Epoll高效的事件模型，我们可以在配置文件中使用"use epoll"指令开启它。
+                
+                --with-threads
+                --with-file-aio
+                启用线程池功能。一般情况下主机有几核处理器在启动Nginx时就会创建几个Worker工作进程，进程创建线程处理每一个请求，当在CPU密集型计算、资源访问的环境下，很多请求都会开启对应的线程，可能会由于磁盘IO限制导致的线程处理请求时间变长，这不是我们期望看到的，我们就可以启用线程池功能，让请求排队等待处理，并且可以充分利用CPU提高处理效率。开启线程池需要AIO的支持。
+                启用异步文件IO（AIO）支持。一般用于大文件传输的场景下。
+                
+                --------------------------------------------------------------------------------
+                
+                --with-http_ssl_module
+                启用HTTP_SSL模块，用于构建HTTPS服务。默认情况下不构建此模块。
+                
+                --with-http_v2_module
+                启用HTTP_V2模块，新的HTTP协议，相比HTTP1更优更快。默认情况下不构建此模块。
+                
+                --with-http_realip_module
+                启用HTTP_Realip模块，用于修改客户端请求头中客户端IP地址值，一般用于反向代理中，将真实的客户端IP传送给后端的应用服务器。默认情况下不构建此模块。
+                
+                --with-http_addition_module
+                启用HTTP_Addition模块，用于在响应之前和之后添加文本。默认情况下不构建此模块。
+                
+                --with-http_xslt_module 
+                --with-http_xslt_module=dynamic
+                启用HTTP_Xslt模块，这个模块是一个过滤器，它可以通过XSLT模板转换成XML响应。需要ibxml2和libxslt库的支持。默认情况下不构建此模块。
+                启用HTTP_Xslt动态模块，允许在配置文件中通过"load_module"指令手动启用和禁用模块的使用。默认情况下不构建此模块。
+                
+                --with-http_image_filter_module
+                --with-http_image_filter_module=dynamic
+                启用HTTP_Image_Filter模块，这个模块是一个集成图片处理器，我们可以使用它转换JPEG、GIF、PNG和WEBP格式的图像，验证这些格式图像的有效型（是不是此格式的图像），输出JSON格式的图像信息，旋转图像，按比例缩放图像，剪切图片等。默认情况下不构建此模块。
+                启用HTTP_Image_Filter动态模块，允许在配置文件中通过"load_module"指令手动启用和禁用模块的使用。默认情况下不构建此模块。
+                
+                --with-http_geoip_module
+                --with-http_geoip_module=dynamic
+                启用HTTP_Geoip模块，这个模块用于处理不同地区的访问，当来自某一个区域的访问时将其重定向到对应的服务或者项目上，需要MaxMind GeoIP库的支持。默认情况下不构建此模块。
+                启用HTTP_Geoip动态模块，允许在配置文件中通过"load_module"指令手动启用和禁用模块的使用。默认情况下不构建此模块。
+                
+                --with-http_sub_module
+                启用HTTP_Sub模块，这个模块是一个过滤器，用于修改响应的内容，可以将一个指定的字符串替换成另一个字符串。默认情况下不构建此模块。
+                
+                --with-http_dav_module     
+                启用HTTP_DAV模块，用于通过WEBDAV协议提供WEB的文件管理功能，类似于一个WEB的文件管理器，可以对服务器的文件进行管理。默认情况下不构建此模块。
+                
+                --with-http_flv_module
+                --with-http_mp4_module
+                启用HTTP_FLV模块，用于为Flash Video（FLV）文件提供伪流视频服务端支持，开启它则允许在网页上播放FLV格式的视频。默认情况下不构建此模块。
+                启用HTTP_MP4模块，用于为MP4格式的视频文件提供伪流视频服务端支持，开启它则允许在网页上播放MP4格式的视频。默认情况下不构建此模块。
+                
+                --with-http_gunzip_module
+                --with-http_gzip_static_module
+                启用HTTP_Gunzip模块，用于为不支持"gzip"编码方式的客户端解压响应，有些浏览器不支持"gzip"编码格式的请求和响应传输，若服务器开启了内容传输压缩功能（Gzip），则需要开启此项，服务器会本地解压数据，将数据传送给浏览器客户端。默认情况下不构建此模块。
+                启用HTTP_Gzip_Static模块，用于将静态内容压缩成".gz"为文件扩展名的预压缩文件，并缓存在本地，在响应时会将此文件发送以替代普通文件，运用此模块的好处就是不需要（Gzip）每次传输时都需要对文件进行处理压缩。在用于Squid+Nginx环境下，当Nginx启用（Gzip）内容传输压缩功能时，在使用Squid3.0以前版本搭建环境时会发现，Squid返回给客户端的并不是压缩状态，这就是由于没有启用此模块导致的。默认情况下不构建此模块。
+                
+                --with-http_auth_request_module
+                启用HTTP_Auth_Request模块，此模块是一个请求验证模块，可以使用外部服务器或服务对网站的每个请求进行身份验证，当用户访问时，Nginx会向用于验证请求的外部服务器发出验证请求，若返回的状态码为200，则通过允许访问，若返回401或403，则访问会被拒绝。默认情况下不构建此模块。
+                
+                --with-http_random_index_module
+                启用HTTP_Random_Index模块，随机主页模块，当用户访问时，随机响应一个主页，而并非由"index"指令定义的一个主页，而是从主页池中随机选中一个主页面返回。默认情况下不构建此模块。
+                
+                --with-http_secure_link_module
+                启用HTTP_Secure_Link模块，防盗链模块，用于检查请求链接的权限以及是否过期，多用于文件下载防盗链。默认情况下不构建此模块。
+                
+                --with-http_degradation_module
+                启用HTTP_Degradation模块，用于当主机剩余内存较低时，用户请求访问，Nginx会对某些"location"的请求返回204或444的响应码。默认情况下不构建此模块。
+                
+                --with-http_slice_module
+                启用HTTP_Slice模块，此模块是一个过滤器，用于将一个大的完整的文件分割成多个小块文件，分段传送给用户，一般用于大文件传输的场景下，使用它可以让用户快速的得到响应。默认情况下不构建此模块。
+                
+                --with-http_stub_status_module
+                启用HTTP_Stub_Status模块，状态信息统计模块，用于返回一个Nginx状态信息统计信息页面，管理员访问这个页面可以获取Nginx的请求处理、当前连接、等待连接等统计信息，一般用于监控Nginx的运行状态。默认情况下不构建此模块。
+                
+                --------------------------------------------------------------------------------
+                
+                --without-http_charset_module
+                禁用HTTP_Charset模块，此模块用于将指定的字符集添加到"Content-Type"响应头字段中。此外此模块还可以将数据从一个字符集转换为另一个字符集，此模块用于字符集设置。不建议禁用。
+                
+                --without-http_gzip_module
+                禁用HTTP_Gzip模块，此模块用于HTTP响应内容传输压缩，可以将响应内存在传输时将其压缩成Gzip编码格式的响应传送给客户端，使用Gzip编码格式响应内容体积会变小，会提高传输效率。不建议禁用。
+                
+                --without-http_ssi_module
+                禁用HTTP_SSI模块，此模块是一个过滤器，用于处理通过它响应中的SSI（Server Side Includes）命令。目前支持的SSI命令列表并不完整，SSI指令是一种可以嵌入WEB页面的一种语法指令。
+                
+                --without-http_userid_module
+                禁用HTTP_Userid模块，此模块用于识别客户端的Cookie。可以使用嵌入变量"$uid_got"和"$uid_set"记录已接受和设置的Cookie。
+                
+                --without-http_access_module
+                禁用HTTP_Access模块，此模块用于限制对某些客户端地址的访问，Allow or Deny。不建议禁用。
+                
+                --without-http_auth_basic_module
+                禁用HTTP_Auth_Basic模块，该模块用于HTTP基本身份验证，使用用户名和密码来限制对资源的访问。
+                
+                --without-http_mirror_module
+                禁用HTTP_Mirror模块，该模块用于将正式环境的流量拷贝到镜像（测试）环境下，一般用于测试环境引入真实环境的流量实现对测试环境的压力测试。
+                
+                --without-http_autoindex_module
+                禁用HTTP_Autoindex模块，该模块用于在处理以斜杠字符（'/'）结尾的请求，并在找不到索引文件的情况下生成目录列表。
+                
+                --without-http_geo_module
+                禁用HTTP_Geo模块，该模块用于从指定变量中获取客户端的IP地址，并将其嵌入到另外一个变量中。默认情况下从"$remote_addr"变量中取得客户端的IP地址。我们可以通过它结合"HTTP_Upstream"实现对来源客户端的负载均衡，当来自不同的客户端请求时，将其负载均衡给后端的不同的服务器处理；还可以使用它结合"HTTP_Map"+"HTTP_Limit_Conn"模块实现对来源客户端的限速功能。
+                
+                --without-http_map_module
+                禁用HTTP_Map模块，该模块用于创建一个变量的映射表，结果变量可以是一个字符串也可以是另外一个变量。
+                
+                --without-http_split_clients_module
+                禁用HTTP_Splic_Clients模块，该模块用于创建适用于A/B测试的变量，AB测试也称之为拆分测试，也就是将一个项目的两个不同版本发布，看用户更喜欢用于那个版本，若版本A受欢迎则发布版本A。
+                
+                --without-http_referer_module
+                禁用HTTP_Referer模块，该模块用于防盗链，用于阻止对请求头部"referer"字段具有无效值的请求访问，可以设置一个白名单，非白名单的无效来源网址的连接则会拒绝请求，使用此模块我们还需考虑到，即使对于有效的请求，常规浏览器也可能不发送"referer"字段。不建议禁用。
+                
+                --without-http_rewrite_module
+                禁用HTTP_Rewerte模块，该模块用于地址重写，用于将来源请求地址重定向到指定的地址上，可以保护真实的地址，增加安全性，该模块需要PCRE库的支持。不建议禁用。
+                
+                --without-http_proxy_module
+                --without-http_fastcgi_module
+                --without-http_uwsgi_module
+                --without-http_scgi_module
+                --without-http_grpc_module
+                禁用HTTP_Proxy模块，该模块用于将请求代理传递到另外一台WEB服务器去处理，Nginx的核心模块。不建议禁用。
+                禁用HTTP_FastCGI模块，该模块用于将请求代理传递到另外一台FastCGI服务器去处理，一般用于反代PHP。不建议禁用。
+                禁用HTTP_UwSGI模块，该模块用于将请求代理传递给另外一台UwSGI服务器去处理。
+                禁用HTTP_SCGI模块，该模块用于将请求代理传递给另外一台SCGI服务器去处理。
+                禁用HTTP_Grpc模块，该模块用于将请求代理传递给另外一台Grpc服务器去处理。
+                
+                --without-http_memcached_module
+                禁用HTTP_Memcached模块，该模块用于Nginx从Memcached服务器获取响应内容。一般用于Nginx+后端服务器+Memcached的环境下，当用户第一请求时，Nginx去Memcached中读取缓存数据，若没有则就请求后端的服务器去处理，后端服务器将静态页面的数据写入到Memcached缓存服务器中并返回响应给Nginx传递给用户，当用户第二次请求时则Nginx直接从Memcached缓存服务器中获取缓存的静态页面内容，Memcached缓存服务器是基于内存的，所以可以减少磁盘IO的使用，提高响应效率。
+                
+                --without-http_limit_conn_module
+                禁用HTTP_Limit_Conn模块，该模块用于限制并发连接数量以及下载带宽限制。
+                
+                --without-http_limit_req_module
+                禁用HTTP_Limit_Req模块，该模块用于限制请求数量，可以限制请求的频率。
+                
+                --without-http_empty_gif_module
+                禁用HTTP_Empty_Gif模块，该模块会在内容中常驻的一个1X1的透明空白的GIF图像，当用户请求时，返回该图像，一般用于测试。
+                
+                --without-http_browser_module
+                禁用HTTP_Browser模块，该模块用于创建变量，变量的值取决于请求头中"user-agent"的值，一般用于区别新式或者旧式浏览器，若新式浏览器则将请求重定向到新式的WEB页面中，呈现新页面，若为旧式浏览器则将返回旧式的WEB页面。
+                
+                --without-http_upstream_hash_module
+                --without-http_upstream_ip_hash_module
+                --without-http_upstream_least_conn_module
+                禁用HTTP_Upstream_Hash模块，该模块提供了由"Upstream"指令定义的一组服务器的负载均衡方法"Hash"，该方法基于散列键值（hash），它会将客户端+服务端的映射关系存放到一个散列键值表中，当客户端第二次请求时则会匹配关系将请求转发至后端的同一台服务器上，实现会话保持功能。该模块提供指令"hash",在会话保持中，我们唯一能标识客户端的标志就是SessionID，所以我们可以使用指令"hash $cookie_jsession"实现会话保持功能。不建议禁用。
+                禁用HTTP_Upstream_IP_Hash模块，该模块提供了由"Upstream"指令定义的一组服务器的负载均衡方法"ip_hash"，该方法也用于会话保持，不过它是基于客户端IP的Hash方法，由于用户可能是ADSL接入的网络，所以客户端可能受动态IP影响会发生变化，所以一般不建议采用这种方法。
+                禁用HTTP_Upstream_Least_Conn模块，该模块提供了由"Upstream"指令定义的一组服务器的负载均衡方法"least_conn"，该方法用于将请求传递到具有最少活动连接、权重较高（性能最好）的后端服务器上去处理。
+                
+                --without-http_upstream_keepalive_module
+                禁用HTTP_Upstream_Keepalive模块，该模块可以为由"Upstream"指令定义的一组服务器提供保持长连接的功能，使用它则会为每个Worker工作进程与后端服务器保持空闲的长连接，连接数由"keepalive"指令指定，当空闲的长连接数量超过指定值时，将关闭最近最少使用的连接。
+                
+                --without-http_upstream_zone_module
+                禁用HTTP_Upstream_Zone模块，该模块可以将由"Upstream"指令定义的服务器组运行时的状态存储在共享内存区域中。
+                
+                --------------------------------------------------------------------------------
+                
+                --with-http_perl_module
+                --with-http_perl_module=dynamic
+                启用HTTP_Perl模块，用于在Perl中实现位置和变量处理程序，并可以将Perl调用到SSI中。默认情况下不构建此模块。
+                启用HTTP_Perl动态模块，允许在配置文件中通过"load_module"指定手动启用和禁用模块的使用。默认情况下不构建此模块。
+                
+                --with-perl_modules_path=PATH
+                设置一个用于保留Perl模块的目录路径。
+                
+                --with-perl=PATH
+                设置Perl可执行命令文件的路径。
+                
+                --------------------------------------------------------------------------------
+                
+                --http-log-path=PATH
+                设置访问日志文件存放目录路径。安装后，可以在主配置文件中使用"access_log"指令修改。
+                
+                --http-client-body-temp-path=PATH
+                设置用于存储客户端请求主体的临时文件存放目录路径。安装后，可以在主配置文件中使用"client_body_temp_path"指令修改。
+                
+                --http-proxy-temp-path=PATH
+                设置用于存储从代理服务器接受的数据临时文件存放目录路径。安装后，可以在主配置文件中使用"proxy_temp_path"指令修改。
+                
+                --http-fastcgi-temp-path=PATH
+                设置用于存储从FastCGI服务器接受的数据临时文件存放目录路径。安装后，可以在主配置文件中使用"fastcgi_temp_path"指令修改。
+                
+                --http-uwsgi-temp-path=PATH
+                设置用于存储从UwSGI服务器接受的数据临时文件存放目录路径。安装后，可以在主配置文件中使用"uwsgi_temp_path"指令修改。
+                
+                --http-scgi-temp-path=PATH
+                设置用于存储从SCGI服务器接受的数据临时文件存放目录路径。安装后，可以在主配置文件中使用"scgi_temp_path"指令修改。
+                
+                --------------------------------------------------------------------------------
+                
+                --without-http
+                禁用HTTP_Core模块，该模块为Nginx的核心模块，用于提供HTTP服务所有核心功能。
+                
+                --without-http-cache
+                禁用HTTP缓存。
+                
+                --------------------------------------------------------------------------------
+                
+                --with-mail
+                --with-mail=dynamic
+                启用HTTP_Mail_Core模块，该模块为Nginx的核心模块，用于提供POP3/IMAP4/SMTP邮件代理服务。默认情况下不构建此模块。
+                启用HTTP_Mail_Core动态模块，允许在配置文件中通过"load_module"指令手动启用和禁用模块的使用。默认情况下不构建此模块。
+                
+                --with-mail_ssl_module
+                启用Mail_SSL模块，用于邮件代理服务支持SSL/TLS协议，需要OpenSSL库的支持。默认情况下不构建此模块。
+                
+                --without-mail_pop3_module
+                禁用Mail_POP3模块，当启用HTTP_Mail_Core模块时，若你不想使用POP3协议，则可以考虑单独禁用此模块。不建议禁用。
+                
+                --without-mail_imap_module
+                禁用Mail_IMAP模块，当启用HTTP_Mail_Core模块时，若你不想使用IMAP4协议，则可以考虑单独禁用此模块。不建议禁用。
+                
+                --without-mail_smtp_module
+                禁用Mail_SMTP模块，当启用HTTP_Mail_Core模块时，若你不想使用SMTP协议，则可以考虑单独禁用此模块。不建议禁用。
+                
+                --------------------------------------------------------------------------------
+                
+                --with-stream
+                --with-stream=dynamic 
+                启用Stream_Core模块，Nginx的核心模块，用于实现TCP/UDP代理和四层负载均衡功能。默认情况下不构建此模块。此模块自Nginx1.9.0版本开始可用。
+                启用Stream_Core动态模块，允许在配置文件中通过"load_module"指令手动启用和禁用模块的使用。默认情况下不构建此模块。
+                
+                --with-stream_ssl_module
+                启用Stream_SSL模块，用于提供SSL/TLS协议支持，需要OpenSSL库的支持。该模块用于Nginx四层负载功能中使用，需要开启Stream_Core模块。默认情况下不构建此模块。
+                
+                --with-stream_realip_module
+                启用Stream_Realip模块，用于修改客户端请求头中客户端IP地址值，一般用于反向代理中，将真实的客户端IP传送给后端的应用服务器。该模块用于Nginx四层负载功能中使用，需要开启Stream_Core模块。默认情况下不构建此模块。
+                
+                --with-stream_geoip_module
+                --with-stream_geoip_module=dynamic
+                启用Stream_Geoip模块，用于处理不同地区的访问，当来自某一个区域的访问时将其重定向到对应的服务或者项目上，需要MaxMind GeoIP库的支持。该模块用于Nginx四层负载功能中使用，需要开启Stream_Core模块。默认情况下不构建此模块。
+                启用Stream_Geoip动态模块，允许在配置文件中通过"load_module"指令手动启用和禁用模块的使用。默认情况下不构建此模块。
+                
+                --with-stream_ssl_preread_module
+                启用Stream_SSL_Preread模块，用于从客户端Hello消息中提取信息，而不会终止SSL/TLS。该模块用于Nginx四层负载功能中使用，需要开启Stream_Core模块。默认情况下不构建此模块。
+                
+                --without-stream_limit_conn_module
+                禁用Stream_Limit_Conn模块，该模块用于限制并发连接数量以及下载带宽限制功能。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。不建议禁用。
+                
+                --without-stream_access_module
+                禁用Stream_Access模块，该模块用于限制对某些客户端地址的访问。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。不建议禁用。
+                
+                --without-stream_geo_module
+                禁用Stream_Geo模块，该模块用于从指定变量中获取客户端的IP地址，并将其嵌入到另外一个变量中。默认情况下从"$remote_addr"变量中取得客户端的IP地址。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。不建议禁用。
+                
+                --without-stream_map_module
+                禁用Stream_Map模块，该模块用于创建一个变量的映射表，结果变量可以是一个字符串也可以是另外一个变量。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。不建议禁用。
+                
+                --without-stream_split_clients_module
+                禁用Stream_Splic_Clients模块，该模块用于创建适用于A/B测试的变量，AB测试也称之为拆分测试，也就是将一个项目的两个不同版本发布，看用户更喜欢用于那个版本，若版本A受欢迎则发布版本A。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。
+                
+                --without-stream_return_module
+                禁用Stream_Return模块，该模块用于向客户端发送指定值，然后关闭连接。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。不建议禁用。
+                
+                --without-stream_upstream_hash_module
+                --without-stream_upstream_least_conn_module
+                禁用Stream_Upstream_Hash模块，该模块提供四层负载均衡的一种调度方法，一般用于基于SessionID的会话保持场景下，当开启Stream_Core模块时自动开启此功能。不建议禁用。
+                禁用Stream_Upstream_IP_Hash模块，该模块提供四层负载均衡的一种调度方法，基于来源IP的会话保持方法，由于来源IP的不稳定性，我们一般很少采用此种方法。当开启Stream_Core模块时自动开启此功能。
+                
+                --without-stream_upstream_zone_module
+                禁用Stream_Upstream_Zone模块，该模块可以将由"Upstream"指令定义的服务器组运行时的状态存储在共享内存区域中。该模块用于Nginx四层负载功能中使用，当开启Stream_Core模块时自动开启此功能。
+                
+                --------------------------------------------------------------------------------
+                
+                --with-google_perftools_module
+                启用Google_Perftools模块，用于可以使用Google Performance Tools分析Nginx的工作进程，分析程序性能瓶颈。该模块适用于Nginx开发人员，默认情况下不构建此模块。
+                
+                --with-cpp_test_module
+                启用Cpp_Test模块，用于C++测试。该模块适用于Nginx开发人员，默认情况下不构建此模块。
+                
+                --add-module=PATH
+                --add-dynamic-module=PATH
+                添加第三方模块，需要指定第三方模块所在目录路径。
+                添加第三方动态模块，需要指定第三方动态模块所在目录路径。
+                
+                --with-compat
+                启用动态模块兼容性。
+                
+                --with-cc=PATH
+                设置GCC编译器所在目录路径。
+                
+                --with-cpp=PATH
+                设置GCC-C++编译器所在目录路径。
+                
+                --with-cc-opt=OPTIONS
+                设置将添加到CFLAGS变量的其他参数，若在FreeBSD系统下使用PCRE库时，应指定"--with-ccc-opt="-I /usr/local/include""。若你在使用select事件驱动模型时，还可以使用它设置可打开的最大文件描述符数量，突破1024的限制，比如"--with-ccc-opt="-D FD_SETSIZE=2048""
+                
+                --with-ld-opt=OPTIONS
+                设置将在连接期间使用的其他参数，若在FreeBSD系统下使用PCRE库时，应指定"--with-ccc-opt="-L /usr/local/lib""。
+                
+                --with-cpu-opt=CPU
+                设置CPU型号，为特定的CPU执行编译操作，有效的值：pentium, pentiumpro, pentium3, pentium4, athlon, opteron, sparc32, sparc64,ppc64。
+                
+                --without-pcre
+                禁用PCRE库的使用。
+                
+                --with-pcre
+                启用PCRE库的使用。PCRE库是一个Perl库，包含Perl兼容的正则表达式。
+                
+                --with-pcre=DIR
+                若你是源码安装的PCRE库，则需要通过此项设置PCRE库的所在目录路径。
+                
+                --with-pcre-opt=OPTIONS
+                为PCRE设置其他要编译的选项。
+                
+                --with-pcre-jit
+                启用"即时编译"的支持，开启此项，则会利用"pcre_jit"指令快速编译PCRE库。
+                
+                --with-zlib=DIR
+                若你是源码安装的Zlib库，则需要通过此项设置Zlib库的所在目录路径。当启用HTTP_Gzip模块的时候需要此库的支持。
+                
+                --with-zlib-opt=OPTIONS
+                为Zlib设置其他要编译的选项。
+                
+                --with-zlib-asm=CPU
+                为Zlib库的编译设置特定CPU，会加快编译速度，有效值：pentium, pentiumpro。
+                
+                --with-libatomic
+                启用Libatomic_Ops库的使用。
+                
+                --with-libatomic=DIR
+                若你是源码安装的Libatomic_Ops库，则需要通过此项设置Libatomic_Ops库的所在目录路径。
+                
+                --with-openssl=DIR
+                若你是源码安装的OpenSSL库，则需要通过此项设置OpenSSL库的所在目录路径。
+                
+                --with-openssl-opt=OPTIONS
+                为OpenSSL设置其他要编译的选项。
+                
+                --with-debug
+                启用调试级别的日志。也可以手动修改主配置文件，使用"error_log /path/to/log debug;"指令设置调试级别的日志。
+                ©著作权归作者所有：来自51CTO博客作者乘_风的原创作品，如需转载，请注明出处，否则将追究法律责任
+                LinuxNginxWEB系统运维（服务应用）
+                
+                
+                
+                Active connections: 对后端发起的活动连接数.
+                Server accepts handled requests: Nginx总共处理了38810620个连接,成功创建38810620次握手(证明中间没有失败的),总共处理了298655730个请求.
+                Reading: Nginx 读取到客户端的Header信息数.
+                Writing: Nginx 返回给客户端的Header信息数.
+                Waiting: 开启keep-alive的情况下,这个值等于 active – (reading + writing),意思就是Nginx已经处理完成,正在等候下一次请求指令的驻留连接.
+                所以,在访问效率高,请求很快被处理完毕的情况下,Waiting数比较多是正常的.如果reading +writing数较多,则说明并发访问量非常大,正在处理过程中.
+                
+                每天一个linux命令(44)--ss命令
+                　　ss 是 socket statistics 的缩写。顾名思义，ss 命令可以用来获取socket 统计信息，它可以显示和netstat 类似的内容。但 ss 的优势在于它能够显示更多更详细的有关TCP和连接状态的信息，而且比netstat更快速更高效。
+                
+                　　当服务器的socket连接数量变得非常大时，无论是使用netstat命令还是 cat  /proc/net/tcp，执行速度都会很慢。可能你不会有切身的感受，但请相信我，当服务器维持的连接达到上万个的时候，使用 netstat 等于浪费生命，而用 ss才是 节省时间。
+                
+                　　天下武功唯快不破。ss快的秘诀在于，他利用了TCP协议栈中 tcp_diag.   tcp_diag 是一个用于分析统计的模块，可以获得Linux 内核中第一手的信息，这就确保了ss的快捷高效。当然，如果你的系统中没有 tcp_diag,ss也可以正常运行，只是效率会变得稍慢。（但仍然比  netstat 要快。）
+                
+                　　1.命令格式：
+                
+                　　　　ss [参数]
+                
+                　　　　ss [参数] [过滤]
+                
+                　　2.命令功能：
+                
+                　　　　ss（socket statistics 缩写），该命令可以用来获取  socket 的统计信息，此命令输出的结果类似于 netstat 输出的内容，但它能显示更多更详细的 TCP 连接状态的信息，且比 netstat 更快速高效。它使用了 TCP 协议栈中 tcp_diag（是一个用于分析统计的模块），能直接从获得第一手内核信息，这就使得 ss 命令快捷高效。在没有 tcp_diag,ss 也可以正常运行。
+                
+                　　3.命令参数：
+                
+                　　-n　　--numeric不解析服务名称
+                
+                　　-r　　--resolve　解析主机名
+                
+                　　-l　　--listening 显示监听状态的套接字（sockets）
+                
+                　　-a　　--all显示所有套接字
+                
+                　　-o　　--options　　显示计时器信息
+                
+                　　-e　　--extended　　显示详细的套接字（socket）的内存使用情况
+                
+                　　-p　　--processed　　显示使用套接字的进程
+                
+                　　-i　　--info 　　显示 tcp 内部信息
+                
+                　　-s　　--summary　　显示套接字（socket）使用概况
+                
+                　　-4　　--IPv4　　仅显示 IPv4的套接字
+                
+                　　-6
+                
+                　　-0（零）　　--packet　　显示 PACKET 套接字
+                
+                　　-t　　--tcp　　仅显示 TCP 套接字
+                
+                　　-u　　--udp　　仅显示  UDP套接字
+                
+                　　-d　　--dccp　　仅显示 DCCP 套接字
+                
+                　　-w　　--raw　　仅显示  RAW 套接字
+                
+                　　-x　　--Unix  仅显示 Unix 套接字
+                
+                　　-f　　--family=FAMILY　　显示 FAMILY 类型的套接字，FAMILY可选  Unix， inet, inet6, link ,  netlink　　
+                
+                　　-A　　--query=QUERY, --socket=QUERY
+                
+                　　　　　　　　QUERY  :=  {all| inet| tcp| udp | raw | unix | packet | netlink } [QUERY]
+                
+                　　-D　　--diag=FILE　　将原始TCP 套接字信息转储到文件
+                
+                　　-F　　--filter=FILE　　从文件中都去过滤信息
+                
+                　　　　　　　　FLITER　　　　:=  [ state  TCP-STATE ] [ EXPRESSION ]
+                
+                　　4使用实例：
+                
+                　　实例1：显示TCP连接
+                
+                　　命令：ss　　-t    -a
+                
+                　　实例2：显示 sockets  摘要
+                
+                　　命令：　　ss   -s
+                
+                　　　　列出当前的established、 closed、 orphaned  and  waiting  TCP sockets
+                
+                　　实例3：
+                
+                　　　　ss  -l
+                
+                　　实例4:查看进程使用的socket
+                
+                　　命令：
+                
+                　　　　ss  -pl
+                
+                　　实例5：找出打开套接字/端口应用程序
+                
+                　　命令：
+                
+                　　　　ss  -lp  |  grep  3306
+                
+                　　实例6：显示所有UDP  sockets
+                
+                　　命令：
+                
+                　　　　ss   -u  -a
+                
+                　　实例7：显示所有状态为 established  的 SMTP 连接
+                
+                　　命令：
+                
+                　　　　ss  -o　　state  established  `(  dport  =: smtp  or  sport  = : smtp )`
+                
+                　　实例8：显示所有状态为 Established 的 HTTP 连接
+                
+                　　命令：
+                
+                　　　　ss  -o  state  established  `(dport  =  :http  or  sport  =  :http)`　　
+                
+                　　实例9：列举出处于  FIN-WAIT-1 状态的源端口为   80 或者  443， 目标网络为  192.168.1 /24 的所有 tcp 套接字
+                
+                　　命令：　　
+                
+                　　　　ss  -o  state  fin-wait-1  `( sport  =  :http  or  sport  =  :https)`  dst  192.168.1/24
+                
+                　　实例10：用TCP 状态过滤 sockets：
+                
+                　　命令：
+                
+                　　　　ss  -4  state  FILTER-NAME-HERE
+                
+                　　　　ss  -6　state  FILTER-NAME-HERE
+                
+                　　FILTER-NAME-HERE 可以代表以下任何一个
+                
+                　　established
+                
+                　　syn-sent
+                
+                　　syn-recv
+                
+                　　fin-wait-1
+                
+                　　fin-wait-2
+                
+                　　time-wait
+                
+                　　closed
+                
+                　　close-wait
+                
+                　　last-ack
+                
+                　　listen
+                
+                　　closing
+                
+                　　all  所有以上状态
+                
+                　　connected   除了listen and closed 的所有状态
+                
+                　　synchronized 　　所有已连接的状态除了  syn-sent
+                
+                　　bucket　　显示状态为 maintained  as  minisockets, 如 time-wait 和 syn-recv.
+                
+                　　big　　和bucket 相反
+                
+                　　实例11：匹配远程地址和端口号
+                
+                　　命令：
+                
+                　　　　ss  dst  ADDERSS_PATTERN
+                
+                　　　　ss  dst  192.168.1.1
+                
+                　　　　ss　dst　192.168.1.1:8080
+                
+                　　实例12：匹配本地地址和端口号
+                
+                　　命令：　
+                
+                　　　　ss　　src  ADDRESS_PATTERN
+                
+                　　　　ss　　src　192.168.1.1
+                
+                　　　　ss　　src   192.168.1.1:80
+                
+                　　实例13：将本地或者远程端口和一个数比较　　
+                
+                　　命令：
+                
+                　　　　ss　　dport　　OP　　PORT　　远程端口和一个数比较； destination  port
+                
+                　　　　ss　　sport　　OP　　PORT　　本地端口和一个数比较；　source   port
+                
+                　　　　OP--OPTION：
+                
+                　　　　<=  or  le,　　>= or ge,　　==  or eq,
+                
+                　　　　!=  or  ne　　<  or gt  　　>   or   lt
+                
+                　　实例14： ss  和  netstat 效率对比
+                
+                　　命令：
+                
+                　　　　　time  netstat  -at
+                
+                　　　　　time  ss
+                
+                　　用 time 命令分别获取通过netstat 和 ss 命令获取程序占用资源所使用的时间。在服务器连接数比较多的时候，netstat 的效率完全没法和 ss 比。
+                
+                　　
+                
+                 Linux 命令--SS
+                2016年04月14日 19:24:42 阅读数：4923 标签： socket yum ipv4  更多
+                个人分类： 常用网络命令
+                ss是Socket Statistics的缩写。
+                
+                顾名思义，ss命令可以用来获取socket统计信息，它可以显示和netstat类似的内容。但ss的优势在于它能够显示更多更详细的有关TCP和连接状态的信息，而且比netstat更快速更高效。
+                
+                【和netstat说再见的原因】
+                
+                当服务器的socket连接数量变得非常大时，无论是使用netstat命令还是直接cat /proc/net/tcp，执行速度都会很慢。可能你不会有切身的感受，但请相信我，当服务器维持的连接达到上万个的时候，使用netstat等于浪费 生命，而用ss才是节省时间。
+                
+                天下武功唯快不破。ss快的秘诀在于，它利用到了TCP协议栈中tcp_diag。tcp_diag是一个用于分析统计的模块，可以获得Linux 内核中第一手的信息，这就确保了ss的快捷高效。当然，如果你的系统中没有tcp_diag，ss也可以正常运行，只是效率会变得稍慢。（但仍然比 netstat要快。）
+                
+                【用数据说话】
+                
+                为了让你更坚决的和netstat说再见，列举一些测试数据，以便证明ss的确名不虚传。
+                
+                当服务器维持3万个socket连接，Admin需要计算具体的连接数量时，不同情况的耗时如下：
+                
+                netstat -at | wc  耗时 15.60 秒
+                ss -atr     | wc  耗时  5.40 秒（未利用tcp_diag）
+                ss -atr     | wc  耗时  0.47 秒（利用tcp_diag）
+                【好马配上好鞍】
+                
+                几乎所有的Linux系统都会默认包含netstat命令，但并非所有系统都会默认包含ss命令。netstat命令是net-tools工具集中的一员：
+                
+                #rpm -q net-tools
+                net-tools-1.60-109.el6.i686
+                而ss命令是iproute工具集中的一员：
+                
+                #rpm -qf /usr/sbin/ss
+                iproute-2.6.32-17.el6.i686
+                #rpm -q iproute
+                iproute-2.6.32-17.el6.i686
+                如果你无法使用ss命令，那么可能是缺少了iproute，需要安装一下：
+                
+                yum install iproute iproute-doc
+                【前浪net-tools和后浪iproute】
+                
+                net-tools是一套标准的Unix网络工具，用于配置网络接口、设置路由表信息、管理ARP表、显示和统计各类网络信息等等，但是遗憾的是，这个工具自2001年起便不再更新和维护了。
+                
+                长江后浪推荐前浪。
+                
+                即将隆重登场的便是iproute，这是一套可以支持IPv4/IPv6网络的用于管理TCP/UDP/IP网络的工具集，这套工具由Stephen Hemminger负责维护和升级，目前的大版本号是2。我们来认识一下Stephen：
+                
+                
+                
+                从某种意义上说，iproute工具集几乎可以替代掉net-tools工具集，具体的替代方案是这样的：
+                
+                用途	net-tool（被淘汰）	iproute2
+                地址和链路配置	ifconfig	ip addr, ip link
+                路由表	route	ip route
+                邻居	arp	ip neigh
+                VLAN	vconfig	ip link
+                隧道	iptunnel	ip tunnel
+                组播	ipmaddr	ip maddr
+                统计	netstat	ss
+                【版本和帮助】
+                
+                想获得ss命令的帮助信息和版本信息，都非常简单，你应该可以猜到的：
+                
+                #ss -h //获得帮助信息，直接man ss会更全面
+                #ss -V //取得版本号，-v也支持
+                ss utility, iproute2-ss091226
+                【ss选项统计】
+                
+                ss的选项既不多也不复杂，除去非功能性选项（-h/-v）外，ss共有22个选项。
+                
+                每一个选项都是既支持短选项（如-s），也支持长选项（如–summary）。
+                
+                我们不会在这里一一介绍，因为这样既枯燥又乏味，而且不出三分钟，你就会昏昏欲睡了。所以，我们会从实际需求和实际问题出发，这样效果会好些。
+                
+                【场景一：我想查看当前服务器的网络连接统计】
+                
+                $ ss -s
+                Total: 295 (kernel 312)
+                TCP:   48 (estab 1, closed 31, orphaned 0, synrecv 0, timewait 0/0), ports 13
+                
+                Transport Total     IP        IPv6
+                *         312       -         -
+                RAW       0         0         0
+                UDP       2         2         0
+                TCP       17        12        5
+                INET      19        14        5
+                FRAG      0         0         0
+                在服务器产生大量sockets连接时，我们会使用这个命令在做宏观统计。
+                
+                【场景二：我想查看所有打开的网络端口】
+                
+                $ ss -l
+                Recv-Q Send-Q           Local Address:Port               Peer Address:Port
+                0      128                         :::webcache                      :::*
+                0      128                         :::http                         :::*
+                0      128                         :::snapenetio                      :::*
+                0      128                          *:snapenetio                       *:*
+                0      50                           *:8531                          *:*
+                0      9                           :::ftp                          :::*
+                0      9                            *:ftp                           *:*
+                0      128                          *:ddi-tcp-1                       *:*
+                0      100                        ::1:smtp                         :::*
+                0      100                  127.0.0.1:smtp                          *:*
+                0      128                          *:8541                          *:*
+                0      128                  127.0.0.1:entextxid                       *:*
+                0      50                           *:12421                         *:*
+                0      10                           *:amqp                          *:*
+                0      128                          *:12521                         *:*
+                0      50                           *:mysql                         *:*
+                如果使用-pl参数的话，则会列出具体的程序名称。你会在输出中看到类似于这样的内容：
+                
+                ("nginx",15786,6)
+                从中可以知道，某个socket连接是属于nginx程序的，nginx程序的PID是15786。
+                
+                【场景三：我想查看这台服务器上所有的socket连接】
+                
+                很简单，直接使用-a选项即可列出所有网络连接。
+                
+                #ss -a
+                如果只想查看TCP sockets，那么使用-ta选项；
+                如果只想查看UDP sockets，那么使用-ua选项；
+                如果只想查看RAW sockets，那么使用-wa选项；
+                如果只想查看UNIX sockets，那么使用-xa选项。
+                
+                【参考文献】
+                
+                1 http://en.wikipedia.org/wiki/Iproute2
+                2 http://en.wikipedia.org/wiki/Netstat
+                3 http://www.cyberciti.biz/files/ss.html
+                4 http://it.toolbox.com/blogs/locutus/what-is-this-ss-program-thingy-14083
+                5 http://www.cyberciti.biz/tips/linux-investigate-sockets-network-connections.html
+                6 http://www.policyrouting.org/iproute2.doc.html
+                
+                
+                
+                
+                  
+                Logo
+                首页
+                文章
+                关注
+                订阅专栏
+                专家
+                网站导航
+                注册
+                登录
+                手机阅读
+                搜索
+                写文章
+                
+                转载
+                tcpsyncookies----常见内核参数的修改
+                linanx0人评论125人阅读2018-06-29 19:19:30
+                *tcpsyncookies
+                
+                是一个开关，是否打开SYN Cookie功能，该功能可以防止部分SYN×××。
+                
+                tcpsynackretries和tcpsynretries定义SYN的重试次数。
+                
+                YN Cookie是对TCP服务器端的三次握手做一些修改，专门用来防范SYN Flood×××的一种手段。它的原理是，在TCP服务器
+                接收到TCP SYN包并返回TCP SYN + ACK包时，不分配一个专门的数据区，而是根据这个SYN包计算出一个cookie值。这个
+                cookie作为将要返回的SYN ACK包的初始序列号。当客户端返回一个ACK包时，根据包头信息计算cookie，与返回的确认序列
+                号(初始序列号 + 1)进行对比，如果相同，则是一个正常连接，然后，分配资源，建立连接。
+                
+                原理：在Tcp服务器收到Tcp Syn包并返回Tcp Syn+ack包时，不专门分配一个数据区，而是根据这个Syn包计算出一个cookie值。在收到Tcp ack包时，Tcp服务器在根据那个cookie值检查这个Tcp ack包的合法性。如果合法，再分配专门的数据区进行处理未来的TCP连接。 
+                默认为0，1表示开启
+                
+                net.ipv4.tcpfintimeout
+                
+                修改timewait状的存在时间，默认的2MSL 
+                注意：timewait存在且生存时间为2MSL是有原因的，见我上一篇博客为什么会有timewait状态的存在，所以修改它有一定的风险，还是根据具体的情况来分析。
+                
+                tcpretries1
+                放弃回应一个TCP连接请求前﹐需要进行多少次重试。RFC 规定最低的数值是3﹐这也是默认值
+                
+                tcpretries2
+                TCP失败重传次数,默认值15,意味着重传15次才彻底放弃.可减少到5,以尽早释放内核资源.
+                ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+                nf_conntrack
+                
+                      该模块在kernel 2.6.15（2006-01-03发布） 被引入，支持ipv4和ipv6，取代只支持ipv4的ip_connktrack，用于跟踪连接的状态，供其他模块使用。
+                
+                最常见的使用场景是 iptables 的 nat 和 state 模块：
+                nat 根据转发规则修改IP包的源/目标地址，靠nf_conntrack的记录才能让返回的包能路由到发请求的机器。
+                state 直接用 nf_conntrack 记录的连接状态（NEW/ESTABLISHED/RELATED/INVALID）来匹配防火墙过滤规则。
+                在服务器访问量大时，如果内核netfilter模块conntrack相关参数配置不合理，就会导致新连接被drop掉
+                推荐bucket至少 262144，max至少 1048576，不够再继续加。
+                
+                net.netfilter.nf_conntrack_count 的数字持续超过 nf_conntrack_max 的 20% 就该考虑调高上限了；
+                测试没问题后可以写入配置文件 vim   /etc/sysctl.d/90-conntrack.conf  :
+                net.netfilter.nf_conntrack_buckets = 262144
+                net.netfilter.nf_conntrack_max=1048576
+                net.nf_conntrack_max=1048576
+                net.netfilter.nf_conntrack_tcp_timeout_fin_wait=30
+                net.netfilter.nf_conntrack_tcp_timeout_time_wait=30
+                net.netfilter.nf_conntrack_tcp_timeout_close_wait=15
+                net.netfilter.nf_conntrack_tcp_timeout_established=300
+                #########################################################################################
+                
+                如何修改内核参数:::
+                
+                Linux在系统运行时修改内核参数(/proc/sys与/etc/sysctl.conf)，而不需要重新引导系统，这个功能是通过/proc虚拟文件系统实现的。
+                在/proc/sys目录下存放着大多数的内核参数，并且设计成可以在系统运行的同时进行更改, 可以通过更改/proc/sys中内核参数对应的文件达到修改内核参数的目的(修改过后，保存配置文件就马上自动生效)，不过重新启动机器后之前修改的参数值会失效，所以只能是一种临时参数变更方案。(适合调试内核参数优化值的时候使用，如果设置值有问题，重启服务器还原原来的设置参数值了。简单方便。)
+                
+                但是如果调试内核参数优化值结束后，需要永久保存参数值，就要通过修改/etc/sysctl.conf内的内核参数来永久保存更改。但只是修改sysctl文件内的参数值，确认保存修改文件后，设定的参数值并不会马上生效，如果想使参数值修改马上生效，并且不重启服务器，可以执行下面的命令：
+                #sysctl –p
+                
+                常用的内核参数：
+                net.ipv4.tcpsyncookies = 1
+                #表示开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN×××，默认为0，表示关闭；
+                net.ipv4.tcptwreuse = 1
+                #表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；
+                net.ipv4.tcptwrecycle = 1
+                #表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。
+                net.ipv4.tcpfintimeout = 30
+                #表示如果套接字由本端要求关闭，这个参数决定了它保持在FIN-WAIT-2状态的时间。
+                net.ipv4.tcpkeepalivetime = 1200
+                #表示当keepalive起用的时候，TCP发送keepalive消息的频度。缺省是2小时，改为20分钟。
+                net.ipv4.iplocalportrange = 1024    65000
+                #表示用于向外连接的端口范围。缺省情况下很小：32768到61000，改为1024到65000。
+                net.ipv4.tcpmaxtwbuckets = 5000
+                #表示系统同时保持TIMEWAIT套接字的最大数量，如果超过这个数字，
+                #TIMEWAIT套接字将立刻被清除并打印警告信息。默认为180000，改为5000。
+                #对于Apache、Nginx等服务器，上几行的参数可以很好地减少TIMEWAIT套接字数量，
+                #但是对于Squid，效果却不大。此项参数可以控制TIMEWAIT套接字的最大数量，避免Squid服务器被大量的TIMEWAIT套接字拖死。*
+                -------------------------------------------------------------------------------------------------------------------------------------------------------------
+                如何尽量处理TIMEWAIT过多
+                sysctl改两个内核参数就行了，如下：
+                net.ipv4.tcp_tw_reuse = 1
+                net.ipv4.tcp_tw_recycle = 1
+                简单来说，就是打开系统的TIMEWAIT重用和快速回收，至于怎么重用和快速回收，这个问题我没有深究，实际场景中这么做确实有效果。用netstat或者ss观察就能得出结论。
+                还有些朋友同时也会打开syncookies这个功能，如下：
+                net.ipv4.tcp_syncookies = 1
+                打开这个syncookies的目的实际上是：“在服务器资源（并非单指端口资源，拒绝服务有很多种资源不足的情况）不足的情况下，尽量不要拒绝TCP的syn（连接）请求，尽量把syn请求缓存起来，留着过会儿有能力的时候处理这些TCP的连接请求”。
+                如果并发量真的非常非常高，打开这个其实用处不大。
+                
+                
+                
+                
+                SYN Flood
+                 
+                下面这段介绍引用自[1].
+                SYN Flood是一种非常危险而常见的Dos攻击方式。到目前为止，能够有效防范SYN Flood攻击的手段并不多，
+                SYN Cookie就是其中最著名的一种。
+                 
+                SYN Flood攻击是一种典型的拒绝服务(Denial of Service)攻击。所谓的拒绝服务攻击就是通过进行攻击，使受害主机或
+                网络不能提供良好的服务，从而间接达到攻击的目的。
+                SYN Flood攻击利用的是IPv4中TCP协议的三次握手(Three-Way Handshake)过程进行的攻击。
+                TCP服务器收到TCP SYN request包时，在发送TCP SYN + ACK包回客户机前，TCP服务器要先分配好一个数据区专门
+                服务于这个即将形成的TCP连接。一般把收到SYN包而还未收到ACK包时的连接状态称为半打开连接(Half-open Connection)。
+                在最常见的SYN Flood攻击中，攻击者在短时间内发送大量的TCP SYN包给受害者。受害者(服务器)为每个TCP SYN包分配
+                一个特定的数据区，只要这些SYN包具有不同的源地址(攻击者很容易伪造)。这将给TCP服务器造成很大的系统负担，最终
+                导致系统不能正常工作。
+                 
+                SYN Cookie
+                 
+                SYN Cookie原理由D.J. Bernstain和Eric Schenk提出。
+                SYN Cookie是对TCP服务器端的三次握手做一些修改，专门用来防范SYN Flood攻击的一种手段。它的原理是，在TCP服务器
+                接收到TCP SYN包并返回TCP SYN + ACK包时，不分配一个专门的数据区，而是根据这个SYN包计算出一个cookie值。这个
+                cookie作为将要返回的SYN ACK包的初始序列号。当客户端返回一个ACK包时，根据包头信息计算cookie，与返回的确认序列
+                号(初始序列号 + 1)进行对比，如果相同，则是一个正常连接，然后，分配资源，建立连接。
+                
+                
+                
+                
+                
+                原
+                TCP参数调优详解
+                
+                在TCP/IP协议中，TCP协议提供可靠的连接服务，采用三次握手建立一个连接。
+                
+                第一次握手：建立连接时，客户端发送syn包(syn=x)到服务器，并进入SYN_SEND状态，等待服务器确认；
+                第二次握手：服务器收到syn包，必须确认客户的SYN（ack=x+1），同时自己也发送一个SYN包（syn=y），即SYN+ACK包，此时服务器进入SYN_RECV状态；
+                第三次握手：客户端收到服务器的SYN＋ACK包，向服务器发送确认包ACK(ack=y+1)，此包发送完毕，客户端和服务器进入ESTABLISHED状态，完成三次握手。
+                
+                完成三次握手，客户端与服务器开始传送数据，在上述过程中，还有一些重要的概念：
+                
+                未连接队列：在三次握手协议中，服务器维护一个未连接队列，该队列为每个客户端的SYN包（syn=j）开设一个条目，该条目表明服务器已收到 SYN包，并向客户发出确认，正在等待客户的确认包。这些条目所标识的连接在服务器处于Syn_RECV状态，当服务器收到客户的确认包时，删除该条目， 服务器进入ESTABLISHED状态。
+                Backlog参数：表示未连接队列的最大容纳数目。
+                
+                SYN-ACK 重传次数　服务器发送完SYN－ACK包，如果未收到客户确认包，服务器进行首次重传，等待一段时间仍未收到客户确认包，进行第二次重传，如果重传次数超 过系统规定的最大重传次数，系统将该连接信息从半连接队列中删除。注意，每次重传等待的时间不一定相同。
+                
+                半连接存活时间：是指半连接队列的条目存活的最长时间，也即服务从收到SYN包到确认这个报文无效的最长时间，该时间值是所有重传请求包的最长等待时间总和。有时我们也称半连接存活时间为Timeout时间、SYN_RECV存活时间。
+                
+                
+                
+                状态解释
+                CLOSED: 表示初始状态。
+                
+                LISTEN:
+                表示服务器端的某个SOCKET处于监听状态，可以接受连接
+                
+                SYN_RCVD:
+                表示接受到了SYN报文，在正常情况下，这个状态是服务器端的SOCKET在建立TCP连接时的三次握手会话过程中的一个中间状态，很短暂，基本上用netstat你是很难看到这种状态的，除非你特意写了一个客户端测试程序，故意将三次TCP握手过程中最后一个ACK报文不予发送。因此这种状态时，当收到客户端的ACK报文后，它会进入到ESTABLISHED状态。
+                
+                SYN_SENT:
+                这个状态与SYN_RCVD遥想呼应，当客户端SOCKET执行CONNECT连接时，它首先发送SYN报文，因此也随即它会进入到了SYN_SENT状态，并等待服务端的发送三次握手中的第2个报文。SYN_SENT状态表示客户端已发送SYN报文。
+                
+                ESTABLISHED：表示连接已经建立
+                
+                FIN_WAIT_1:
+                FIN_WAIT_1和FIN_WAIT_2状态的真正含义都是表示等待对方的FIN报文。而这两种状态的区别是：FIN_WAIT_1状态实际上是当SOCKET在ESTABLISHED状态时，它想主动关闭连接，向对方发送了FIN报文，此时该SOCKET即进入到FIN_WAIT_1状态。而当对方回应ACK报文后，则进入到FIN_WAIT_2状态，当然在实际的正常情况下，无论对方何种情况下，都应该马上回应ACK报文，所以FIN_WAIT_1状态一般是比较难见到的，而FIN_WAIT_2状态还有时常常可以用netstat看到。
+                
+                FIN_WAIT_2:
+                FIN_WAIT_2状态下的SOCKET，表示半连接，也即有一方要求close连接，但另外还告诉对方，我暂时还有点数据需要传送给你，稍后再关闭连接。
+                
+                TIME_WAIT:
+                表示收到了对方的FIN报文，并发送出了ACK报文，就等2MSL后即可回到CLOSED可用状态了。如果FIN_WAIT_1状态下，收到了对方同时带FIN标志和ACK标志的报文时，可以直接进入到TIME_WAIT状态，而无须经过FIN_WAIT_2状态。
+                
+                CLOSING:
+                正常情况下，发送FIN报文后，按理来说是应该先收到（或同时收到）对方的ACK报文，再收到对方的FIN报文。但是CLOSING状态表示你发送FIN报文后，并没有收到对方的ACK报文，反而却也收到了对方的FIN报文。什么情况下会出现此种情况呢？其实细想一下，也不难得出结论：那就是如果双方几乎在同时close一个SOCKET的话，那么就出现了双方同时发送FIN报文的情况，也即会出现CLOSING状态，表示双方都正在关闭SOCKET连接。
+                
+                CLOSE_WAIT:
+                表示在等待关闭。怎么理解呢？当对方close一个SOCKET后发送FIN报文给自己，你系统毫无疑问地会回应一个ACK报文给对方，此时则进入到CLOSE_WAIT状态。接下来呢，实际上你真正需要考虑的事情是察看你是否还有数据发送给对方，如果没有的话，那么你也就可以 close这个SOCKET，发送FIN报文给对方，也即关闭连接。所以你在CLOSE_WAIT状态下，需要完成的事情是等待你去关闭连接。
+                
+                LAST_ACK:
+                被动关闭一方在发送FIN报文后，最后等待对方的ACK报文。当收到ACK报文后，也即可以进入到CLOSED可用状态了。
+                
+                调优
+                开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击，默认为0，表示关闭；
+                net.ipv4.tcp_syncookies = 1
+                
+                开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；
+                net.ipv4.tcp_tw_reuse = 1
+                
+                开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭；
+                net.ipv4.tcp_tw_recycle = 1
+                
+                系统默认的TIMEOUT时间。
+                net.ipv4.tcp_fin_timeout = 5
+                
+                当keepalive起用的时候，TCP发送keepalive消息的频度。缺省是2小时，改为20分钟(20*60s)
+                net.ipv4.tcp_keepalive_time = 1200
+                
+                表示用于向外连接的端口范围。缺省情况下很小：32768到61000，改为10000到65000
+                net.ipv4.ip_local_port_range = 10000 65000
+                
+                SYN队列的长度，默认为1024，加大队列长度为8192，可以容纳更多等待连接的网络连接数
+                net.ipv4.tcp_max_syn_backlog = 8192
+                
+                系统同时保持TIME_WAIT的最大数量，如果超过这个数字，TIME_WAIT将立刻被清除并打印警告信息。默认为180000，改为5000
+                net.ipv4.tcp_max_tw_buckets = 5000
+                
+                其他调优参数
+                tcp_syn_retries ：INTEGER
+                默认值是5
+                对于一个新建连接，内核要发送多少个 SYN 连接请求才决定放弃。不应该大于255，默认值是5，对应于180秒左右时间。(对于大负载而物理通信良好的网络而言,这个值偏高,可修改为2.这个值仅仅是针对对外的连接,对进来的连接,是由tcp_retries1 决定的)
+                
+                tcp_synack_retries ：INTEGER
+                默认值是5
+                对于远端的连接请求SYN，内核会发送SYN ＋ ACK数据报，以确认收到上一个 SYN连接请求包。这是所谓的三次握手( threeway handshake)机制的第二个步骤。这里决定内核在放弃连接之前所送出的 SYN+ACK 数目。不应该大于255，默认值是5，对应于180秒左右时间。(可以根据上面的 tcp_syn_retries 来决定这个值)
+                
+                tcp_keepalive_time ：INTEGER
+                默认值是7200(2小时)
+                当keepalive打开的情况下，TCP发送keepalive消息的频率。(由于目前网络攻击等因素,造成了利用这个进行的攻击很频繁,曾经也有cu的朋友提到过,说如果2边建立了连接,然后不发送任何数据或者rst/fin消息,那么持续的时间是不是就是2小时,空连接攻击? tcp_keepalive_time就是预防此情形的.我个人在做nat服务的时候的修改值为1800秒)
+                
+                tcp_keepalive_probes：INTEGER
+                默认值是9
+                TCP发送keepalive探测以确定该连接已经断开的次数。(注意:保持连接仅在SO_KEEPALIVE套接字选项被打开是才发送.次数默认不需要修改,当然根据情形也可以适当地缩短此值.设置为5比较合适)
+                
+                tcp_keepalive_intvl：INTEGER
+                默认值为75
+                探测消息发送的频率，乘以tcp_keepalive_probes就得到对于从开始探测以来没有响应的连接杀除的时间。默认值为75秒，也就是没有活动的连接将在大约11分钟以后将被丢弃。(对于普通应用来说,这个值有一些偏大,可以根据需要改小.特别是web类服务器需要改小该值,15是个比较合适的值)
+                
+                tcp_retries1 ：INTEGER
+                默认值是3
+                放弃回应一个TCP连接请求前﹐需要进行多少次重试。RFC 规定最低的数值是3﹐这也是默认值﹐根据RTO的值大约在3秒 – 8分钟之间。(注意:这个值同时还决定进入的syn连接)
+                
+                tcp_retries2 ：INTEGER
+                默认值为15
+                在丢弃激活(已建立通讯状况)的TCP连接之前﹐需要进行多少次重试。默认值为15，根据RTO的值来决定，相当于13-30分钟(RFC1122规定，必须大于100秒).(这个值根据目前的网络设置,可以适当地改小,我的网络内修改为了5)
+                
+                tcp_orphan_retries ：INTEGER
+                默认值是7
+                在近端丢弃TCP连接之前﹐要进行多少次重试。默认值是7个﹐相当于 50秒 – 16分钟﹐视 RTO 而定。如果您的系统是负载很大的web服务器﹐那么也许需要降低该值﹐这类 sockets 可能会耗费大量的资源。另外参的考 tcp_max_orphans 。(事实上做NAT的时候,降低该值也是好处显著的,我本人的网络环境中降低该值为3)
+                
+                tcp_fin_timeout ：INTEGER
+                默认值是 60
+                对于本端断开的socket连接，TCP保持在FIN-WAIT-2状态的时间。对方可能会断开连接或一直不结束连接或不可预料的进程死亡。默认值为 60 秒。过去在2.2版本的内核中是 180 秒。您可以设置该值﹐但需要注意﹐如果您的机器为负载很重的web服务器﹐您可能要冒内存被大量无效数据报填满的风险﹐FIN-WAIT-2 sockets 的危险性低于 FIN-WAIT-1 ﹐因为它们最多只吃 1.5K 的内存﹐但是它们存在时间更长。另外参考 tcp_max_orphans。(事实上做NAT的时候,降低该值也是好处显著的,我本人的网络环境中降低该值为30)
+                
+                tcp_max_tw_buckets ：INTEGER
+                默认值是180000
+                系 统在同时所处理的最大 timewait sockets 数目。如果超过此数的话﹐time-wait socket 会被立即砍除并且显示警告信息。之所以要设定这个限制﹐纯粹为了抵御那些简单的 DoS 攻击﹐千万不要人为的降低这个限制﹐不过﹐如果网络条件需要比默认值更多﹐则可以提高它(或许还要增加内存)。(事实上做NAT的时候最好可以适当地增加该值)
+                
+                tcp_tw_recycle ：BOOLEAN
+                默认值是0
+                打开快速 TIME-WAIT sockets 回收。除非得到技术专家的建议或要求﹐请不要随意修改这个值。(做NAT的时候，建议打开它)
+                
+                tcp_tw_reuse：BOOLEAN
+                默认值是0
+                该文件表示是否允许重新应用处于TIME-WAIT状态的socket用于新的TCP连接(这个对快速重启动某些服务,而启动后提示端口已经被使用的情形非常有帮助)
+                
+                tcp_max_orphans ：INTEGER
+                缺省值是8192
+                系统所能处理不属于任何进程的TCP sockets最大数量。假如超过这个数量﹐那么不属于任何进程的连接会被立即reset，并同时显示警告信息。之所以要设定这个限制﹐纯粹为了抵御那些简单的 DoS 攻击﹐千万不要依赖这个或是人为的降低这个限制(这个值Redhat AS版本中设置为32768,但是很多防火墙修改的时候,建议该值修改为2000)
+                
+                tcp_abort_on_overflow ：BOOLEAN
+                缺省值是0
+                当守护进程太忙而不能接受新的连接，就象对方发送reset消息，默认值是false。这意味着当溢出的原因是因为一个偶然的猝发，那么连接将恢复状态。只有在你确信守护进程真的不能完成连接请求时才打开该选项，该选项会影响客户的使用。(对待已经满载的sendmail,apache这类服务的时候,这个可以很快让客户端终止连接,可以给予服务程序处理已有连接的缓冲机会,所以很多防火墙上推荐打开它)
+                
+                tcp_syncookies ：BOOLEAN
+                默认值是0
+                只有在内核编译时选择了CONFIG_SYNCOOKIES时才会发生作用。当出现syn等候队列出现溢出时象对方发送syncookies。目的是为了防止syn flood攻击。
+                注意：该选项千万不能用于那些没有收到攻击的高负载服务器，如果在日志中出现synflood消息，但是调查发现没有收到synflood攻击，而是合法用户的连接负载过高的原因，你应该调整其它参数来提高服务器性能。参考:
+                tcp_max_syn_backlog
+                tcp_synack_retries
+                tcp_abort_on_overflow
+                syncookie严重的违背TCP协议，不允许使用TCP扩展，可能对某些服务导致严重的性能影响(如SMTP转发)。(注意,该实现与BSD上面使用的tcp proxy一样,是违反了RFC中关于tcp连接的三次握手实现的,但是对于防御syn-flood的确很有用.)
+                
+                tcp_stdurg ：BOOLEAN
+                默认值为0
+                使用 TCP urg pointer 字段中的主机请求解释功能。大部份的主机都使用老旧的 BSD解释，因此如果您在 Linux 打开它﹐或会导致不能和它们正确沟通。
+                
+                tcp_max_syn_backlog ：INTEGER
+                对于那些依然还未获得客户端确认的连接请求﹐需要保存在队列中最大数目。对于超过 128Mb 内存的系统﹐默认值是 1024 ﹐低于 128Mb 的则为 128。如果服务器经常出现过载﹐可以尝试增加这个数字。警告﹗假如您将此值设为大于 1024﹐最好修改 include/net/tcp.h 里面的 TCP_SYNQ_HSIZE ﹐以保持 TCP_SYNQ_HSIZE*16<=tcp_max_syn_backlog ﹐并且编进核心之内。(SYN Flood攻击利用TCP协议散布握手的缺陷，伪造虚假源IP地址发送大量TCP-SYN半打开连接到目标系统，最终导致目标系统Socket队列资源耗 尽而无法接受新的连接。为了应付这种攻击，现代Unix系统中普遍采用多连接队列处理的方式来缓冲(而不是解决)这种攻击，是用一个基本队列处理正常的完 全连接应用(Connect()和Accept() )，是用另一个队列单独存放半打开连接。这种双队列处理方式和其他一些系统内核措施(例如Syn-Cookies/Caches)联合应用时，能够比较有效的缓解小规模的SYN Flood攻击(事实证明<1000p/s)加大SYN队列长度可以容纳更多等待连接的网络连接数，所以对Server来说可以考虑增大该值.)
+                
+                tcp_window_scaling ：INTEGER
+                缺省值为1
+                该 文件表示设置tcp/ip会话的滑动窗口大小是否可变。参数值为布尔值，为1时表示可变，为0时表示不可变。tcp/ip通常使用的窗口最大可达到 65535 字节，对于高速网络，该值可能太小，这时候如果启用了该功能，可以使tcp/ip滑动窗口大小增大数个数量级，从而提高数据传输的能力(RFC 1323)。（对普通地百M网络而言，关闭会降低开销，所以如果不是高速网络，可以考虑设置为0）
+                
+                tcp_timestamps ：BOOLEAN
+                缺省值为1
+                Timestamps 用在其它一些东西中﹐可以防范那些伪造的 sequence 号码。一条1G的宽带线路或许会重遇到带 out-of-line数值的旧sequence 号码(假如它是由于上次产生的)。Timestamp 会让它知道这是个 ‘旧封包’。(该文件表示是否启用以一种比超时重发更精确的方法（RFC 1323）来启用对 RTT 的计算；为了实现更好的性能应该启用这个选项。)
+                
+                tcp_sack ：BOOLEAN
+                缺省值为1
+                使 用 Selective ACK﹐它可以用来查找特定的遗失的数据报— 因此有助于快速恢复状态。该文件表示是否启用有选择的应答（Selective Acknowledgment），这可以通过有选择地应答乱序接收到的报文来提高性能（这样可以让发送者只发送丢失的报文段）。(对于广域网通信来说这个选项应该启用，但是这会增加对 CPU 的占用。)
+                
+                tcp_fack ：BOOLEAN
+                缺省值为1
+                打开FACK拥塞避免和快速重传功能。(注意，当tcp_sack设置为0的时候，这个值即使设置为1也无效)
+                
+                tcp_dsack ：BOOLEAN
+                缺省值为1
+                允许TCP发送”两个完全相同”的SACK。
+                
+                
+                
+                
+                
+                Linux常用网络工具：Http压力测试之ab
+                ab的全称是Apache Bench，是Apache自带的网络压力测试工具，相比于LR、JMeter，是我所知道的 Http 压力测试工具中最简单、最通用的。
+                
+                ab命令对发出负载的计算机要求很低，不会占用很高CPU和内存，但也能给目标服务器产生巨大的负载，能实现基础的压力测试。
+                
+                在进行压力测试时，最好与服务器使用交换机直连，以获取最大的网络吞吐量。
+                
+                ab的安装很简单，安装Apache会自动安装，如果要单独安装ab，可以使用yum安装：
+                
+                yum -y install httpd-tools
+                ab命令选项
+                
+                ab命令最基本的参数是-n和-c：
+                
+                -n 执行的请求数量
+                -c 并发请求个数
+                其他参数：
+                
+                -t 测试所进行的最大秒数
+                -p 包含了需要POST的数据的文件
+                -T POST数据所使用的Content-type头信息
+                -k 启用HTTP KeepAlive功能，即在一个HTTP会话中执行多个请求，默认时，不启用KeepAlive功能
+                命令示例：
+                
+                ab -n 1000 -c 100 http://www.baidu.com/
+                ab性能指标
+                
+                使用ab命令测试的结果，可以参考其中的中文解释：
+                
+                复制代码
+                Document Path:          /  ###请求的资源
+                Document Length:        50679 bytes  ###文档返回的长度，不包括相应头
+                
+                
+                Concurrency Level:      3000   ###并发个数
+                Time taken for tests:   30.449 seconds   ###总请求时间
+                Complete requests:      3000     ###总请求数
+                Failed requests:        0     ###失败的请求数
+                Write errors:           0
+                Total transferred:      152745000 bytes
+                HTML transferred:       152037000 bytes
+                Requests per second:    98.52 [#/sec] (mean)      ###平均每秒的请求数
+                Time per request:       30449.217 [ms] (mean)     ###平均每个请求消耗的时间
+                Time per request:       10.150 [ms] (mean, across all concurrent requests)  ###上面的请求除以并发数
+                Transfer rate:          4898.81 [Kbytes/sec] received   ###传输速率
+                
+                
+                Connection Times (ms)
+                              min  mean[+/-sd] median   max
+                Connect:        2   54  27.1     55      98
+                Processing:    51 8452 5196.8   7748   30361
+                Waiting:       50 6539 5432.8   6451   30064
+                Total:         54 8506 5210.5   7778   30436
+                
+                
+                Percentage of the requests served within a certain time (ms)
+                  50%   7778   ###50%的请求都在7778Ms内完成
+                  66%  11059
+                  75%  11888
+                  80%  12207
+                  90%  13806
+                  95%  18520
+                  98%  24232
+                  99%  24559
+                 100%  30436 (longest request)
+                复制代码
+                对压力测试的结果重点关注吞吐率（Requests per second）、用户平均请求等待时间（Time per request）指标：
+                
+                1、吞吐率（Requests per second）：
+                
+                服务器并发处理能力的量化描述，单位是reqs/s，指的是在某个并发用户数下单位时间内处理的请求数。某个并发用户数下单位时间内能处理的最大请求数，称之为最大吞吐率。
+                
+                记住：吞吐率是基于并发用户数的。这句话代表了两个含义：
+                
+                a、吞吐率和并发用户数相关
+                
+                b、不同的并发用户数下，吞吐率一般是不同的
+                
+                计算公式：总请求数/处理完成这些请求数所花费的时间，即
+                
+                Request per second=Complete requests/Time taken for tests
+                
+                必须要说明的是，这个数值表示当前机器的整体性能，值越大越好。
+                
+                2、用户平均请求等待时间（Time per request）：
+                
+                计算公式：处理完成所有请求数所花费的时间/（总请求数/并发用户数），即：
+                
+                Time per request=Time taken for tests/（Complete requests/Concurrency Level）
+                
+                3、服务器平均请求等待时间（Time per request:across all concurrent requests）：
+                
+                计算公式：处理完成所有请求数所花费的时间/总请求数，即：
+                
+                Time taken for/testsComplete requests
+                
+                可以看到，它是吞吐率的倒数。
+                
+                同时，它也等于用户平均请求等待时间/并发用户数，即
+                
+                Time per request/Concurrency Level。
+                
+                 
+                
+                
+
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
 
 
 

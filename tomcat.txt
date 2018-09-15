@@ -1,4 +1,358 @@
- 
 
-  
-     Tomcat 
+
+       Tomcat
+
+       Tomcat是Apache基金会提供的Servlet容器，它支持JSP, Servlet和JDBC等J2EE关键技术，所以用户可以用Tomcat开发基于数据库，Servlet和JSP页面的Web应用，这是没有问题的。但是，Tomcat却不是EJB容器；也就是说，Tomcat不支持J2EE的重要技术之一，EJB。
+
+       至于支持EJB的应用服务器，Weblogic( Oracle), WebSphere（IBM)和JBoss( Redhat)都是符合J2EE规范的EJB容器，所以都可以用来开发大型的分布式应用程序。
+
+
+部署Tomcat服务器:
+
+                 1）使用RPM安装JDK环境
+
+                      yum –y install  java-1.8.0-openjdk                //安装JDK
+                      yum -y install java-1.8.0-openjdk-headless        //安装JDK
+                      java -version                                     //查看JAVA版本
+
+                 2）安装Tomcat（apache-tomcat-8.0.30.tar.gz软件包，在lnmp_soft中有提供）
+
+                      tar -xf  apache-tomcat-8.0.30.tar.gz
+                      mv apache-tomcat-8.0.30  /usr/local/tomcat
+                      ls /usr/local/tomcat
+                      bin/                                            //主程序目录
+                      lib/                                            //库文件目录
+                      logs/                                           //日志目录  
+                      temp/                                           //临时目录
+                      work/                                           //自动编译目录jsp代码转换servlet
+                      conf/                                           //配置文件目录
+                      webapps/                                        //页面目录
+
+                 3）启动服务
+
+                      /usr/local/tomcat/bin/startup.sh
+                      firewall-cmd --set-default-zone=trusted
+                      setenforce 0
+
+                 4）服务器验证端口信息
+
+                      netstat -nutlp |grep java        //查看java监听的端口
+
+                  tcp        0      0 :::8080              :::*                LISTEN      2778/java           
+                  tcp        0      0 ::ffff:127.0.0.1:8005     :::*         LISTEN       2778/java  
+
+                      提示：如果检查端口时，8005端口启动非常慢，可用使用下面的命令用urandom替换random（非必须操作）。
+
+                      mv /dev/random  /dev/random.bak
+
+                      ln -s /dev/urandom  /dev/random
+
+                 5）客户端浏览测试页面
+
+                      firefox http://192.168.2.100:8080
+
+              修改Tomcat配置文件
+
+                 1）创建测试JSP页面
+
+                      vim  /usr/local/tomcat/webapps/ROOT/test.jsp
+                      <html>
+                      <body>
+                      <center>
+                      Now time is: <%=new java.util.Date()%>            //显示服务器当前时间
+                      </center>
+                      </body>
+                      </html>
+
+                 2）重启服务
+
+                      /usr/local/tomcat/bin/shutdown.sh
+                      /usr/local/tomcat/bin/startup.sh
+
+              验证测试
+                      
+                 1）服务器验证端口信息
+
+                      netstat -nutlp |grep java        //查看java监听的端口
+                      tcp        0      0 :::8080              :::*                LISTEN      2778/java           
+                      tcp        0      0 ::ffff:127.0.0.1:8005     :::*         LISTEN       2778/java  
+
+                      提示：如果检查端口时，8005端口启动非常慢，可用使用下面的命令用urandom替换random（非必须操作）。
+
+                      mv /dev/random  /dev/random.bak
+                      ln -s /dev/urandom  /dev/random
+
+                 2）客户端浏览测试页面
+                      firefox http://192.168.2.100:8080
+                      firefox http://192.168.2.100:8080/test.jsp
+
+              使用Tomcat部署虚拟主机
+
+                      修改server.xml配置文件，创建两个域名的虚拟主机，修改如下两个参数块：
+                      # cat /usr/local/tomcat/conf/server.xml
+                      <Server>
+                         <Service>
+                           <Connector port=8080 />
+                           <Connector port=8009 />
+                           <Engine name="Catalina" defaultHost="localhost">
+                      <Host name="www.a.com" appBase="a" unpackWARS="true" autoDeploy="true">
+                      </Host>
+                      <Host name="www.b.com" appBase="b" unpackWARS="true" autoDeploy="true">
+                      </Host>
+                      … …
+                      
+                     配置服务器虚拟主机
+                      
+             1）修改server.xml配置文件，创建虚拟主机
+
+                      vim /usr/local/tomcat/conf/server.xml
+                      … …
+                      <Host name="www.a.com" appBase="a" unpackWARS="true" autoDeploy="true">
+                      </Host>
+                      <Host name="www.b.com" appBase="b" unpackWARS="true" autoDeploy="true">
+                      </Host>
+
+             2）创建虚拟主机对应的页面根路径
+
+                      mkdir -p  /usr/local/tomcat/{a,b}/ROOT
+                      echo "AAA"   > /usr/local/tomcat/a/ROOT/index.html
+                      echo "BBB" > /usr/local/tomcat/b/ROOT/index.html
+
+             3）重启Tomcat服务器
+
+                      /usr/local/tomcat/bin/shutdown.sh
+                      /usr/local/tomcat/bin/startup.sh
+
+             4）客户端设置host文件，并浏览测试页面进行测试
+
+                      注意：ssh远程连接时使用使用-X参数才可以！！！
+                      vim /etc/hosts
+                      … …
+                      192.168.2.100      www.a.com  www.b.com
+                      firefox http://www.a.com:8080/        //注意访问的端口为8080
+                      firefox http://www.b.com:8080/
+
+            修改www.b.com网站的首页目录为base
+
+             1）使用docBase参数可以修改默认网站首页路径
+
+                      vim /usr/local/tomcat/conf/server.xml
+                      … …
+                      <Host name="www.a.com" appBase="a" unpackWARS="true" autoDeploy="true">
+                      </Host>
+                      <Host name="www.b.com" appBase="b" unpackWARS="true" autoDeploy="true">
+                      <Context path="" docBase="base" reloadable="true"/>
+                      </Host>
+                      … …
+                      mkdir  /usr/local/tomcat/b/base
+                      echo "BASE" > /usr/local/tomcat/b/base/index.html
+                      /usr/local/tomcat/bin/shutdown.sh
+                      /usr/local/tomcat/bin/startup.sh
+
+             2）测试查看页面是否正确
+
+                      firefox http://www.b.com:8080/        //结果为base目录下的页面内容
+
+           跳转
+             
+             1）当用户访问http://www.a.com/test打开/var/www/html目录下的页面
+
+                       vim /usr/local/tomcat/conf/server.xml
+                      … …
+                      <Host name="www.a.com" appBase="a" unpackWARS="true" autoDeploy="true">
+                      <Context path="/test" docBase="/var/www/html/" />
+                      </Host>
+                      <Host name="www.b.com" appBase="b" unpackWARS="true" autoDeploy="true">
+                      <Context path="" docBase="base" />
+                      </Host>
+                      … …
+
+                      echo "Test" > /var/www/html/index.html
+                      /usr/local/tomcat/bin/shutdown.sh
+                      /usr/local/tomcat/bin/startup.sh
+
+             2）测试查看页面是否正确
+
+                      firefox http://www.a.com:8080/test    
+                      //返回/var/www/html/index.html的内容
+                      //注意，访问的端口为8080
+
+         配置Tomcat支持SSL加密网站
+
+             1）创建加密用的私钥和证书文件
+
+                keytool -genkeypair -alias tomcat -keyalg RSA -keystore /usr/local/tomcat/keystore              
+                     //提示输入密码为:123456
+                     //-genkeypair     生成密钥对
+                     //-alias tomcat     密钥别名
+                     //-keyalg RSA     定义密钥算法为RSA算法
+                     //-keystore         定义密钥文件存储在:/usr/local/tomcat/keystore
+
+             2)再次修改server.xml配置文件，创建支持加密连接的Connector
+
+                     vim /usr/local/tomcat/conf/server.xml
+                     … …
+                     <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
+                     maxThreads="150" SSLEnabled="true" scheme="https" secure="true"
+                     keystoreFile="/usr/local/tomcat/keystore" keystorePass="123456" clientAuth="false" sslProtocol="TLS" />
+                     //备注，默认这段Connector被注释掉了，打开注释，添加密钥信息即可
+
+             3）重启Tomcat服务器
+
+                     /usr/local/tomcat/bin/shutdown.sh
+                     /usr/local/tomcat/bin/startup.sh
+
+             4）客户端设置host文件，并浏览测试页面进行测试
+
+                     vim /etc/hosts
+                     … …
+                     192.168.2.100      www.a.com  www.b.com
+                     firefox https://www.a.com:8443/
+                     firefox https://www.b.com:8443/
+                     firefox https://192.168.2.100:8443/
+
+          配置Tomcat日志    
+
+             1)为每个虚拟主机设置不同的日志文件
+                     vim /usr/local/tomcat/conf/server.xml
+                     .. ..
+                     <Host name="www.a.com" appBase="a" unpackWARS="true" autoDeploy="true">
+                     <Context path="/test" docBase="/var/www/html/" />
+                     #从默认localhost虚拟主机中把Valve这段复制过来，适当修改下即可
+                     <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+                                    prefix=" a_access" suffix=".txt"
+                                    pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+                     </Host>
+                     <Host name="www.b.com" appBase="b" unpackWARS="true" autoDeploy="true">
+                     <Context path="" docBase="base" />
+                     <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+                                    prefix=" b_access" suffix=".txt"
+                                    pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+                     </Host>
+                     .. ..
+             2）重启Tomcat服务器
+                     /usr/local/tomcat/bin/shutdown.sh
+                     /usr/local/tomcat/bin/startup.sh
+             3）查看服务器日志文件
+                     ls /usr/local/tomcat/logs/
+       扩展实验(配置Tomcat集群)
+                     
+             1) 在192.168.4.5主机上配置Nginx调度器（具体安装步骤参考前面的章节）
+                     vim  /usr/local/nginx/conf/nginx.conf
+                     http{
+                         upstream toms {
+                             server 192.168.2.100:8080;
+                             server 192.168.2.200:8080;
+                         }
+                         server  {
+                             listen 80;
+                             server_name localhost;
+                             location / {
+                                 proxy_pass  http://toms;
+                             }
+                         }
+                     }  
+             2) 在192.168.2.100和192.168.2.200主机上配置Tomcat调度器
+                     以下以Web1为例：
+                     yum -y install  java-1.8.0-openjdk                //安装JDK
+                     yum -y install java-1.8.0-openjdk-headless        //安装JDK
+                     tar -xzf  apache-tomcat-8.0.30.tar.gz
+                     mv apache-tomcat-8.0.30  /usr/local/tomcat
+                     3）启动服务
+                     /usr/local/tomcat/bin/startup.sh
+         自写脚本： 
+               #!/bin/bash
+                     mytomcat(){
+                     ln=lnmp_soft.tar.gz
+                     tc=apache-tomcat-8.0.30.tar.gz
+                     [ ! -f $ln ]&& echo "没有lnmp_soft.tar.gz" && exit
+                     tar -xf $ln
+                     cd  lnmp_soft/
+                     [ ! -f $tc ]&& echo "没有apache-tomcat-8.0.30.tar.gz" && exit
+                     tar -xf $tc
+                     mv  apache-tomcat-8.0.30/  /usr/local/tomcat
+                     useradd  -s /sbin/tomcat  tomcat
+                     chown -R tomcat:tomcat /usr/local/tomcat/
+                     echo "#!/bin/bash
+                     case \$1 in
+                     -s)
+                     su  - tomcat  -s /bin/bash -c '/usr/local/tomcat/bin/shutdown.sh'  &> /dev/null
+                     ;;
+                     -r)
+                     su - tomcat -c '/usr/local/tomcat/bin/shutdown.sh'  -s /bin/bash  &> /dev/null
+                     su - tomcat -c '/usr/local/tomcat/bin/startup.sh'  -s /bin/bash  &> /dev/null
+                     ;;
+                     -e)
+                     echo "/bin/tomcat"  >> /etc/rc.local
+                     chmod +x /etc/rc.local
+                     ;;
+                     -de)
+                     if grep -q "/bin/tomcat" /etc/ec.local ;then
+                     sed  -i  's#/bin/tomcat##' /etc/rc.local
+                     else
+                     echo "没有自起"
+                     fi
+                     ;;
+                     *)
+                     su - tomcat -c '/usr/local/tomcat/bin/startup.sh'  -s /bin/bash  &> /dev/null
+                     ;;
+                     esac"  > tomcat
+                     chmod +x tomcat
+                     cp tomcat  /bin/tomcat
+                     cd /usr/local/tomcat/lib
+                     yum -y install java-1.8.0-openjdk-devel.x86_64
+                     jar -xf catalina.jar
+                     sed -ri 's/.info(.*)/.info=nginx\/1.9.2/'  org/apache/catalina/util/ServerInfo.properties
+                     sed -ri 's/.number(.*)/.number=1.9.2/'  org/apache/catalina/util/ServerInfo.properties
+                     /bin/tomcat
+                     }
+               mytomcat
+
+            使用Varnish加速Web
+            
+            
+            部署Varnish缓存服务器(192.168.4.5)
+            
+            1）编译安装软件(python-docutils默认光盘中没有，需要在lnmp_soft中找) 
+
+                     yum -y install gcc readline-devel    //安装软件依赖包
+                     yum -y install ncurses-devel         //安装软件依赖包
+                     yum -y install pcre-devel            //安装软件依赖包
+                     yum -y install \
+                     python-docutils-0.11-0.2.20130715svn7687.el7.noarch.rpm        //安装软件依赖包
+                     useradd -s /sbin/nologin varnish                //创建账户
+                     tar -xf varnish-5.2.1.tar.gz
+                     cd varnish-5.2.1
+                     ./configure
+                     make && make install
+
+            2）复制启动脚本及配置文件
+
+                     cp  etc/example.vcl   /usr/local/etc/default.vcl
+            3）修改代理配置文件
+                     vim  /usr/local/etc/default.vcl
+                     backend default {
+                          .host = "192.168.2.100";
+                          .port = "80";
+                      }
+            4）启动服务
+                      varnishd  -f /usr/local/etc/default.vcl
+                      //varnishd命令的其他选项说明如下：
+                      //varnishd –s malloc,128M        定义varnish使用内存作为缓存，空间为128M
+                      //varnishd –s file,/var/lib/varnish_storage.bin,1G 定义varnish使用文件作为缓存
+            客户端测试
+            
+            1）客户端开启浏览器访问
+
+                      curl http://192.168.4.5
+
+            其他操作
+            
+            1）查看varnish日志
+                      varnishlog                        //varnish日志
+                      varnishncsa                    //访问日志
+
+            2）更新缓存数据，在后台web服务器更新页面内容后，用户访问代理服务器看到的还是之前的数据，说明缓存中的数据过期了需要更新（默认也会自动更新，但非实时更新）。
+            varnishadm  
+            varnish> ban req.url ~ .*
+            //清空缓存数据，支持正则表达式
