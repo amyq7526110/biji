@@ -9,49 +9,497 @@ my(){
    mysql -e "$1"
       
 } 
+#   ----------------------MYSQL-day09   MySQL视图 MySQL存储过程-----------------
+#      
+#      把ql系统用户信息存储到db9库下的user 表里，并在所有列前添加行号字段id (要求自动增长)
+#       
+#          一、mysql视图
+#          1.1  什么是mysql视图
+#        – 虚拟表
+#      
+#        – 内容与真实的表相似,有字段有记录
+#        – 视图并不在数据库中以存储的数据形式存在
+#        – 行和列的数据来自定义视图时查询所引用的基表,并
+#        且在具体引用视图时动态生成
+#        – 更新视图的数据,就是更新基表的数据
+#        – 更新基表数据,视图的数据也会跟着改变
 
-#   ----------------------MYSQL-day07   MySQL读写分离-------------------------
+#      1.2 视图优点
+#              • 简单
+#              – 用户不需关心视图中的数据如何查询获得
+#              – 视图中的数据已经是过滤好的符合条件的结果集
+#              • 安全
+#              – 用户只能看到视图中的数据
+#              • 数据独立
+#              – 一旦视图结构确定,可以屏蔽表结构对用户的影响
 
-#   一、数据读写分离
+#             视图使用限制
+
+#             • 不能在视图上创建索引
+#             • 在视图的FROM子句中不能使用子查询
+#             • 以下情形中的视图是不可更新的
+#             – 包含以下关键字的SQL语句:聚合函数(SUM、MIN、
+#               MAX、COUNT等)、DISTINCT、GROUP BY、
+#               HAVING、UNION或UNION ALL
+#             – 常量视图、JOIN、FROM一个不能更新的视图
+#             – WHERE子句的子查询引用了FROM子句中的表
+#             – 使用了临时表
+
+
+
+#      1.3  视图的基本使用
+#      创建视图
+#
+#       my "create view db9.v1 as select name,uid,shell from db9.user;"
+#
+#       my "select * from  db9.v1;"
  
-#       什么是数据读写分离？
+#       my "desc db9.v1;"
+   
+#       my "grant select on db9.v1 to yaya@'%'   identified by 'Azsd1234.';"
 
+#       my "create view db9.v2(vname,vuid) as select  name,uid from db9.user;"
+ 
+#       my "select * from db9.v2;desc db9.v2;"   
+   
+#
+#      查看视图
+
+        
+#        my "use db9;show tables;"
+
+
+#        my "use db9;show table  status\G;"
+
+#        my "use db9;show table status where comment='view'\G;"
+
+
+#        my "use mysql ;show table status where comment='view'\G;"
+
+
+#        my "show create view db9.v2;"
+
+
+
+#      使用视图(update insert )
+ 
+v1=db9.v1
+user=db9.user
+v2=db9.v2
+
+#     my "update db9.v1 set name='admin' where name='root';"
+
+#     my "select name from db9.user;"
+ 
+#     my "select name from db9.v1;"
+
+#     my "delete from $user where name='lucy';"
+
+#     my "insert into $user(name,uid) values('lucy',888);"
+
+#     my "select name,uid from $user where name='lucy';"
+  
+#     my "select name,uid from $v1 where name='lucy';"
+
+      
+
+#      删除视图
+ 
+#      my "drop view db9.v2;"
+#      my "drop view db9.user;"
+#      my "drop view db9.v1;"
+#      my "use db9; show tables;"
+ 
+#      1.4  AS定义视图中字段名称
+#      1.5 OR REPLACEX选项的使用
+
+#      视图进阶
+
+
+
+#      创建视图的完全格式
+t1=db9.t1
+t2=db9.t2
+a=db9.a
+b=db9.b
+
+#        my "create table db9.t1 select name,uid from $user  limit 3 ;"
+
+#        my "create table db9.t2 select name,uid from $user  limit 6 ;"
+
+#        my "select * from  $t1,$t2  where $t1.name=$t2.name;"
+          
+#        my "create view $v1 as select  * from $t1,$t2 where $t1.name=$t2.name;"
+ 
+#        my "select a.name as  aname , b.name as bname   from $t1 a , $t2 b where a.name=b.name;"
+v3=db9.v3
+v4=db9.v4
+
+#        my "create view $v3 as select a.name as  aname , b.name as bname   from $t1 a , $t2 b where a.name=b.name;"
+    
+#        my "select * from $v1;"
+
+#        my "select t1.name,t2.name from $t1  left join $t2 on $t1.name=$t2.name; "
+
+#        my "create view db9.v4(aname,bname) as select t1.name,t2.name from $t1  left join $t2 on $t1.name=$t2.name; "
+
+#        my "select * from db9.v4;"
+
+#          my "create or replace view  $v4  as select * from $user;"
+
+#          my "select * from $v4;"
+
+
+
+
+
+
+
+
+
+
+
+#      • 命令格式
+#      – CREATE
+#      [OR REPLACE]
+#      [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}]
+#      [DEFINER = { user | CURRENT_USER }]
+#      [SQL SECURITY { DEFINER | INVOKER }]
+#      VIEW view_name [(column_list)]
+#      AS select_statement
+#      [WITH [CASCADED | LOCAL] CHECK OPTION]设置字段别名
+#      • 视图中的字段名不可以重复 所以要定义别名
+#      – create view 视图名
+#      as
+#      select 表别名.源字段名 as 字段别名
+#      from 源表名 表别名 left join 源表名 表别名
+#      on 条件;
+#      mysql> create view v2
+#      as
+#      select a.name as aname , b.name as bname , a.uid as auid , b.uid
+#      as buid from user a left join info b on a.uid=b.uid;重要选项说明
+#      • OR REPLACE
+#      – Create or replace view 视图名 as select 查询;
+#      – 创建时,若视图已存在,会替换已有的视图
+#      mysql> create view v2 as select * from t1;
+#      Query OK, 0 rows affected (0.01 sec)
+#      mysql> create view v2 as select * from t1;
+#      ERROR 1050 (42S01): Table ‘v2’ already exists //提示已存在
+#      mysql>
+#      mysql> create or replace view v2 as select * from t1; //无提示
+#      Query OK, 0 rows affected (0.00 sec)
+#      mysql>重要选项说明(续1)
+#      • ALGORITHM
+#      – ALGORITHM = {UNDEFINED | MERAGE |
+#      TEMPTABLE}
+#      – MERAGE,替换方式;TEMPTABLE,具体化方式
+#      – UNDEFINED,未定义重要选项说明(续2)
+#      • LOCAL和CASCADED关键字决定检查的范围
+#      – LOCAL 仅检查当前视图的限制
+#      – CASCADED 同时要满足基表的限制(默认值)
+    user2=db9.user2
+#       my "create table $user2 select * from $user where uid>=10 and uid<=1000;"
+#       my "select * from $user2;" 
+
+    v5=db9.v5
+
+#       my "create view $v5 as select name,uid from $user2;"
+ 
+#          my "select * from $v5 where uid=11;"
+ 
+#        my "update $v5 set uid=1111 where name='operator';"
+
+#     mysql -e "select * from db9.user2;"
+
+v6=db9.v6
+#       my "create view $v6 as select *  from $user2  where uid <=100 with local check option;use db9 ; show tables;"
+  
+#       my  "select name,uid from db9.v6;"
+
+#       my "update $v6 set uid=101 where name='ftp';"
+#       my "update $v6 set uid=77 where name='ftp';"
+
+#       my  "select name,uid from db9.v6;"
+
+
+v7=db9.v7
+v8=db9.v8
+
+#        my "create view $v7 as select name,uid,shell from $user2 where uid>=10 and uid<=50;"
+ 
+
+#        my "create view $v8 as select name,uid,shell from $v7  where uid>=20 with cascaded check option;select * from $v8; "
+  
+         my "select * from $v7;"
+         my "select * from $v8;"
+   
+         my "update $v8 set uid=16 where name='ntp';"
+         
+         my "update $v8 set uid=51 where name='ntp';"
+
+ 
+#      mysql> create view v1 as
+#      select * from a where uid < 10 with check option;
+#      Query OK, 0 rows affected (0.09 sec)
+#      mysql> create view v2 as
+#      select * from v1 where uid >=5 with local check option;
+#      Query OK, 0 rows affected (0.09 sec)
+
+
+#      
+#      二、mysql存储过程
+#      2.1 基本使用：创建  查看  调用   删除 
+#      
+#      2.2 存储过程参数类型： in   out   inout
+#      
+#      2.3mysql 变量类型： 会话变量 全局变量   用户变量   局部变量
+#      
+#      2.4 mysql运算符号 :   +   -    *   /    DIV   %  
+#      
+#      2.5 条件判断符号：
+#      >  >=  <  <=   =  !=   or   and   !   like   regexp 
+#      is  null    is  not  null    
+#      in  
+#      not  in 
+#      between....and....
+#      
+#      2.6 流程控制：
+#      if 顺序结构
+#      if  条件判断  then
+#          代码
+#          .....
+#      end  if ;
+#      
+#      if  条件判断  then
+#          代码
+#          .....
+#      else
+#         代码
+#          .....
+#      end  if;
+#      
+#      循环结构
+#      循环控制参数
+#
+#   ----------------------MYSQL-day08  部署MYSQL高可用集群-----------------
+#
+#       集群定义： 使用多台服务提供相同的服务
+#
+#       高可用集群定义：主备模式，被客户端访问的称作主，当主宕机时，备用     
+#       服务器自动接收客户端访问。
+#       
+#       配置mysql数据库服务高可用集群（MHA  + 主从同步）
+#
+#        MHA软件介绍
+#
+#        配置MHA集群
+#
+#        安装软件包：
+#
+#         将规划好的vip 地址192.168.4.100 分配 给 当前 主服务器 192.168.4.51 
+#
+#        ifconfig eth0:1 192.168.4.100
+#
+#         在所有数据节点上授权监控用户
+#
+#        my "grant all on *.* to root@'%' identified by 'Azsd1234.';"
+#
+#        my "select user,host from mysql.user;"
+#
+#        在所有主机上安装perl软件包 （51~56）
+#
+#         cd  mha-soft-student
+#         yum -y  install  perl-*.rpm
+#         
+#        在所有主机上安装mha_node软件包 （51~56）
+#
+#         yum  -y  install   perl-DBD-mysql
+#         rpm  -ivh  mha4mysql-node-0.56-0.el6.noarch.rpm
+#         
+#        只在管理 "主机56" 上安装mha_manager软件包
+#
+#         yum -y  install    perl-ExtUtils-*     perl-CPAN*
+#         tar  -zxvf  mha4mysql-manager-0.56.tar.gz
+#         cd  mha4mysql-manager-0.56
+#         perl  Makefile.PL  
+#         make
+#         make install
+#         
+# 
+#        拷贝命令（56）
+#
+#          cp  mha4mysql-manager-0.56/bin/*    /usr/local/bin/
+#
+#           相关命令
+#           • manager节点提供的命令工具
+#           命令
+#           作用
+#           masterha_check_ssh 检查MHA的SSH配置状况
+#           masterha_check_repl 检查MySQL复制状况
+#           masterha_manager 启动MHA
+#           masterha_check_status 检测MHA运行状态
+#           masterha_master_monitor 检测master是否宕机
+#
+#
+#         在主机51 52  53  检查是否有同步数据的用户 repluser   
+#
+#          show  grants  for  repluser@"%" ;
+#         
+#         在主机51~55 做如下设置   不自动删除本机的中继日志文件
+#
+#
+#           my  "show variables like 'relay_log_purge';"
+#           my  "set global relay_log_purge=off;"
+#           my  "show variables like 'relay_log_purge';"
+#         
+#         
+#          创建工作目录 和主配置文件 （56）
+#
+#           mkdir    /etc/mha_manager/
+#         
+#           cp  mha4mysql-manager-0.56/samples/conf/app1.cnf   /etc/mha_manager/
+#         
+#          编辑主配置文件 app1.cnf(56)
+# 
+#           vim  /etc/mha_manager/app1.cnf
+#
+#          创建故障切换脚本（56）
+#
+#          ls  /usr/local/bin/master_ip_failover
+#         
+#          cp mha4mysql-manager-0.56/samples/scripts/master_ip_failover 
+#         
+#          /usr/local/bin/
+#         
+#         
+#         验证配置
+#
+#         验证ssh 免密码登录 数据节点主机
+#
+#          masterha_check_ssh --conf=/etc/mha_manager/app1.cnf
+#         
+#         Sun May  6 16:38:19 2018 - [info] All SSH connection tests passed 
+#         
+#         successfully.
+#         
+#         验证 数据节点的主从同步配置（要不调用故障切换脚本）
+#
+#         masterha_check_repl --conf=/etc/mha_manager/app1.cnf
+#         
+#         MySQL Replication Health is OK.
+#         
+#         
+#         四、测试高可用集群配置
+#
+#         4.1 在主库上手动部署vip 地址   192.168.4.100
+#
+#          ifconfig  eth0:1 192.168.4.100/24
+#         
+#          ifconfig  eth0:1
+#         eth0:1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 
+#         
+#         1500
+#                 inet 192.168.4.100  netmask 255.255.255.0  broadcast 
+#         
+#         192.168.4.255
+#                 ether 74:52:09:07:51:01  txqueuelen 1000  (Ethernet)
+#         
+#         
+#         4.2 修改故障切换脚本 指定vip地址的部署信息
+#          vim /usr/local/bin/master_ip_failover 
+#         my $vip = '192.168.4.100/24';  # Virtual IP 
+#         my $key = "1";
+#         my $ssh_start_vip = "/sbin/ifconfig eth0:$key $vip";
+#         my $ssh_stop_vip = "/sbin/ifconfig eth0:$key down";
+#         ：wq
+#         
+#         4.3 启动管理服务，并查看服务状态
+#          masterha_manager --conf=/etc/mha/app1.cnf 
+#         --remove_dead_master_conf   --ignore_last_failover
+#         
+#            – --remove_dead_master_conf //删除宕机主库配置
+#            – --ignore_last_failover   //忽略xxx.health文件         
+#         
+#          masterha_check_status --conf=/etc/mha_manager/app1.cnf
+#         app1 (pid:16944) is running(0:PING_OK), master:192.168.4.51
+#          
+#         
+#         ++++++++++++++++++++++++++++++++++++++++++++++++
+#         4.4 测试故障转移
+#         在主库51 上执行  ]# shutdown   -h  now
+#         
+#         
+#         4.5 在管理主机上查看服务状态(如果服务停止了，手动启动一下服务，再查看状态)
+#          masterha_check_status --conf=/etc/mha_manager/app1.cnf
+#         app1 (pid:17507) is running(0:PING_OK), master:192.168.4.52
+#         
+#         
+#         4.6 在52 本机查看是否获取vip地址
+#         # ip addr  show  | grep  192.168.4
+#             inet 192.168.4.52/24 brd 192.168.4.255 scope global eth0
+#             inet 192.168.4.100/24 brd 192.168.4.255 scope global secondary eth0:1
+#         
+#         
+#         4.6 客户端连接vip地址 ，访问数据服务
+#        mysql   -h192.168.4.100   -uwebadmin   -p123456
+#         mysql> 
+#
+#
+#       
+#       测试高可用集群配置
+#        在主库上手动部署vip 地址   192.168.4.100
+#        修该故障切换脚本 指定vip地址的部署信息
+#        启动管理服务，并查看服务状态
+#
+#
+#
+#  
+#
+#
+#---------------------------------------------------------------------------
+#
+#   ----------------------MYSQL-day07   MySQL读写分离-------------------------
+#
+#   一、数据读写分离
+# 
+#       什么是数据读写分离？
+#
 #             把客户端访问数据时的查询请求和写请求分别给不同的数据库服务器处理。
 #
 #       为要对数据做读写分离？
-
+#
 #         减轻单台数据库服务器的并发访问压力
-
+#
 #         提高数据库服务器硬件利用率
-
+#
 #       读写分离的原理
-
+#
 #       • 多台MySQL服务器
-
+#
 #       – 分别提供读、写服务,均衡流量
 #       – 通过主从复制保持数据一致性
-
+#
 #       • 由MySQL代理面向客户端
-
+#
 #       – 收到SQL写请求时,交给服务器A处理
 #       – 收到SQL读请求时,交给服务器B处理
 #       – 具体区分策略由服务设置
-
+#
 #       实现数据读写分离的方式？
-
+#
 #        人肉分离：  做不同的数据操作时，访问指定的数据库服务器
-
+#
 #        使用mysql中间件提供的服务实现：mycat   mysql-proxy   maxscale
-
+#
 #        使用中间件提供的服务做数据读写分离的缺点？
 #
 #         单点故障
 #         当访问量大时，会成为网络瓶颈
 #      二、配置数据读写分离
-
+#
 #         2.1  拓扑结构			        webuser    123456
 #    	client254   mysql  -h192.168.4.56  -u用户名    -p密码
-
+#
 #    	      |
 #                 代理服务器56
 #                      |
@@ -60,8 +508,8 @@ my(){
 #                |                   |
 #            master                slave
 #              51	            52
-
-
+#
+#
 #     2.2 配置数据读写分离
 #     2.2.1  配置一主一从  主从同步结构，并在客户端测试配置
 #     master51> grant  all  on  webdb.*  to webuser@"%"  identified by " 123456";
@@ -161,53 +609,53 @@ my(){
 #     ]# mysql -h192.168.4.56 -P4006 -uwebuser -p123456
 #     mysql>  select  @@hostname
 #     mysql>  执行插入或查询 （ 在51 和 52 本机查看记录）
-
-
-
+#
+#
+#
 #     配置数据读写分离
-
+#
 #       配置一主一从  主从同步结构，并在客户端测试配置
-
+#
 #       grant  all  on  webdb.*  to webuser@"%"  identified by " 123456";
 #     
 #       配置数据读写分离服务器
-
+#
 #        环境准备
 #        setenforce  0
 #        systemctl  stop  firewalld
 #        yum repolist
 #        ping  -c  2  192.168.4.51
 #        ping  -c  2  192.168.4.52
-
+#
 #     下载软件包 maxscale-2.1.2-1.rhel.7.x86_64.rpm
 #     
 #     配置数据读写分离服务器 50
-
+#
 #     1 装包
-
+#
 #        yum -y reinstall maxscale-2.1.2-1.rhel.7.x86_64.rpm
-
+#
 #     2 修改配置文件
-    
+#    
 #        cof=/etc/maxscale.cnf
-
-
+#
+#
 #          [maxscale]  //服务运行后开启线程的数量
 #          threads=auto
-
+#
 #        sed -i '/threads/s/1/auto/' $cof
-
-
+#
+#
 #     #定义数据库服务器
-
+#
 #          [名称]    
 #          type=server
 #          address=数据库服务器的ip地址
 #          port=3306
 #          protocol=MySQLBackend
-
+#
 #          sed -rie ":begin; /\[server/,/end/ { /end/! { $! { N; b begin }; }; s/\[server1(.*end)/\[server1\1\n\n\[server2\1/; };" $cof 
- 
+# 
 #              [server1]
 #              type=server
 #              address=127.0.0.1
@@ -219,11 +667,11 @@ my(){
 #              address=127.0.0.1
 #              port=3306
 #              protocol=MySQLBackend
-
-
+#
+#
 #          sed -rie ":begin; /\[server1/,/0.1/ { /0.1/! { $! { N; b begin }; }; s/(\[server1.*address=).*/\1192.168.4.51/; };"  $cof
-
-
+#
+#
 #              [server1]
 #              type=server
 #              address=192.168.4.51
@@ -235,9 +683,9 @@ my(){
 #              address=127.0.0.1
 #              port=3306
 #              protocol=MySQLBackend
-
+#
 #          sed -rie ":begin; /\[server2/,/0.1/ { /0.1/! { $! { N; b begin }; }; s/(\[server2.*address=).*/\1192.168.4.52/; };"  $cof
-
+#
 #              [server1]
 #              type=server
 #              address=192.168.4.51
@@ -249,15 +697,15 @@ my(){
 #              address=192.168.4.52
 #              port=3306
 #              protocol=MySQLBackend
-
+#
 #              sed -rie '/^servers/s/$/, server2/' $cof
-
+#
 #              sed -ri '/^passwd/s/=.*/=Azsd1234./'  $cof
-
-
-     
+#
+#
+#     
 #          定义监控的数据库服务器
-
+#
 #             36 [MySQL Monitor]
 #             37 type=monitor
 #             38 module=mysqlmon
@@ -267,10 +715,10 @@ my(){
 #             42 monitor_interval=10000
 #     
 #             sed -rie  ":begin; /^\[MySQL/,/10000/ { /10000/ ! { $! { N; b begin};}; s/(.*)user=(.*)\n(.*)\n(.*)/\1user=scalemon\n\3\n\4/ }; "  $cof
-       
-
+#       
+#
 #          #不定义只读服务
-
+#
 #             53 #[Read-Only Service]
 #             54 #type=service
 #             55 #router=readconnroute
@@ -278,11 +726,11 @@ my(){
 #             57 #user=myuser
 #             58 #passwd=mypwd
 #             59 #router_options=slave
-
+#
 #             sed -rie ":begin; /\[Read-Only/,/slave/ { /slave/! { $! { N; b begin }; }; s/\n/\n#/g;s/^/#/ };" $cof
 #     
 #         #定义读写分离服务
-
+#
 #             64 [Read-Write Service]
 #             65 type=service
 #             66 router=readwritesplit
@@ -292,35 +740,35 @@ my(){
 #             70 max_slave_connections=100%
 #    
 #             sed -rie  ":begin; /\[Read-Write/,/100%/ { /100%/ ! { $! { N; b begin};}; s/(.*)user=(.*)\n(.*)\n(.*)/\1user=scaleuser\n\3\n\4/ }; "  $cof     
-
+#
 #          #定义管理服务
-
+#
 #             76 [MaxAdmin Service]
 #             77 type=service
 #             78 router=cli
 #     
 #          #不指定只读服务使用的端口号
-
+#
 #             86 #[Read-Only Listener]
 #             87 #type=listener
 #             88 #service=Read-Only Service
 #             89 #protocol=MySQLClient
 #             90 #port=4008
-
+#
 #            sed -rie ":begin; /\[Read-Only Lis/,/4008/ { /4008/! { $! { N; b begin }; }; s/\n/\n#/g;s/^/#/ };" $cof
 #     
 #          #定义读写分离服务使用的端口号
-
+#
 #             92 [Read-Write Listener]
 #             93 type=listener
 #             94 service=Read-Write Service
 #             95 protocol=MySQLClient
 #             96 port=4006  #设置使用的端口
-
-
+#
+#
 #     
 #          #定义管理服务使用的端口
-
+#
 #             98 [MaxAdmin Listener]
 #             99 type=listener
 #            100 service=MaxAdmin Service
@@ -329,33 +777,33 @@ my(){
 #                port=4018    #不设置使用的默认端口
 #     
 #            sed -i   '$a port=4016' $cof    
- 
+# 
 #     3 根据配置文件的设置，在2台数据库服务器上添加授权用户
-   
+#   
 #        grant replication slave, replication client on *.* to
 #        scalemon@'%' identified by 'Azsd1234.';
-
+#
 #        //创建监控用户
-
+#
 #        grant select on mysql.* to maxscale@‘%’ identified by   'Azsd1234.';
-
+#
 #        //创建路由用户
-
+#
 #        grant all on *.* to student@'%' identified by 'Azsd1234.';        
 #        
 #     4 启动服务
-       
+#       
 #        maxscale -f /etc/maxscale.cnf
-
+#
 #        maxadmin  -uadmin -pmariadb -P4016 -e "list servers"
-
-
+#
+#
 #     5 查看服务进程和端口
 #     
 #     2.2.3 测试配置
-
+#
 #     a 在本机访问管理管端口查看监控状态
-
+#
 #     maxadmin  -P端口  -u用户   -p密码
 #     maxadmin -P4016  -uadmin   -pmariadb 
 #      
@@ -364,26 +812,26 @@ my(){
 #     mysql  -h读写分离服务ip   -P4006   -u用户名  -p密码
 #     
 #     mysql  -h192.168.4.56 -P4006 -uwebuser -p123456
-
+#
 #     mysql>  select  @@hostname
-
+#
 #     二、mysql多实例
-
+#
 #     2.1 多实例介绍
-
+#
 #         多实例概述
-
+#
 #         • 什么是多实例
-
+#
 #           – 在一台物理主机上运行多个数据库服务
 #        
 #         
 #         • 为什么要使用多实例
-
+#
 #           – 节约运维成本
 #           – 提高硬件利用率
-
-
+#
+#
 #     2.2 配置多实例
 #     1 环境准备
 #     2 安装提供多多实例服务的mysql数据库服务软件
@@ -417,10 +865,10 @@ my(){
 #     mysql> ALTER USER user() identified   by   "新密码";
 #     7 停止多实例服务
 #     mysqld_multi  --user=root  --password=密码  stop  实例编号
-    #     
- 
+#    #     
+# 
 #      tar -xf   mysql-5.7.20-linux-glibc2.12-x86_64.tar.gz
-
+#
 #      mv  mysql-5.7.20-linux-glibc2.12-x86_64 /usr/local/mysql
 #
 #      sed -i '$a export PATH=/usr/local/mysql/bin/:$PATH'  /etc/profile
@@ -474,7 +922,7 @@ my(){
 #  存储引擎： 是表的处理器，不同的存储引擎有不同的功能和数据存储方式。Myisam   innodb
 #  
 #  文件系统： 存储表中记录的磁盘
-#  
+# 
 #  3.2mysql服务处理查询请求过程：
 #  数据服务器接收到查询请求后，先从查询缓存里查找记录，若查询缓存里有查找记录，直接从缓存提取数据给客户端，
 #  
@@ -492,23 +940,60 @@ my(){
 #  c 、提供服务软件的版本低，导致性能低下：
 #  1 查看服务运行时的参数配置   my.cnf
 #  mysql> show  variables;
+#
+#  
 #  mysql> show  variables   like "%innodb%";
 #  2 常用参数：
 #  并发连接数量
+# 
 #  Max_used_connections/max_connections=0.85
 #    500/x=0.85  * 100%   = 85%
 #  
-#  show  global  status  like "Max_used_connections";
-#  set  global   max_connections  =   数字；
+#     my "show variables like  '%conn%';"
+#     my "set global max_connections=500;"
+#     my "show variables like  '%conn%';"
+#   
+#     my "show global status;"
 #  
-#  连接超时时间
-#  show   variables   like   "%timeout%";
-#  connect_timeout  客户端与服务器建立连接时tcp三次握手超时是时间
-#  wait_timeout  户端与服务器建立连接后，等待执行sql命令的超时时间。
+#     my "show global  status  like 'Max_used%';"
+#
+#     show  global  status  like "Max_used_connections";
+#     set  global   max_connections  =   数字；
+#
 #  
+#   连接超时时间
+#   
+# #     my "show variables like '%timeout%';"
+#
+#    show   variables   like   "%timeout%";
+#
+#    connect_timeout 10     客户端与服务器建立连接时tcp三次握手超时是时间
+#
+#    wait_timeout    28800  客户端与服务器建立连接后，等待执行sql命令的超时时间。
+#   
+#    dev.mysql.com/doc/
+#
+# 
+#          缓存参数控制
+#          • 缓冲区、线程数量、开表数量
+#          选 项
+#          知
+#          识
+#          讲
+#          解
+#          含 义
+#          key_buffer-size 用于MyISAM引擎的关键索引缓存大小
+#          sort_buffer_size 为每个要排序的线程分配此大小的缓存空间
+#          read_buffer_size 为顺序读取表记录保留的缓存大小
+#          thread_cache_size 允许保存在缓存中被重用的线程数量
+#           table_open_cache 为所有线程缓存的打开的表的数量
+#
+#     my "show variables like '%buffer%';"
+# 
 #  
 #  可以重复使用的线程的数量  thread
 #  show   variables   like   "%thread%";
+#   my "show variables like '%thread%'; "
 #  thread_cache_size = 9
 #  
 #  所有线程同时打开表的数量
@@ -570,7 +1055,7 @@ my(){
 #  慢查询日志： 记录超过指定时间显示查询结果的sql命令
 #  查询日志： 记录所有sql命令。
 #  5、网络架构有问题（有数据传输瓶颈） 
-
+#
 #    MySQL性能调优
 #       三、mysql调优
 #       3.1 mysql体系结构 （由8个功能模块组成）：
@@ -604,7 +1089,7 @@ my(){
 #       uptime     free  -m      top  --> 0.0 wa
 #       
 #       b  、网络带宽窄   网络测速软件
-
+#
 #    • 提高MySQL系统的性能、响应速度
 #    – 替换有问题的硬件(CPU/磁盘/内存等)
 #   
@@ -613,52 +1098,52 @@ my(){
 #   
 #    – 服务程序的运行参数调整
 #    – 对SQL查询进行优化
-
-
+#
+#
 #      my "show processlist;"
-
+#
 #      my "show status;"
-
+#
 #     my "show status like '%innodb%';"
-
+#
 #      my "show status like 'Innodb_row_lock_waits';"
-
-
+#
+#
 #     查看服务运行时的参数配置   my.cnf
-
+#
 #      my "show variables;"
-   
+#   
 #      my "show variables like 'connect_timeout';"
-
+#
 #      my "set GLOBAL connect_timeout = 20;
 #          show variables like 'connect_timeout';"
-
+#
 #      vim /etc/my.cnf
-
+#
 #      [msyqld]
 #      connect_timeout = 20; 
-
-
+#
+#
 #   ----------------------------------------------------------------------------
 #   ----------------------MYSQL-day06   部署MYSQL主从同步-------------------------
-
- 
-
-
-
-
+#
+# 
+#
+#
+#
+#
 #       一、什么是mysql主从同步
-
+#
 #           主：正在被客户端访问的数据库服务器，被称作主库服务器。
 #           从：自动同步主库上的数据的数据库服务器，被称作从库服务器。
-
+#
 #                实现数据的自动备份  
- 
-
+# 
+#
 #       二、配置mysql主从同步
-
+#
 #           2.1 拓扑图
-
+#
 #         192.168.2.100/24   192.168.2.200/24
 #               __               __
 #              |主|  复制/同步  |从|  
@@ -675,65 +1160,65 @@ my(){
 #
 #           数据库服务器 192.168.4.51  做主库
 #           数据库服务器 192.168.4.52  做从库
-
+#
 #mysqldump   -A > a.sql
-
-
+#
+#
 #       配置mysql主从同步
-
+#
 #           配置主库
-
+#
 #              a 创建用户授权
-                 
+#                 
 #                 my "grant replication slave on *.*  to repluser@'%' identified by 'Azsd1234.';"
-  
+#  
 #                 my "select user,host from mysql.user;"                           
-                        
+#                        
 #              b 启用binlog日志
-
+#
 #                sed -i '/\[mysqld]/a   binlog-format="mixed"'  /etc/my.cnf
 #                sed -i '/\[mysqld]/a   log-bin=master100 '     /etc/my.cnf
 #                sed -i '/\[mysqld]/a   server_id=100'          /etc/my.cnf 
-       
+#       
 #                systemctl restart mysqld
-
+#
 #                my "show master status;"
-
+#
 #              c 查看正在使用binlog日志信息
-    
+#    
 #                ls /var/lib/mysql/master*
 #       
 #           配置从库
 #               ssh-copy-id  192.168.2.200
-             
+#             
 #              a 验证主库的用户授权
-
+#
 #              b 指定server_id
 #    ssh 192.168.2.200         "sed -i '/\[mysqld]/a   server_id=200'  /etc/my.cnf" 
 #    ssh 192.168.2.200 "systemctl  restart mysqld"
-
+#
 #              c 数据库管理员本机登录，指定主数据库服务器的信息
-
+#
 #                 change  master  to
 #                 master_host="主库ip地址",
 #                 master_user="主库授权用户名",
 #                 master_password="授权用户密码",
 #                 master_log_file="主库binlog日志文件名",
 #                 master_log_pos=binlog日志文件偏移量;
-
-
+#
+#
 #                  mysql> change master to
 #                      -> master_host="192.168.2.100",
 #                      -> master_user="repluser",
 #                      -> master_password="Azsd1234.",
 #                      -> master_log_file="master100.000001",
 #                      -> master_log_pos=441;
-
-
+#
+#
 #              d 启动slave进程
-
+#
 #                start slave
-
+#
 #              e 查看进程状态信息
 #       
 #        相关命令
@@ -742,12 +1227,12 @@ my(){
 #             show  processlist;  #查看当前数据库服务器上正在执行的程序
 #             start  slave ; #启动slave 进程
 #             stop  slave ; #停止slave 进程
-
+#
 #        在客户端测试主从同步配置
 #          在主库服务器上添加访问数据时，使用连接用户
 #                my "grant select,insert on db5.* to yaya@'%' identified by 'Azsd1234.';"
 #          客户端使用主库的授权用户，连接主库服务器，建库表插入记录
-
+#
 #              mysql> select  user();
 #        +------------------+
 #        | user()           |
@@ -767,17 +1252,17 @@ my(){
 #        mysql> insert into b values('haha');
 #        
 #        mysql> insert into b values('xixi');
-
-
-
+#
+#
+#
 #2.4.3  在从库本机，使用管理登录查看是否有和主库一样库表记录及授权用户
 #     
-      #  主  select * from db5.b;
-      #  从  select * from db5.b;               
-         
-   
+#      #  主  select * from db5.b;
+#      #  从  select * from db5.b;               
+#         
+#   
 #2.4.4 客户端使用主库的授权用户,连接从库服务器，也可以看到新建的库表及记录
-
+#
 #
 #         三、mysql主从同步的工作原理
 #         从库数据库目录下的文件：
@@ -793,53 +1278,53 @@ my(){
 #                           从库指定主库的日志信息错误（日志名   偏移量）
 #
 #  Last_IO_Error: 报错信息
-
+#
 #
 #          修改步骤：
-
+#
 #           stop  slave;
 #           change  master  to   选项="值";
 #           start  slave;
 #
 #          SQL线程报错原因： 执行本机中继日志文件里的sql命令,用到库或表在本机不存在。
-
+#
 #            Last_SQL_Error: 报错信息
 #            
 #            设置从库暂时不同步主库的数据？
 #            在从库上把slave 进程停止 
-
+#
 #            stop  slave;
 #            
 #          把从库恢复成独立的数据库服务器？
-
+#
 #             rm -rf  /var/lib/mysql/master.info 
 #             systemctl  restart mysqld
 #             rm  -rf   主机名-relay-bin.XXXXXX   主机名-relay-bin.index   relay-log.info
 #
 #     mysql主从同步结构模式
-
+#
 #           一主一从  
 #           一主多从  
 #           主从从
 #           主主结构（又称作互为主从）
 #
 #     mysql主从同步常用配置参数
-
+#
 #           主库服务器在配置文件my.cnf 使用的参数
-
+#
 #           vim /etc/my.cnf
 #           [mysqld]
 #           binlog_do_db=库名列表   #只允许同步库Binlog_Ignore_DB=库名列表    #只不允许同步库
 #           systemctl  restart  mysqld
 #           
 #     从库服务器在配置文件my.cnf 使用的参数
-
+#
 #           vim /etc/my.cnf
 #           [mysqld]
 #           log_slave_updates
-
+#
 #           级联复制
-
+#
 #           relay_log=中继日志文件名
 #           replicate_do_db=库名列表   #只同步的库
 #           replicate_ignore_db=库名列表   #只不同步的库
@@ -943,15 +1428,15 @@ my(){
 #           rpl-semi-sync-slave-enabled = 1
 #
 # --------------------------------------------------------------------------------
-
-
-
+#
+#
+#
 #   ----------------------MYSQL-day05   数据备份与恢复-------------------------
 #
 #       一数据备份相关概念
 #            1.1 数据备份的目的: 数据被误删除 或 设备损害导致数据丢失 ，是备份文件恢复数据。
 #            1.2数据备份方式:
-
+#
 #            物理备份： 指定备份库和表对应的文件
 #               
 #            cp   -r   /var/lib/mysql   /opt/mysql.bak
@@ -971,35 +1456,35 @@ my(){
 #                  systemctl  restart  mysqld
 #           
 #     重新初始化授权库，只适合 没有存储数据的数据库操作
-
-
+#
+#
 #            systemctl stop mysqld
 #            rm -rf /var/lib/mysql
 #            systemctl start mysql
-      
-
-
-
-
+#      
+#
+#
+#
+#
 #------------------
-
-
- 
+#
+#
+# 
 #            逻辑备份： 在执行备份命令时，根据备份的库表及数据生成对应的sql命令，把sql存储到指定的文件里。
 #            
-
-
-
+#
+#
+#
 #               数据备份策略:
 #               完全备份  备份所有数据（一张表的所有数据  一个库的所有数据  一台数据库的所有数据）
 #               
 #               备份新产生数据（差异备份 和 增量备份  都备份新产生的数据 ）
 #               差异备份 备份自完全备份后，所有新产生的数据。
 #               增量备份 备份自上次备份后，所有新产生的数据
-
-
+#
+#
 #                          18：00  t1   文件名    数据
-
+#
 #                 1 完全            10   1.sql     10            
 #                 2 差异             5   2.sql      5               
 #                 3                  7   3.sql     12                 
@@ -1007,9 +1492,9 @@ my(){
 #                 5                  1   5.sql     15              
 #                 6                  3   6.sql     18             
 #                 7 差异             9   7.sql     27
-
+#
 ##---------                18：00  t1   文件名    数据
-
+#
 #                 1 完全            10   1.sql     10            
 #                 2 增量             5   2.sql      5               
 #                 3                  7   3.sql      7                 
@@ -1017,10 +1502,10 @@ my(){
 #                 5                  1   5.sql      1              
 #                 6                  3   6.sql      3             
 #                 7 增量             9   7.sql      9
-
-
-
-
+#
+#
+#
+#
 #   ---        完全备份与完全恢复
 #                    完全备份数据命令
 #                    man mysqldump
@@ -1036,8 +1521,8 @@ my(){
 #                    完全恢复数据命令
 #                         mysql  -uroot  -p密码  数据库名   <  目录名/文件名.sql
 #
-
-
+#
+#
 #        完全备份数据
 #              mkdir  -p /mydatabak
 #              mysqldump -uroot -p654321  studb > /mydatabak/studb.sql
@@ -1047,18 +1532,18 @@ my(){
 #              cat  /mydatabak/db3-user3.sql
 #             
 #        完全恢复数据
-
+#
 #              mysql -uroot -p654321  studb  < /mydatabak/studb.sql 
 #              mysql -uroot -p654321  db3   < /mydatabak/db3-user3.sql
 #             
 #          使用source 命令恢复数据
-
+#
 #             mysql> create database  bbsdb;
 #             mysql> use bbsdb;
 #             mysql> source  /mydatabak/studb.sql
 #
 #每周一晚上18:00备份studb库的所有数据到本机的/dbbak目录下，备份文件名称要求如下  日期_库名.sql。
-
+#
 #          vim /root/bakstudb.sh
 #          #!/bin/bash
 #          day=`date +%F`
@@ -1073,35 +1558,35 @@ my(){
 #          
 #          crontab  -e
 #          00  18   *  *  1        /root/bakstudbT CHARSET=utf8.sh  &> /dev/null#
-
-
+#
+#
 #           完全备份的缺点:
 #           数据量大时，备份和恢复数据都受磁盘I/O
 #           备份和恢复数据会给表加写锁
 #           使用完全备份文件恢复数据，只能把数据恢复到备份时的状态。完全备份后新
 #           
 #           写入的数据无法恢复
-
-
+#
+#
 #           实时备份
-
+#
 #          增量备份与增量恢复
-
+#
 #                 启动mysql数据库服务的binlog日志文件 实现实时增量备份
-
+#
 #                 binlog日志介绍
-
+#
 #                       是mysql数据库服务日志文件的一种，默认没有启用。记录除查询之外的sql命令,二进制日志。
-
-
+#
+#
 #                        查询命令例如： select   show   desc  
-
+#
 #                        写命令例如： insert   update   delete   create  drop 
-
-
-
+#
+#
+#
 #                 启用binlog日志
-
+#
 #                         vim /etc/my.cnf
 #                         [mysqld]
 #                         server_id=51
@@ -1114,34 +1599,34 @@ my(){
 #                          cat  /var/lib/mysql/主机名-bin.index  日志索引
 #                         
 #                        my "show  variables like 'binlog_format';"
-
-
-
-
-
+#
+#
+#
+#
+#
 #                 查看binlog日志文件内容
-
-
+#
+#
 #                   my "insert into usertab(name,uid) values('lily',56),
 #                      ('bob',65);"
-
+#
 #                   my "insert into usertab(name,uid) values('huni',65);"                     
 #                   my "delete from usertab  where name='lily';" 
-
+#
 #                    mysqlbinlog  /var/lib/mysql/host54-bin.000001
-
-
-
+#
+#
+#
 #                 binlog日志记录sql命令方式
 #               
 #           使用binlog日志恢复数据
-
+#
 #                命令格式
 #                mysqlbinlog  日志文件名   |  mysql  -uroot  -p密码
-
-
+#
+#
 #                mysqlbinlog [选项] 日志文件名   |  mysql  -uroot  -p密码
-      
+#      
 #       binlog日志记录sql命令方式
 #
 #                记录方式有2种：  偏移量   、记录sql命令执行的时间
@@ -1153,29 +1638,29 @@ my(){
 #                指定时间范围选项
 #   180913 19:32:26             --start-datetime="yyyy-mm-dd  hh:mm:ss"  
 #   180913 19:33:00             --stop-position="yyyy-mm-dd  hh:mm:ss" 
-           
+#           
 #        my "delete from teadb.usertab where name in ('bob','hini');"
-  
-                    
+#  
+#                    
 #       mysqlbinlog --start-position=300 --stop-position=766 /var/lib/mysql/host54-bin.000001  |  mysql
-
- 
+#
+# 
 #             mysqlbinlog /var/lib/mysql/host54-bin.000001  > binlog.txt
-
+#
 #             awk '/lily/{print NR}' binlog.txt
 #             36
 #             69
 #             118
 #             awk 'NR==32{print $3}'  binlog.txt
-
+#
 #             akw '/huni/{print NR}' binlog.txt
 #             53
 #             102
 #             135
 #             awk 'NR==58{print $3}'  binlog.txt
-
+#
 #            管理日志文件 (大小超500M，生成新的文件)
-
+#
 #                   mkdir /mybinlog
 #                   chown mysql /mybinlog/
 #                   vim /etc/my.cnf
@@ -1185,31 +1670,31 @@ my(){
 #                    # log-bin=db54
 #                    log-bin=/mybinlog/db54
 #                    binlog_format="mixed"
-         
+#         
 #                    ls /mybinlog/
 #                    db54.000001  db54.index
-
-
+#
+#
 #                 手动生成新的日志文件方法
-
+#
 #                    my "show master  status;"  
-
+#
 #                    my "flush logs;"
- 
+# 
 #                    ls  -l /mybinlog/
-
+#
 #                     systemctl restart mysqld
- 
+# 
 #                     my "show master  status;"  
-                     
+#                     
 #                    mysql -e "flush logs"
-
+#
 #                    mysqldump   --flush-logs teadb   > /opt/haha.sql
-  
+#  
 #                    my "show master status;"                             
- 
+# 
 #  ----------------------- 
-  
+#  
 #               my "flush logs;"
 #               my "create database gamedb;"
 #               my "create table gamedb.user(
@@ -1220,36 +1705,36 @@ my(){
 #               my "insert into gamedb.user values(888);"
 #               my "flush logs;"
 #               my "show master status;"
-
+#
 #               ls /mybinlog/
 #               db54.000001  db54.000003  db54.000005  db54.000007
 #               db54.000002  db54.000004  db54.000006  db54.index
 #               my "drop database  gamedb;"
-       
+#       
 #               mysqlbinlog  /mybinlog/db54.000006  | mysql
-    
+#    
 #               my "select * from gamedb.user;"
-
-
-
-
-
-
+#
+#
+#
+#
+#
+#
 #                 删除已有的binlog日志文件
-
-
+#
+#
 #                删除所有的binlog日志，重新建日志
-
+#
 #                  my "reset master;"
-
+#
 #                删除早于指定版本的binlog日志
-
-
+#
+#
 #                 my "purge master logs to 'binlog文件名'"
-
+#
 #                
 #           安装第3方软件percona,提供备份命令innobackupex，对数据做增量备份
-
+#
 #                软件介绍
 #                安装软件
 #                备份命令的使用格式
@@ -1257,7 +1742,7 @@ my(){
 #                增量备份与恢复
 #                增量备份的工作过程
 #                恢复完全备份中的当表
-
+#
 #3.2  安装第3方软件提供备份命令，对数据做增量备份
 #软件介绍 Percona 开源软件  在线热备不锁表  适用于生成环境。
 #
@@ -1287,7 +1772,7 @@ my(){
 #                    --no-timestamp  不使用时间戳做备份文件的子目录名
 #
 #          innobackupex完全备份 与 完全恢复
-
+#
 #           innobackupex  --user  root   --password   654321  \
 #           --databases="mysql   performance_schema  sys   gamedb"   /allbak  --no-timestamp
 #
@@ -1296,54 +1781,54 @@ my(){
 #                   --copy-back
 #             systemctl stop mysqld
 #             rm   -rf  /var/lib/mysql
-
+#
 #             mkdir  /var/lib/mysql
-
+#
 #             innobackupex  --user root --password 654321  --copy-back  /allbak 
-
+#
 #             chown  -R  mysql:mysql  /var/lib/mysql
-
+#
 #             systemctl  restart  mysqld
-
+#
 #             mysql   -uroot  -p654321
-
+#
 #             show  databases;
 #             select  * from  gmaedb.t1;
 #
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+#
 #      my "create database db5;"
- 
+# 
 #      my "create table db5.a(
 #      id int(5) );"
-
+#
 #      my "insert into db5.a  values(666);"
-
+#
 #      my "show databases;"
-
+#
 # innobackupex   增量备份 与 恢复
-
+#
 # 备份：
-
+#
 # 第一次备份 备份所有数据
-
+#
 # innobackupex --user root --password Azsd1234. /fullbak --no-timestamp
-
+#
 #  写入新数据
-
+#
 # my "insert into db5.a values(888);"
-
+#
 # my "select * from db5.a;"
-
+#
 #  增量备份
-
+#
 #  --incremental 指定备份文件夹
-
+#
 #  --incremental--basedir=  指定基准文件夹   
-
+#
 #  innobackupex --user root --password Azsd1234. \
 #    --incremental /zengdir --incremental-basedir=/fullbak --no-timestamp
-
+#
 #     ls /fullbak
 #     echo 
 #     ls /fullbak/db5/
@@ -1351,40 +1836,40 @@ my(){
 #     ls /zengdir
 #     echo 
 #     ls /zengdir/db5
-
+#
 #   插入新数据
-
+#
 #    my "insert into db5.a values(999);"
-
+#
 #   增量备份
-
+#
 #    innobackupex --user root --password Azsd1234.  --incremental /zeng2dir  --incremental-basedir=/zengdir --no-timestamp
-
+#
 #    ls /zeng2dir
- 
+# 
 #    ls /zengdir
-
+#
 #   增量备份的工作过程
-
+#
 #     在线热备不锁表 对innodb存储引擎的表 增量备份
-
+#
 #     事务日志文件
-
+#
 #       ibdata1      
 #       ib_logfile0   
 #       ib_logfile1
-
+#
 #    日志序列号  LSN
-
+#
 #  xtrabackup_checkpoints  (记录备份类型 和lsn范围) 
-
+#
 #  cat /fullbak/xtrabackup_checkpoints
 #  cat /zengdir/xtrabackup_checkpoints
 #  cat /zeng2dir/xtrabackup_checkpoints 
-
-
+#
+#
 #       ibdata1  
- 
+# 
 #             systemctl stop mysqld
 #             rm -rf /var/lib/mysql/*
 #             innobackupex --user root --password Azsd1234. --apply-log --redo-only /fullbak/
@@ -1400,83 +1885,83 @@ my(){
 #             chown -R mysql:mysql /var/lib/mysql
 #             
 #             systemctl start mysqld
-
-   
-
+#
+#   
+#
 #   恢复
-
+#
 #        准备恢复数据
-
+#
 #        合并日志
-
+#
 #        把备份数据copy 到数据库目录下
-
+#
 #        修改权限
-
+#
 #        启动服务
-
-
+#
+#
 # 使用完全备份文件恢复单个表
-
+#
 #          my "create table db5.b(
 #              name char(10));"
-  
+#  
 #          my "insert into  db5.b values('bob');"
-   
+#   
 #          my "select * from db5.b"
-
+#
 #          my "desc db5.b;"
-
+#
 #          innobackupex   --user root --password Azsd1234. --databases="db5"  /db5full --no-timestamp 
-
+#
 #          my "drop table db5.b;"
-
+#
 #     恢复表
-
+#
 #           导出表信息
 #          ls /db5full/db5
 #          innobackupex --user root --password Azsd1234. --databases="db5" --apply-log --export /db5full
 #          ls /db5full/db5
-
-
-
+#
+#
+#
 #           创建删除的表
-
+#
 #           my "create table db5.b(
 #name char(10));"
 #           删除表空间  存储数据的表文件  表.idb 
-
+#
 #           my "alter table db5.b
 #discard tablespace;"
 #           copy表信息文件到数据库目录下
-
+#
 #             cp /db5full/db5/b.{exp,ibd,cfg}  /var/lib/mysql/db5/
-
+#
 #           修改权限
-
+#
 #             chown -R  mysql:mysql /var/lib/mysql/db5/
-
-
+#
+#
 #           导入表信息
-         
+#         
 #             my "alter table db5.b
 #                 import tablespace;"
-
-
+#
+#
 #             my "select * from db5.b;"
-
+#
 #             rm -rf /var/lib/mysql/db5/b.{cfg,exp}
-
+#
 # --------------------------------------------------------------
-
-
-
+#
+#
+#
 #                
-
+#
 #------------------------------------------------------------------------------
-
-
-
+#
+#
+#
 #   ------------------------MYSQL-day04  MYSQL 用户授权与权限撤销--------------
 #
 #      管理员密码管理
@@ -1533,8 +2018,8 @@ my(){
 #                 库名.*       某个库
 #                 库名.表名  某张表
 #                
-
- 
+#
+# 
 #                 用户名的表示方式：
 #                 连接数据库服务器是使用的名字
 #                 授权时自定义，要有标识性
@@ -1550,9 +2035,9 @@ my(){
 #                 identified   by  "密码"   授权用户连接数据库服务器密码自定义即可
 #                 
 #                 with  grant  option 可选项，让新添加的授权用户有授权的权限。
-
+#
 #                 授权用户连接后修改密码
-                           
+#                           
 #                          set password=password('')
 #
 #                 管理员  
@@ -1587,15 +2072,15 @@ my(){
 #         
 #         
 #                 my "select user,host from mysql.user;"
-
+#
 #                 my "revoke select,update on *.* from myadm@'%';"
-
+#
 #                 my "revoke all on  *.* from mydba@'%';"                
-
+#
 #                 my "show grants for  mydba@'%'; "
-
+#
 #                 my "revoke grant option on *.* from mydba@'%';"
-
+#
 #                 my "drop  user mydba@'%';"
 #         
 #          数据库服务器使用授权库存储授权信息
@@ -1631,22 +2116,22 @@ my(){
 #         my "select * from mysql.db where user='yaya'\G;"
 #
 #         my "update mysql.db set Insert_priv='N' where user='yaya' and host='192.168.4.51' and db='db5';flush privileges;"
-      
+#      
 #         my "show grants for yaya@'192.168.4.51';"
-           
+#           
 #         my "select * from mysql.db where user='yaya'\G;"
-
-
-
-
-
-
-
-
-
-
-
-
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
 #          工作中如何授权:
 #         给管理者授权     给完全权限 且有授权权限
 #         给使用者授权     只给select  和  insert 权限  

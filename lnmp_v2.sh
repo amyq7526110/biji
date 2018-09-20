@@ -85,7 +85,7 @@ mylnmp(){
 
 #       安装 mairadb php 环境
 
-        yum -y install mariadb-server mariadb mariadb-devel
+#        yum -y install mariadb-server mariadb mariadb-devel
         yum -y install php php-mysql
 
 
@@ -96,12 +96,14 @@ mylnmp(){
         sed  -i   '65,71s/^.*#/        /'  $conf
         sed  -i   '70s/_.*$/.conf;/'       $conf
         sed  -i   '69d'                    $conf
+        sed -rie ":begin; /^ +location/,/index.html/ { /index.html/! { $! { N; b begin }; }; s/index.html/index.php  index.html/ ; };" $conf
+
 
 #       启动服务
                  
-        systemctl restart mariadb
+#        systemctl restart mariadb
 
-        systemctl enable mariadb
+#        systemctl enable mariadb
 
         systemctl restart php-fpm.service
 
@@ -115,6 +117,8 @@ mylnmp(){
 #      验证
   
        cp  ../php_scripts/mysql.php  /usr/local/nginx/html/
+
+       sed -rie '/^\$mysql/s/root(.*)mysql/root\x27,\x27Azsd1234.\x27,\x27mysql/'  /usr/local/nginx/html/mysql.php
  
        firefox 127.0.0.1/mysql.php
 
