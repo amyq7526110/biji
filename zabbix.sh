@@ -126,8 +126,8 @@ myagent(){
 
 #   修改zabbix_agent 配置文件
 
-    sed -ri 's/^Server=(.*)/Server=\1,'$ip'/'             /usr/local/etc/zabbix_agentd.conf
-    sed -ri 's/^ServerActive=(.*)/ServerActive=\1,'$ip'/' /usr/local/etc/zabbix_agentd.conf
+    sed -ri 's/^Server=(.*)/Server='$ip'/'             /usr/local/etc/zabbix_agentd.conf
+    sed -ri 's/^ServerActive=(.*)/ServerActive='$ip'/' /usr/local/etc/zabbix_agentd.conf
     sed   -ri 's/^Hostname=(.*)/Hostname=zabbix_server/'  /usr/local/etc/zabbix_agentd.conf
     sed -i 's/# UnsafeUserParameters=0/UnsafeUserParameters=1/' /usr/local/etc/zabbix_agentd.conf
 

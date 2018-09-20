@@ -34,9 +34,9 @@ cd ~
 #      修改配置文件
      
      
-       sed -ri 's/^Server=(.*)/Server=\1,'$ip'/' /usr/local/etc/zabbix_agentd.conf   
+       sed -ri 's/^Server=(.*)/Server='$ip'/' /usr/local/etc/zabbix_agentd.conf   
      
-       sed -ri 's/^ServerActive=(.*)/ServerActive=\1,'$ip'/' /usr/local/etc/zabbix_agentd.conf 
+       sed -ri 's/^ServerActive=(.*)/ServerActive='$ip'/' /usr/local/etc/zabbix_agentd.conf 
  
        sed -ri '/^Hostname=/c  Hostname='$hostname'' /usr/local/etc/zabbix_agentd.conf
       

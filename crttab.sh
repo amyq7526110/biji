@@ -211,7 +211,7 @@ v4=db9.v4
 
 #     mysql -e "select * from db9.user2;"
 
-v6=db9.v6
+ v6=db9.v6
 #       my "create view $v6 as select *  from $user2  where uid <=100 with local check option;use db9 ; show tables;"
   
 #       my  "select name,uid from db9.v6;"
@@ -222,6 +222,7 @@ v6=db9.v6
 #       my  "select name,uid from db9.v6;"
 
 
+
 v7=db9.v7
 v8=db9.v8
 
@@ -230,12 +231,12 @@ v8=db9.v8
 
 #        my "create view $v8 as select name,uid,shell from $v7  where uid>=20 with cascaded check option;select * from $v8; "
   
-         my "select * from $v7;"
-         my "select * from $v8;"
-   
-         my "update $v8 set uid=16 where name='ntp';"
-         
-         my "update $v8 set uid=51 where name='ntp';"
+#         my "select * from $v7;"
+#         my "select * from $v8;"
+#   
+#         my "update $v8 set uid=16 where name='ntp';"
+#         
+#         my "update $v8 set uid=51 where name='ntp';"
 
  
 #      mysql> create view v1 as
@@ -248,13 +249,360 @@ v8=db9.v8
 
 #      
 #      二、mysql存储过程
+
+#          存储过程介绍
+
+#          • 存储过程,相当于是MySQL语句组成的脚本
+#          – 指的是数据库中保存的一系列SQL命令的集合
+#          – 可以在存储过程中使用变量、条件判断、流程控制等
+
+#          存储过程优点
+
+#          • 提高性能
+#          • 可减轻网络负担
+#          • 可以防止对表的直接访问
+#          • 避免重复编写SQL操作
+
+
 #      2.1 基本使用：创建  查看  调用   删除 
-#      
+
+#        创建存储过程
+
+#             • 语法格式
+#             – > delimiter //
+#             create procedure 名称()
+#             begin
+#             .. .. 功能代码
+#             end
+#             //
+#             //结束存储过程
+#             – Delimiter;
+#             •
+#             •
+#             delimiter关键字用来指定存储过程的分隔符(默认为;)
+#             若没有指定分割符,编译器会把存储过程当成SQL语句进行处理,从而执行出错
+#              my "delimiter //
+#                  create procedure db9.p1()
+#                  begin
+#                  select * from $user limit 10;
+#                  end
+#                  //
+#                  delimiter ;
+#                  call db9.p1();"       
+#     
+
+p1=db9.p1 
+#              my "delimiter //
+#                  create procedure db9.p1()
+#                  begin
+#                  select * from $user limit 10;
+#                  end
+#                  //
+#                  delimiter ;"
+#              my "call $p1();"       
+
+#               my "delimiter //
+#                   create procedure $p1()
+#                   begin
+#                   select count(*) from $user  where shell='/bin/bash';
+#                   end
+#                   //
+#                   delimiter ;
+#                   my "call $p1();"
+              
+
+c1=db9.c1
+
+#               my "delimiter //
+#                   create procedure $c1()
+#                   begin 
+#                   select user();
+#                   end
+#                   //
+#                   delimiter ;"
+#                   my "call $c1"
+
+
+#             查看存储过程
+
+#             • 方法1
+
+#             – mysql> show procedure status;
+
+#             • 方法2
+
+#             – mysql> select db,name,type from mysql.proc
+
+#             where name="存储过程名";
+
+#             mysql> select db,name,type from mysql.proc where name="say";
+
+#             +---------+------+-------------+
+#             | db
+#             | name | type
+#             |
+#             +---------+------+-------------+
+#             | studydb | say | PROCEDURE |
+#             +---------+------+-------------+
+
+#               my "desc mysql.proc\G;"
+#
+#               my "select db,name,type from mysql.proc where name='p1';"
+#
+#               my "select db,name,type from mysql.proc where type='procedure';"
+#
+#               my "select * from mysql.proc where name='p1'\G;"
+#
+#               my "select body from mysql.proc where name='p1';"
+
+
+#              调用/删除存储过程
+
+#              • 调用存储过程
+#              – call
+#              存储过程没有参数时,()可以省略
+#              存储过程有参数时,调用时必须传给参数
+#              存储过程名();
+#              • 删除存储过程
+#              – drop procedure 存储过程名;
+#              mysql> call say();
+#              +------+----------+------+------+---------+---------+-----------+
+#              | name | password | uid | gid | comment | homedir | shell
+#              |
+#              +------+----------+------+------+---------+---------+-----------+
+#              | root | x
+#              | 0 | 0 | root
+#              | /root
+#              | /bin/bash |
+#              +------+----------+------+------+---------+---------+-----------+
+#              1 row in set (0.00 sec)
+#              mysql> drop procedure say;
+#              Query OK, 0 rows affected (0.00 sec) 
+    
+#               my "drop procedure $p1;"
+   
+#               my "call $p1();"
+
 #      2.2 存储过程参数类型： in   out   inout
+
+         
+ 
+
+#             参数类型
+#             • 调用参数时,名称前也不需要加@
+#             – create procedure 名称(  类型 参数名 数据类型 , 类型 参数名 数据类型 )
+
+
+#             关键字
+
+#             in    输入参数 作用是给存储过程传值,必须在调用存储过程时赋值,在存储过程中该参数的值不允许修改;默认类型是in
+p5=db9.p5
+
+#             my "delimiter //
+#                 create procedure $p5( in sname char(25)) 
+#                 begin
+#                 declare x int(1);
+#                 set x = 0;
+#                 select count(name) into x  from $user  where shell=sname;
+#                 select x;
+#                 end
+#                 //
+#                 delimiter ;"
+#
+#              my "call $p5();"
+#              my "call $p5('/bin/bash');"
+#              my "call $p5('/sbin/nologin');"
+#              my "call $p5('/sbi/nologin');"
+
+#             out   输出参数 该值可在存储过程内部被改变,并可返回。
+
+p6=db9.p6
+#              my "drop procedure $p6;"  
+#              my "delimiter //
+#                  create procedure $p6( out usernum int(2)) 
+#                  begin
+#                  select count(name) into usernum  from $user  ;
+#                  select usernum;
+#                  end
+#                  //
+#                  delimiter ;"
+#  
+#              my "call $p6();"
+#              my "call $p6(7);"
+#              my "set @x=7;call $p6(@x);select @x;"
+#              my "call $p6(@y); select @y;"
+
+                   
+#
+                 
+
+
+#             inout 输入/输出参数
+
+#             in
+
+#             调用时指定,并且可被改变和返回参数类型(续1)
+
+#             mysql> delimiter //
+#             mysql> create procedure say(in username char(10))
+#             //定义in类型的参数变量username
+#             -> begin
+#             -> select username;
+#             -> select * from user where name=username;
+#             -> end
+#             -> //
+#             mysql> delimiter ;参数类型(续2)
+#             mysql> call say("root");
+#             //调用存储过程时给值
+#             +----------+
+#             | username |
+#             +----------+
+#             | root
+#             |
+#             +----------+
+#             1 row in set (0.00 sec)
+#             +----+------+------+----------+------+------+---------+---------+---------+
+#             | id | name | sex | password | pay | gid | comment | homedir | shell |
+#             +----+------+------+----------+------+------+---------+---------+---------+
+#             | 01 | root | boy | x
+#             | 0 | 0 | root
+#             | /root
+#             | /bin/bash |
+#             +----+------+------+-----
+  
+  
+
 #      
 #      2.3mysql 变量类型： 会话变量 全局变量   用户变量   局部变量
+
+#              变量类型
+
+#                  • 调用局部变量时,变量名前不需要加@
+#        名称
+
+#        会话变量
+#        会话变量和全局变量叫系统变量 使用set命令定义;
+        
+    
+#          my "show session variables like '%time%';" 
+
+ #         my "set session sort_buffer_size=888888;show session variables like 'sort_buffer_size';"
+  
+  #        my  "show  variables like 'sort_buffer_size';"
+
+#        全局变量
+  
+#          my "show global variables;"
+
+#        全局变量的修改会影响到整个服务器,但是对会话
+#        变量的修改,只会影响到当前的会话。
+
+#           my " select @@hostname;"
+
+
+
+#        用户变量
+#             在客户端连接到数据库服务的整个过程中都是有效
+#             的。当前连接断开后所有用户变量失效。
+#           定义 set
+#           @变量名=值;
+#           输出 select @变量名;a
+
+   #               my "select max(uid) into @y from $user; select @y;"
+
+    #              my "set @x=55; select @x;"
+                    
+
+#        局部变量 
+
+#           存储过程中的begin/end。其有效范围仅限于该语
+#           句块中,语句块执行完毕后,变量失效。
+#           declare专门用来定义局部变量。
+             p3=db9.p3
+#             my "delimiter //
+#                 create procedure $p3()
+#                 begin
+#                 declare x int(2) default 1;
+#                 declare y char(10); 
+#                 set y='hha';
+#                 select x;
+#                 select y;
+#                 end
+#                 //
+#                 delimiter ;"
+#                 
+#                 my "call $p3();"
+
+
+
 #      
 #      2.4 mysql运算符号 :   +   -    *   /    DIV   %  
+#           • 运算符号及用法示例
+#           符号
+#           描述
+#           示例
+#           + 加法运算 SET @var1=2+2;
+#           - 减法运算 SET @var2=3-2;
+#           * 乘法运算 SET @var3=3*2; 6
+#           / 除法运算 SET @var4=10/3; 3.333333333
+#           DIV 整除运算 SET @var5=10
+#           取模 SET @var6=10%3 ;
+#           %
+#           4
+#           1
+#           DIV 3; 3
+#           1
+#    set       @z=1+2;select @z;
+#    set       @x=1; set @y=2;set @z=@x*@y; select @z;
+#    set       @x=1; set @y=2;set @z=@x-@y; select @z;
+#    set       @x=1; set @y=2;set @z=@x/@y; select @z;
+
+#             my "set @x=2;set @j=5 ;set @k=@x * @j;select @k;" 
+#
+#             my "set @z=1+2;select @z;"
+#
+#             my "set @x=1 ; set @y=2;set  @z=@x/@y;select @z;"
+#             my "set @x=2 ; set @y=5;set  @z=@x div @y;select @z;"
+#             my "set @x=9 ; set @y=4;set  @z=@x % @y;select @z;"
+p4=db9.p4     
+#             my "drop procedure $p4;" 
+#             my "insert into $user(name,shell) values('pop','/bin/bash'),('bob','/sbin/nologin');"
+#             my "delimiter //
+#                 create procedure $p4()
+#                 begin
+#                 declare x int(2); 
+#                 declare y int(2); 
+#                 declare z int(2); 
+#                 select count(name) into x  from $user where shell='/bin/bash';
+#                 select count(name) into y  from $user where shell='/sbin/nologin';
+#                 select x;  
+#                 select y;
+#                 set z=x+y;
+#                 select z;
+#                 end
+#                 //
+#                 delimiter ;"
+#
+#              my "call $p4"
+
+#             my "drop procedure $p4;" 
+#             my "insert into $user(name,shell) values('pop','/bin/bash'),('bob','/sbin/nologin');"
+#             my "delimiter //
+#                 create procedure $p4()
+#                 begin
+#                 declare x int(2); 
+#                 declare y int(2); 
+#                 declare z int(2); 
+#                 select count(name) into x  from $user where shell='/bin/bash';
+#                 select count(name) into y  from $user where shell='/sbin/nologin';
+#                 select x;  
+#                 select y;
+#                 set z=x+y;
+#                 select z;
+#                 end
+#                 //
+#                 delimiter ;"
+
 #      
 #      2.5 条件判断符号：
 #      >  >=  <  <=   =  !=   or   and   !   like   regexp 
