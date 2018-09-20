@@ -439,7 +439,23 @@ p6=db9.p6
 
 #             inout 输入/输出参数
 
-#             in
+p7=db9.p7
+#              my "drop procedure $p7;"
+#              my "delimiter //
+#                  create procedure $p7( inout num int(2)) 
+#                  begin
+#                  select num;
+#                  select count(name) into num  from db9.user where uid<=1000;
+#                  select num;
+#                  end
+#                  //
+#                  delimiter ;"
+#  
+#              my "call $p7();"
+#              my "call $p7(7);"
+#              my "set @x=5;call $p7(@x);select @x;"
+#              my "call $p7(@y);select @y;"
+
 
 #             调用时指定,并且可被改变和返回参数类型(续1)
 
@@ -605,6 +621,24 @@ p4=db9.p4
 
 #      
 #      2.5 条件判断符号：
+p9=db9.p9
+#                 my "delimiter //
+#                     create procedure $p9( in x int(2) )
+#                     begin 
+#                     if x is not null then
+#                     select * from $user where id=x;
+#                     else 
+#                     select * from $user where id=1;
+#                     end if;
+#                     end
+#                     //
+#                     "
+#                 my "call $p9();"
+#                 my "call $p9(2);"
+#                 my "call $p9(@x);"
+#                 my "set @x=3;call $p9(@x);"
+
+
 #      >  >=  <  <=   =  !=   or   and   !   like   regexp 
 #      is  null    is  not  null    
 #      in  
@@ -627,6 +661,136 @@ p4=db9.p4
 #      end  if;
 #      
 #      循环结构
+
+p10=db9.p10
+p11=db9.p11
+p12=db9.p12
+
+#             my "delimiter //
+#                 create procedure $p10()
+#                 begin 
+#                 while 1=2 do
+#                 select * from db9.user where id=1;
+#                 end while;
+#                 end
+#                 //
+#                 delimiter ;
+#                 "
+#             
+#             my "call $p10();"
+#            
+
+#             my "delimiter //
+#                  create procedure $p11()
+#                  begin 
+#                  while 1=1 do
+#                  select * from db9.user where id=1;
+#                  end while;
+#                  end
+#                  //
+#                  delimiter ;
+#                  "
+
+
+#             my "call $p11();"
+
+
+#             my "delimiter //
+#                  create procedure $p12()
+#                  begin
+#                  declare x int(2); 
+#                  set x = 1;
+#                  while x <= 10 do
+#                  select x;
+#                  set x = x + 1;
+#                  end while;
+#                  end
+#                  //
+#                  delimiter ;
+#                  "
+#             
+#             
+#             my "call $p12();"
+
+p13=db9.p13
+#           循环结构(续1)
+#           • loop死循环
+#           – 无条件、反复执行某一段代码
+#           loop
+#           循环体
+#           .. ..
+#           end loop;
+
+#              my "delimiter //
+#                create procedure $p13()
+#                loop
+#                select * from $user where name='bin';
+#                end loop;
+#                end
+#                //
+#                delimiter ;"
+
+#           循环结构(续2)
+#           • repeat条件式循环
+#           – 当条件成立时结束循环
+#           repeat
+#           循环体
+#           .. ..
+#           until 条件判断
+#           end repeat;
+
+p14=db9.p14
+#              my "drop procedure $p14;"
+#              my "delimiter //
+#                  create procedure $p14()
+#                  begin 
+#                  declare x int(2);
+#                  set x = 10;
+#                  repeat
+#                  select x;
+#                  set x = x - 1;
+#                  until x < 1    
+#                  end repeat;
+#                  end
+#                  //
+#                  delimiter ;"
+#
+#               my "call $p14();"
+p15=db9.p15
+   
+#              my "delimiter //
+#                  create procedure $p15(in a int(2),in b int(2))
+#                  begin 
+#                  declare z  int(2);
+#                  set z= b-a;       
+#                  set a= a-1;
+#                  select * from $user where uid%2=0  limit a,z;
+#                  end
+#                  //
+#                  delimiter ;"
+   
+#            my "call $p15(5,15);"
+           
+p16=db9.p16
+#                my "drop procedure $p16;"  
+#                my "delimiter //
+#                   create procedure $p16( in a int(2) )
+#                   if a is null then 
+#                   select * from $user limit 1;
+#                   else
+#                   set a = a-1;
+#                   select * from $user limit a,1;
+#                   end if;
+#                   end
+#                   //
+#                   delimiter ;
+#                   "
+
+#               my  "call $p16(2);"
+#               my  "call $p16(@x);"
+
+#               my  "call $p16(14);"
+
 #      循环控制参数
 #
 #   ----------------------MYSQL-day08  部署MYSQL高可用集群-----------------
