@@ -1,5 +1,5 @@
 #!/bin/bash 
-
+#
 my(){
   
    echo   
@@ -9,6 +9,58 @@ my(){
    mysql -e "$1"
       
 } 
+#   ----------------------MYSQL-day09   分库分表概述  配置mycat-----------------
+
+#         分库分表
+
+#         • 什么是分库分表
+#         – 将存放在一个数据库(主机)中的数据,按照特定方式进行拆分,分散存放到多个数据库(主机)中,以达到分散单台设备负载的效果
+
+#           垂直分割
+#         
+#         • 纵向切分
+#         
+#         – 将单个表,拆分成多个表,分散到不同的数据库
+#         – 将单个数据库的多个表进行分类,按业务类别分散到
+#         不同的数据库上水平分割
+#         
+#         • 横向切分
+#         
+#         – 按照表中某个字段的某种规则,把表中的许多记录按
+#         行切分,分散到多个数据库中
+
+
+
+
+#                mycat介绍软件介绍
+
+#                • mycat 是基于Java的分布式数据库系统中间层,为高并发环境的分布式访问提供解决方案
+
+#                – 支持JDBC形式连接
+#                – 支持MySQL、Oracle、Sqlserver、Mongodb等
+#                – 提供数据读写分离服务
+#                – 可以实现数据库服务器的高可用
+#                – 提供数据分片服务
+#                – 基于阿里巴巴Cobar进行研发的开源软件
+#                – 适合数据大量写入数据的存储需求分片规则
+
+#              • mycat支持提供10种分片规则
+
+#                1 枚举法 sharding-by-intfile
+#                2 固定分片 rule1
+#                3 范围约定 auto-sharding-long
+#                4 求模法 mod-long
+#                5 日期列分区法 sharding-by-date
+#                6 通配取模 sharding-by-pattern
+#                7 ASCII码求模通配 sharding-by-prefixpattern
+#                8 编程指定 sharding-by-substring
+#                9 字符串拆分hash解析 sharding-by-stringhash
+#                10 一致性hash sharding-by-murmur
+
+
+
+# -------------------------------------------------------------------------
+
 #   ----------------------MYSQL-day09   MySQL视图 MySQL存储过程-----------------
 #      
 #      把ql系统用户信息存储到db9库下的user 表里，并在所有列前添加行号字段id (要求自动增长)
@@ -23,7 +75,7 @@ my(){
 #        且在具体引用视图时动态生成
 #        – 更新视图的数据,就是更新基表的数据
 #        – 更新基表数据,视图的数据也会跟着改变
-
+#
 #      1.2 视图优点
 #              • 简单
 #              – 用户不需关心视图中的数据如何查询获得
@@ -32,9 +84,9 @@ my(){
 #              – 用户只能看到视图中的数据
 #              • 数据独立
 #              – 一旦视图结构确定,可以屏蔽表结构对用户的影响
-
+#
 #             视图使用限制
-
+#
 #             • 不能在视图上创建索引
 #             • 在视图的FROM子句中不能使用子查询
 #             • 以下情形中的视图是不可更新的
@@ -44,121 +96,121 @@ my(){
 #             – 常量视图、JOIN、FROM一个不能更新的视图
 #             – WHERE子句的子查询引用了FROM子句中的表
 #             – 使用了临时表
-
-
-
+#
+#
+#
 #      1.3  视图的基本使用
 #      创建视图
 #
 #       my "create view db9.v1 as select name,uid,shell from db9.user;"
 #
 #       my "select * from  db9.v1;"
- 
+# 
 #       my "desc db9.v1;"
-   
+#   
 #       my "grant select on db9.v1 to yaya@'%'   identified by 'Azsd1234.';"
-
+#
 #       my "create view db9.v2(vname,vuid) as select  name,uid from db9.user;"
- 
+# 
 #       my "select * from db9.v2;desc db9.v2;"   
-   
+#   
 #
 #      查看视图
-
-        
+#
+#        
 #        my "use db9;show tables;"
-
-
+#
+#
 #        my "use db9;show table  status\G;"
-
+#
 #        my "use db9;show table status where comment='view'\G;"
-
-
+#
+#
 #        my "use mysql ;show table status where comment='view'\G;"
-
-
+#
+#
 #        my "show create view db9.v2;"
-
-
-
+#
+#
+#
 #      使用视图(update insert )
- 
-v1=db9.v1
-user=db9.user
-v2=db9.v2
-
+# 
+#v1=db9.v1
+#user=db9.user
+#v2=db9.v2
+#
 #     my "update db9.v1 set name='admin' where name='root';"
-
+#
 #     my "select name from db9.user;"
- 
+# 
 #     my "select name from db9.v1;"
-
+#
 #     my "delete from $user where name='lucy';"
-
+#
 #     my "insert into $user(name,uid) values('lucy',888);"
-
+#
 #     my "select name,uid from $user where name='lucy';"
-  
+#  
 #     my "select name,uid from $v1 where name='lucy';"
-
-      
-
+#
+#      
+#
 #      删除视图
- 
+# 
 #      my "drop view db9.v2;"
 #      my "drop view db9.user;"
 #      my "drop view db9.v1;"
 #      my "use db9; show tables;"
- 
+# 
 #      1.4  AS定义视图中字段名称
 #      1.5 OR REPLACEX选项的使用
-
+#
 #      视图进阶
-
-
-
+#
+#
+#
 #      创建视图的完全格式
-t1=db9.t1
-t2=db9.t2
-a=db9.a
-b=db9.b
-
+#t1=db9.t1
+#t2=db9.t2
+#a=db9.a
+#b=db9.b
+#
 #        my "create table db9.t1 select name,uid from $user  limit 3 ;"
-
+#
 #        my "create table db9.t2 select name,uid from $user  limit 6 ;"
-
+#
 #        my "select * from  $t1,$t2  where $t1.name=$t2.name;"
-          
+#          
 #        my "create view $v1 as select  * from $t1,$t2 where $t1.name=$t2.name;"
- 
+# 
 #        my "select a.name as  aname , b.name as bname   from $t1 a , $t2 b where a.name=b.name;"
-v3=db9.v3
-v4=db9.v4
-
+#v3=db9.v3
+#v4=db9.v4
+#
 #        my "create view $v3 as select a.name as  aname , b.name as bname   from $t1 a , $t2 b where a.name=b.name;"
-    
+#    
 #        my "select * from $v1;"
-
+#
 #        my "select t1.name,t2.name from $t1  left join $t2 on $t1.name=$t2.name; "
-
+#
 #        my "create view db9.v4(aname,bname) as select t1.name,t2.name from $t1  left join $t2 on $t1.name=$t2.name; "
-
+#
 #        my "select * from db9.v4;"
-
+#
 #          my "create or replace view  $v4  as select * from $user;"
-
+#
 #          my "select * from $v4;"
-
-
-
-
-
-
-
-
-
-
-
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
 #      • 命令格式
 #      – CREATE
 #      [OR REPLACE]
@@ -197,77 +249,77 @@ v4=db9.v4
 #      • LOCAL和CASCADED关键字决定检查的范围
 #      – LOCAL 仅检查当前视图的限制
 #      – CASCADED 同时要满足基表的限制(默认值)
-    user2=db9.user2
+#    user2=db9.user2
 #       my "create table $user2 select * from $user where uid>=10 and uid<=1000;"
 #       my "select * from $user2;" 
-
-    v5=db9.v5
-
+#
+#    v5=db9.v5
+#
 #       my "create view $v5 as select name,uid from $user2;"
- 
+# 
 #          my "select * from $v5 where uid=11;"
- 
+# 
 #        my "update $v5 set uid=1111 where name='operator';"
-
+#
 #     mysql -e "select * from db9.user2;"
-
- v6=db9.v6
+#
+# v6=db9.v6
 #       my "create view $v6 as select *  from $user2  where uid <=100 with local check option;use db9 ; show tables;"
-  
+#  
 #       my  "select name,uid from db9.v6;"
-
+#
 #       my "update $v6 set uid=101 where name='ftp';"
 #       my "update $v6 set uid=77 where name='ftp';"
-
+#
 #       my  "select name,uid from db9.v6;"
-
-
-
-v7=db9.v7
-v8=db9.v8
-
+#
+#
+#
+#v7=db9.v7
+#v8=db9.v8
+#
 #        my "create view $v7 as select name,uid,shell from $user2 where uid>=10 and uid<=50;"
- 
-
+# 
+#
 #        my "create view $v8 as select name,uid,shell from $v7  where uid>=20 with cascaded check option;select * from $v8; "
-  
+#  
 #         my "select * from $v7;"
 #         my "select * from $v8;"
 #   
 #         my "update $v8 set uid=16 where name='ntp';"
 #         
 #         my "update $v8 set uid=51 where name='ntp';"
-
- 
+#
+# 
 #      mysql> create view v1 as
 #      select * from a where uid < 10 with check option;
 #      Query OK, 0 rows affected (0.09 sec)
 #      mysql> create view v2 as
 #      select * from v1 where uid >=5 with local check option;
 #      Query OK, 0 rows affected (0.09 sec)
-
-
+#
+#
 #      
 #      二、mysql存储过程
-
+#
 #          存储过程介绍
-
+#
 #          • 存储过程,相当于是MySQL语句组成的脚本
 #          – 指的是数据库中保存的一系列SQL命令的集合
 #          – 可以在存储过程中使用变量、条件判断、流程控制等
-
+#
 #          存储过程优点
-
+#
 #          • 提高性能
 #          • 可减轻网络负担
 #          • 可以防止对表的直接访问
 #          • 避免重复编写SQL操作
-
-
+#
+#
 #      2.1 基本使用：创建  查看  调用   删除 
-
+#
 #        创建存储过程
-
+#
 #             • 语法格式
 #             – > delimiter //
 #             create procedure 名称()
@@ -290,8 +342,8 @@ v8=db9.v8
 #                  delimiter ;
 #                  call db9.p1();"       
 #     
-
-p1=db9.p1 
+#
+#p1=db9.p1 
 #              my "delimiter //
 #                  create procedure db9.p1()
 #                  begin
@@ -300,7 +352,7 @@ p1=db9.p1
 #                  //
 #                  delimiter ;"
 #              my "call $p1();"       
-
+#
 #               my "delimiter //
 #                   create procedure $p1()
 #                   begin
@@ -309,10 +361,10 @@ p1=db9.p1
 #                   //
 #                   delimiter ;
 #                   my "call $p1();"
-              
-
-c1=db9.c1
-
+#              
+#
+#c1=db9.c1
+#
 #               my "delimiter //
 #                   create procedure $c1()
 #                   begin 
@@ -321,22 +373,22 @@ c1=db9.c1
 #                   //
 #                   delimiter ;"
 #                   my "call $c1"
-
-
+#
+#
 #             查看存储过程
-
+#
 #             • 方法1
-
+#
 #             – mysql> show procedure status;
-
+#
 #             • 方法2
-
+#
 #             – mysql> select db,name,type from mysql.proc
-
+#
 #             where name="存储过程名";
-
+#
 #             mysql> select db,name,type from mysql.proc where name="say";
-
+#
 #             +---------+------+-------------+
 #             | db
 #             | name | type
@@ -344,7 +396,7 @@ c1=db9.c1
 #             +---------+------+-------------+
 #             | studydb | say | PROCEDURE |
 #             +---------+------+-------------+
-
+#
 #               my "desc mysql.proc\G;"
 #
 #               my "select db,name,type from mysql.proc where name='p1';"
@@ -354,10 +406,10 @@ c1=db9.c1
 #               my "select * from mysql.proc where name='p1'\G;"
 #
 #               my "select body from mysql.proc where name='p1';"
-
-
+#
+#
 #              调用/删除存储过程
-
+#
 #              • 调用存储过程
 #              – call
 #              存储过程没有参数时,()可以省略
@@ -378,26 +430,26 @@ c1=db9.c1
 #              1 row in set (0.00 sec)
 #              mysql> drop procedure say;
 #              Query OK, 0 rows affected (0.00 sec) 
-    
+#    
 #               my "drop procedure $p1;"
-   
+#   
 #               my "call $p1();"
-
+#
 #      2.2 存储过程参数类型： in   out   inout
-
-         
- 
-
+#
+#         
+# 
+#
 #             参数类型
 #             • 调用参数时,名称前也不需要加@
 #             – create procedure 名称(  类型 参数名 数据类型 , 类型 参数名 数据类型 )
-
-
+#
+#
 #             关键字
-
+#
 #             in    输入参数 作用是给存储过程传值,必须在调用存储过程时赋值,在存储过程中该参数的值不允许修改;默认类型是in
-p5=db9.p5
-
+#p5=db9.p5
+#
 #             my "delimiter //
 #                 create procedure $p5( in sname char(25)) 
 #                 begin
@@ -413,10 +465,10 @@ p5=db9.p5
 #              my "call $p5('/bin/bash');"
 #              my "call $p5('/sbin/nologin');"
 #              my "call $p5('/sbi/nologin');"
-
+#
 #             out   输出参数 该值可在存储过程内部被改变,并可返回。
-
-p6=db9.p6
+#
+#p6=db9.p6
 #              my "drop procedure $p6;"  
 #              my "delimiter //
 #                  create procedure $p6( out usernum int(2)) 
@@ -431,15 +483,15 @@ p6=db9.p6
 #              my "call $p6(7);"
 #              my "set @x=7;call $p6(@x);select @x;"
 #              my "call $p6(@y); select @y;"
-
-                   
 #
-                 
-
-
+#                   
+#
+#                 
+#
+#
 #             inout 输入/输出参数
-
-p7=db9.p7
+#
+#p7=db9.p7
 #              my "drop procedure $p7;"
 #              my "delimiter //
 #                  create procedure $p7( inout num int(2)) 
@@ -455,10 +507,10 @@ p7=db9.p7
 #              my "call $p7(7);"
 #              my "set @x=5;call $p7(@x);select @x;"
 #              my "call $p7(@y);select @y;"
-
-
+#
+#
 #             调用时指定,并且可被改变和返回参数类型(续1)
-
+#
 #             mysql> delimiter //
 #             mysql> create procedure say(in username char(10))
 #             //定义in类型的参数变量username
@@ -485,56 +537,56 @@ p7=db9.p7
 #             | /root
 #             | /bin/bash |
 #             +----+------+------+-----
-  
-  
-
+#  
+#  
+#
 #      
 #      2.3mysql 变量类型： 会话变量 全局变量   用户变量   局部变量
-
+#
 #              变量类型
-
+#
 #                  • 调用局部变量时,变量名前不需要加@
 #        名称
-
+#
 #        会话变量
 #        会话变量和全局变量叫系统变量 使用set命令定义;
-        
-    
+#        
+#    
 #          my "show session variables like '%time%';" 
-
- #         my "set session sort_buffer_size=888888;show session variables like 'sort_buffer_size';"
-  
-  #        my  "show  variables like 'sort_buffer_size';"
-
+#
+# #         my "set session sort_buffer_size=888888;show session variables like 'sort_buffer_size';"
+#  
+#  #        my  "show  variables like 'sort_buffer_size';"
+#
 #        全局变量
-  
+#  
 #          my "show global variables;"
-
+#
 #        全局变量的修改会影响到整个服务器,但是对会话
 #        变量的修改,只会影响到当前的会话。
-
+#
 #           my " select @@hostname;"
-
-
-
+#
+#
+#
 #        用户变量
 #             在客户端连接到数据库服务的整个过程中都是有效
 #             的。当前连接断开后所有用户变量失效。
 #           定义 set
 #           @变量名=值;
 #           输出 select @变量名;a
-
-   #               my "select max(uid) into @y from $user; select @y;"
-
-    #              my "set @x=55; select @x;"
-                    
-
+#
+#   #               my "select max(uid) into @y from $user; select @y;"
+#
+#    #              my "set @x=55; select @x;"
+#                    
+#
 #        局部变量 
-
+#
 #           存储过程中的begin/end。其有效范围仅限于该语
 #           句块中,语句块执行完毕后,变量失效。
 #           declare专门用来定义局部变量。
-             p3=db9.p3
+#             p3=db9.p3
 #             my "delimiter //
 #                 create procedure $p3()
 #                 begin
@@ -548,9 +600,9 @@ p7=db9.p7
 #                 delimiter ;"
 #                 
 #                 my "call $p3();"
-
-
-
+#
+#
+#
 #      
 #      2.4 mysql运算符号 :   +   -    *   /    DIV   %  
 #           • 运算符号及用法示例
@@ -572,7 +624,7 @@ p7=db9.p7
 #    set       @x=1; set @y=2;set @z=@x*@y; select @z;
 #    set       @x=1; set @y=2;set @z=@x-@y; select @z;
 #    set       @x=1; set @y=2;set @z=@x/@y; select @z;
-
+#
 #             my "set @x=2;set @j=5 ;set @k=@x * @j;select @k;" 
 #
 #             my "set @z=1+2;select @z;"
@@ -580,7 +632,7 @@ p7=db9.p7
 #             my "set @x=1 ; set @y=2;set  @z=@x/@y;select @z;"
 #             my "set @x=2 ; set @y=5;set  @z=@x div @y;select @z;"
 #             my "set @x=9 ; set @y=4;set  @z=@x % @y;select @z;"
-p4=db9.p4     
+#p4=db9.p4     
 #             my "drop procedure $p4;" 
 #             my "insert into $user(name,shell) values('pop','/bin/bash'),('bob','/sbin/nologin');"
 #             my "delimiter //
@@ -600,7 +652,7 @@ p4=db9.p4
 #                 delimiter ;"
 #
 #              my "call $p4"
-
+#
 #             my "drop procedure $p4;" 
 #             my "insert into $user(name,shell) values('pop','/bin/bash'),('bob','/sbin/nologin');"
 #             my "delimiter //
@@ -618,10 +670,10 @@ p4=db9.p4
 #                 end
 #                 //
 #                 delimiter ;"
-
+#
 #      
 #      2.5 条件判断符号：
-p9=db9.p9
+#p9=db9.p9
 #                 my "delimiter //
 #                     create procedure $p9( in x int(2) )
 #                     begin 
@@ -637,8 +689,8 @@ p9=db9.p9
 #                 my "call $p9(2);"
 #                 my "call $p9(@x);"
 #                 my "set @x=3;call $p9(@x);"
-
-
+#
+#
 #      >  >=  <  <=   =  !=   or   and   !   like   regexp 
 #      is  null    is  not  null    
 #      in  
@@ -661,11 +713,11 @@ p9=db9.p9
 #      end  if;
 #      
 #      循环结构
-
-p10=db9.p10
-p11=db9.p11
-p12=db9.p12
-
+#
+#p10=db9.p10
+#p11=db9.p11
+#p12=db9.p12
+#
 #             my "delimiter //
 #                 create procedure $p10()
 #                 begin 
@@ -679,7 +731,7 @@ p12=db9.p12
 #             
 #             my "call $p10();"
 #            
-
+#
 #             my "delimiter //
 #                  create procedure $p11()
 #                  begin 
@@ -690,11 +742,11 @@ p12=db9.p12
 #                  //
 #                  delimiter ;
 #                  "
-
-
+#
+#
 #             my "call $p11();"
-
-
+#
+#
 #             my "delimiter //
 #                  create procedure $p12()
 #                  begin
@@ -711,8 +763,8 @@ p12=db9.p12
 #             
 #             
 #             my "call $p12();"
-
-p13=db9.p13
+#
+#p13=db9.p13
 #           循环结构(续1)
 #           • loop死循环
 #           – 无条件、反复执行某一段代码
@@ -720,7 +772,7 @@ p13=db9.p13
 #           循环体
 #           .. ..
 #           end loop;
-
+#
 #              my "delimiter //
 #                create procedure $p13()
 #                loop
@@ -729,7 +781,7 @@ p13=db9.p13
 #                end
 #                //
 #                delimiter ;"
-
+#
 #           循环结构(续2)
 #           • repeat条件式循环
 #           – 当条件成立时结束循环
@@ -738,8 +790,8 @@ p13=db9.p13
 #           .. ..
 #           until 条件判断
 #           end repeat;
-
-p14=db9.p14
+#
+#p14=db9.p14
 #              my "drop procedure $p14;"
 #              my "delimiter //
 #                  create procedure $p14()
@@ -756,22 +808,57 @@ p14=db9.p14
 #                  delimiter ;"
 #
 #               my "call $p14();"
-p15=db9.p15
-   
+#user=a.user
+#p15=a.p15
+#p16=a.p16
+#              my "drop procedure $p16"
 #              my "delimiter //
-#                  create procedure $p15(in a int(2),in b int(2))
+#                  create procedure $p16( in a int(2) , in b int(2)  )
 #                  begin 
 #                  declare z  int(2);
-#                  set z= b-a;       
-#                  set a= a-1;
-#                  select * from $user where uid%2=0  limit a,z;
+#                  set z= b-a;
+#                  set a= a-1;       
+#                  select * from a.user  where uid%2=0  and id in (select id from ( select * from $user limit a,z) as t );
 #                  end
 #                  //
 #                  delimiter ;"
-   
-#            my "call $p15(5,15);"
-           
-p16=db9.p16
+#  
+#             my "call $p16(3,15);"
+#           
+#              my "drop procedure $p15"
+#              my "delimiter //
+#                  create procedure $p15( in a int(2) , in b int(2)  )
+#                  begin 
+#                  declare z  int(2);
+#                  set z= b-a;
+#                  set a= a-1;       
+#                  select * from  $user limit a,z;
+#                  end
+#                  //
+#                  delimiter ;"
+#  
+#             my "call $p15(3,15);"
+#
+#p17=a.p17
+#              my "drop procedure $p17"
+#              my "delimiter //
+#                  create procedure $p17( in a int(2) , in b int(2)  )
+#                  begin 
+#                  declare z  int(2);
+#                  set a= a-1;
+#                  set b= b-1;
+#                  while  a < b do
+#                  select uid into z  from $user limit a,1;
+#                  if z%2=0 then 
+#                  select * from  $user limit a,1;
+#                  end if;
+#                  set a = a+1 ;
+#                  end while;
+#                  end
+#                  //
+#                  delimiter ;"
+#  
+#             my "call $p17(3,15);"
 #                my "drop procedure $p16;"  
 #                my "delimiter //
 #                   create procedure $p16( in a int(2) )
@@ -785,12 +872,12 @@ p16=db9.p16
 #                   //
 #                   delimiter ;
 #                   "
-
+#
 #               my  "call $p16(2);"
 #               my  "call $p16(@x);"
-
+#
 #               my  "call $p16(14);"
-
+#
 #      循环控制参数
 #
 #   ----------------------MYSQL-day08  部署MYSQL高可用集群-----------------
@@ -1418,7 +1505,7 @@ p16=db9.p16
 #  三、mysql调优
 #  3.1 mysql体系结构 （由8个功能模块组成）：
 #  管理工具： 安装服务软件后，提供的命令 
-#                                  mysqldump  
+#              mysqldump 
 #  		mysqlbinlog
 #  		mysqladmin
 #  连接池： 当接收到客户端的连接请求后，检查是否有资源响应客户端的连接请求。
@@ -1489,19 +1576,16 @@ p16=db9.p16
 #          缓存参数控制
 #          • 缓冲区、线程数量、开表数量
 #          选 项
-#          知
-#          识
-#          讲
-#          解
 #          含 义
 #          key_buffer-size 用于MyISAM引擎的关键索引缓存大小
 #          sort_buffer_size 为每个要排序的线程分配此大小的缓存空间
 #          read_buffer_size 为顺序读取表记录保留的缓存大小
 #          thread_cache_size 允许保存在缓存中被重用的线程数量
-#           table_open_cache 为所有线程缓存的打开的表的数量
+#          table_open_cache 为所有线程缓存的打开的表的数量
 #
-#     my "show variables like '%buffer%';"
-# 
+#           my "show variables like '%buffer%';"
+  
+  
 #  
 #  可以重复使用的线程的数量  thread
 #  show   variables   like   "%thread%";
@@ -1634,8 +1718,118 @@ p16=db9.p16
 #
 #      [msyqld]
 #      connect_timeout = 20; 
+
+
+#      查询缓存： 缓存曾经查找到的记录,缓存空间从物理内存划分出来的。
+
+
+#          my "show variables like '%cache%';"        
+
+#          my "show variables like 'query_cache%';"
+
+#          | Variable_name                | Value   |
+#          +------------------------------+---------+
+#          | query_cache_limit            | 1048576 |
+#          | query_cache_min_res_unit     | 4096    |
+#          | query_cache_size             | 1048576 |
+#          | query_cache_type             | OFF     |
+#          | query_cache_wlock_invalidate | OFF 
+
+
+#           query_cache_type  0 1 2
+
+#           0  禁用查询缓存
+  
+#           1  启用查询缓存 有空间就存
+
+#           2  启用查询缓存 但需要手动设置缓存本次查询结果
+   
+#           query_cache_limit     | 1048576  大于1m不进入查询缓存 
+
+#           query_cache_min_res_unit     | 4096  最小存储单元
+
+#           query_cache_size             | 1048576 
+
+#           myisam
+
+
+
+
+
+
+#           query_cache_wlock_invalidate | OFF  查询缓存写锁无效 off 
+
+
+#           show global status like 'qcache%'; 
+#          
+#          +-------------------------+---------+
+#          | Variable_name           | Value   |
+#          +-------------------------+---------+
+#          | Qcache_free_blocks      | 1       |
+#          | Qcache_free_memory      | 1031832 |
+#          | Qcache_hits             | 0       |   命中率
+#          | Qcache_inserts          | 0       |   查询缓存次数
+#          | Qcache_lowmem_prunes    | 0       |
+#          | Qcache_not_cached       | 257     |
+#          | Qcache_queries_in_cache | 0       |
+#          | Qcache_total_blocks     | 1       |
+#          +-------------------------+---------+
+
+#          MySQL日志类型
+
+#          • 常用日志种类及选项
+
+#          类 型  错误日志   查询日志 慢查询日志
+
+#          错误日志     记录启动/运行/停止过程中的错误消息
+
+#          log-error[=name]
+
+#          查询日志     记录客户端连接和查询操作
+
+#          general-log
+#          general-log-file=
+
+#           sed -i '/^\[mysqld]/a  general-log' /etc/my.cnf
+#           systemctl restart mysqld
+
+
+#          慢查询日志   记录耗时较长或不使用索引的查询操作
+
+#          slow-query-log
+#          slow-query-log-file=
+#          long-query-time=
+#          优化SQL查询
+#          • 记录慢查询
+#          slow-query-log        启用慢查询
+#          slow-query-log-file   指定慢查询日志文件
+#          long-query-time       超过时间(默认10秒)
+#          log-queries-not-using-indexes 记录未使用索引的查询
 #
-#
+#           sed -i '/^\[mysqld]/a  slow-query-log' /etc/my.cnf
+
+#           systemctl restart mysqld
+
+#             my "select sleep(11);"
+
+
+#             my "select sleep(15);"
+
+
+
+#                调优思路总结
+#                手段
+#                具体操作
+#                升级硬件 CPU 、内存、硬盘
+#                加大网络带宽 付费加大带宽
+#                调整mysql服务运行参数 并发连接数、连接超时时间、重复使用的
+#                线程数........
+#                调整与查询相关的参数 查询缓存、索引缓存.......
+#                启用慢查询日志 slow-query-log
+#                网络架构不合理 调整网络架构
+#                
+
+
 #   ----------------------------------------------------------------------------
 #   ----------------------MYSQL-day06   部署MYSQL主从同步-------------------------
 #

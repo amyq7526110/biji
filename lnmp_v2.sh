@@ -85,7 +85,7 @@ mylnmp(){
 
 #       安装 mairadb php 环境
 
-#        yum -y install mariadb-server mariadb mariadb-devel
+        yum -y install mariadb-server mariadb mariadb-devel
         yum -y install php php-mysql
 
 
@@ -96,14 +96,12 @@ mylnmp(){
         sed  -i   '65,71s/^.*#/        /'  $conf
         sed  -i   '70s/_.*$/.conf;/'       $conf
         sed  -i   '69d'                    $conf
-        sed -rie ":begin; /^ +location/,/index.html/ { /index.html/! { $! { N; b begin }; }; s/index.html/index.php  index.html/ ; };" $conf
-
 
 #       启动服务
                  
-#        systemctl restart mariadb
+        systemctl restart mariadb
 
-#        systemctl enable mariadb
+        systemctl enable mariadb
 
         systemctl restart php-fpm.service
 
@@ -118,7 +116,7 @@ mylnmp(){
   
        cp  ../php_scripts/mysql.php  /usr/local/nginx/html/
 
-       sed -rie '/^\$mysql/s/root(.*)mysql/root\x27,\x27Azsd1234.\x27,\x27mysql/'  /usr/local/nginx/html/mysql.php
+       sed -ri  '/^\$mysql/s/root(.*)mysql/root\x27,\x27Azsd1234.\x27,\x27mysql/' /usr/local/nginx/html/mysql.php
  
        firefox 127.0.0.1/mysql.php
 
@@ -202,7 +200,52 @@ myyh(){
 #    //文件句柄的有效时间是60秒，60秒后过期
 #    //只有访问次数超过5次会被缓存
 }
+proxy(){
+conf=/usr/local/nginx/conf/nginx.conf
 
+           echo  "请输入反向代理的地址"       
+
+           read -a  ip
+
+           sed -rie ":begin; /^ +location(.*)php/,/conf;\n/ { /conf;\n/! { $! { N; b begin }; }; s/\n/\n#/g;s/^/#/ };"  $conf
+
+           for i in ${ip[@]}
+
+           do
+           server=$server"\n    server ${i}:80;"
+
+           done
+
+
+           sed  -i   "/^http/{n;n;n;s/$/\n    upstream haha{${server}\n    }/}" $conf
+#           sed  -i  '/^ +index/{s#$#\n\n            proxy_pass http://haha;#}' /usr/local/nginx/conf/nginx.conf 
+
+           sed  -ri  '/^ +index/{s#$#\n            proxy_set_header Host $http_host;\n            proxy_set_header X-Forward-For $remote_addr;\n            proxy_pass http://haha;#}'  $conf
+
+
+#             proxy_set_header Host $http_host;
+#             proxy_set_header X-Forward-For $remote_addr;
+ 
+#          nginx反向代理：服务器basePath路径问题如何解决
+#          
+#          比如：访问地址www.xxx.com.cn:20023然后映射到nginx服务器80端口
+#          
+#          解决方法加“proxy_set_header Host $http_host;proxy_set_header X-Forward-For $remote_addr;”具体如下
+#          
+#           server { 
+#          
+#                  listen       80; 
+#                  server_name  www.xxx.com.cn; 
+#           
+#                  location / {
+#                       proxy_set_header Host $http_host;
+#                       proxy_set_header X-Forward-For $remote_addr;
+#                       proxy_pass      http://ip:9081/;
+#                  }
+#          
+#          }
+}
 mylnmp
 myyh
+proxy
 nginx -s reload
