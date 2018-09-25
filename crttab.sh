@@ -56,8 +56,122 @@ my(){
 #                8 编程指定 sharding-by-substring
 #                9 字符串拆分hash解析 sharding-by-stringhash
 #                10 一致性hash sharding-by-murmur
+#              
+#              配置mycat装包
 
+#              • 安装JDK
+#              – 系统自带的即可
 
+#              [root@localhost ~]# rpm -qa | grep -i jdk
+#              java-1.8.0-openjdk-1.8.0.65-3.b17.el7.x86_64
+#              java-1.8.0-openjdk-headless-1.8.0.65-3.b17.el7.x86_64
+
+#              • 安装mycat服务软件包
+
+#              [root@localhost ~]# tar -zxf mycat-server-1.4-beta-
+#              20150604171601-linux.tar.gz
+#              //免安装,解压即可使用
+
+#              [root@localhost ~]# mv mycat/ /usr/local/
+
+#              [root@localhost ~]# ls /usr/local/mycat/
+
+#              bin catlet conf lib logs version.txt修改配置文件
+
+#              • 目录结构说明
+
+#              – bin //mycat命令,如 启动 停止 等
+#              – catlet //扩展功能
+#              – conf //配置文件
+#              – lib //mycat使用的jar
+#              – log //mycat启动日志和运行日志
+#              – wrapper.log //mycat服务启动日志
+#              – mycat.log //记录SQL脚本执行后的报错内容修改配置文件(续1)
+
+#              • 重要配置文件说明
+
+#              – server.xml //设置连mycat的账号信息
+#              – schema.xml //配置mycat的真实库表
+#              – rule.xml //定义mycat分片规则
+
+#              • 配置标签说明
+
+#              – <user>.. ..</user>
+#              //定义连mycat用户信息
+#              – <datanode>.. ..</datanode>
+#              //指定数据节点
+#              – <datahost>.. ..</datahost>
+#              //指定数据库地址及用户信息修改配置文件(续2)
+#              • 修改配置文件/usr/local/mycat/conf/server.xml
+#              <user name=“test”>
+#              //连mycat的用户名
+#              <property name=“password”>test</property> //对应密码
+#              <property name="schemas">TESTDB</property>
+#              </user>
+#              <user name="user">
+#              <property name="password">user</property>
+#              <property name="schemas">TESTDB</property>
+#              <property name="readOnly">true</property>
+#              //定义只读
+#              </user>修改配置文件(续3)
+#              • 修改配置文件/usr/local/mycat/conf/schema.xml
+#              – 定义分片信息
+#              知
+#              识
+#              讲
+#              解修改配置文件(续4)
+#              • 修改配置文件/usr/local/mycat/conf/schema.xml
+#              – 定义分片信息
+#              知
+#              识
+#              讲
+#              解修改配置文件(续5)
+#              • 修改数据库服务器配置文件
+#              – 添加对应设置后重启mysqld服务
+#              知
+#              识
+#              讲
+#              解
+#              – 添加授权用户
+#              – 创建存储数据对应的库db1 、 db2
+#              # vim /etc/my.cnf
+#              [mysqld]
+#              .. ..
+#              lower_case_table_names = 1
+#              //表名忽略大小写
+#              [root@localhost ~]# systemctl restart mysqld
+#              mysql> grant all on *.* to admin@"%" identified by "123456";
+#              //添加授权访问用户启动服务
+#              • 启动服务
+#              – 指定java路径、添加PATH路径、启动服务
+#              知
+#              识
+#              讲
+#              解测试配置
+#              • 在客户端连接mycat服务器
+#              – mysql -h服务器地址 -P端口 -u用户名 -p密码
+#              知
+#              识
+#              讲
+#              解
+#              [root@room9pc17 ~]# mysql -h192.168.4.56 -P8066 -utest -ptest
+#              MySQL [(none)]> show databases;
+#              +----------+
+#              | DATABASE |
+#              +----------+
+#              | TESTDB |
+#              +----------+
+#              1row in set (0.00 sec)案例1:搭建mycat 分片服务器
+#              具体要求如下:
+#              1)数据库主机 192.168.4.55 使用db1库存储数据
+#              课
+#              堂
+#              练
+#              习
+#              2)数据库主机 192.168.4.56 使用db2库存储数据
+#              3)主机 192.168.4.54 运行mycat服务,逻辑库名称为
+#              test,连接用户名为admin,密码123456
+#              4)在主机 192.168.4.254 访问测试配置
 
 # -------------------------------------------------------------------------
 
