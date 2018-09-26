@@ -9,7 +9,388 @@ my(){
    mysql -e "$1"
       
 } 
-#   ----------------------MYSQL-day09   分库分表概述  配置mycat-----------------
+#   ----------------------MYSQL-day11 创建Redis集群 -----------------------------
+#           redis 服务器 ip 地址及端口规划
+
+#           192.168.4.51    6351
+#           192.168.4.52    6352
+#           192.168.4.53    6353
+#           192.168.4.54    6354
+#           192.168.4.55    6355
+#           192.168.4.56    6356
+#           
+#           yum -y install gcc gcc-c++  ruby rubygems
+
+#           tar -zxvf redis-3.2.0.tar.gz
+
+#           cd redis-3.2.0/
+
+#           make
+
+#           make install PREFIX=/usr/loca/redis
+
+#           mkdir /etc/redis
+
+#           cp redis.conf  /etc/redis/
+
+#           vim /etc/redis/redis.conf
+
+#           bind  IP地址	                 //只写物理接口的IP地址
+
+#           daemonize    yes                     //redis后台运行
+
+#           port  xxxx                           //端口号不要使用默认的6379
+
+#           cluster-enabled  yes                 //开启集群  把注释#去掉
+
+#           cluster-config-file  nodes.conf      //集群的配置文件 不要使用默认的名称 
+
+#           cluster-node-timeout  5000           //请求超时  设置5秒够了
+#           
+#           :wq
+#           
+#
+
+#            创建集群
+
+#               • 在选中的一台redis服务器上,执行创建集群脚本
+
+#               – 部署ruby脚本运行环境
+
+#               – 创建集群
+
+#                yum -y install ruby rubygems
+
+#                rpm -ivh --nodeps ruby-devel-2.0.0.648-30.el7.x86_64.rpm
+
+#                gem install redis-3.2.1.gem
+
+#                cd redis-4.0.8/src/
+
+#                ./redis-trib.rb create --replicas 1 host:port host:port ......
+
+#               --replicas 1 ,自动为每一个master节点分配一个slave节点创建集群(续1)
+
+#               • 创建集群
+
+#               redis-trib.rb create --replicas 1 \
+#               192.168.4.51:6351 192.168.4.52:6352 \
+#               192.168.4.53:6353 192.168.4.54:6354 \
+#               192.168.4.55:6355 192.168.4.56:6356 \
+#               >>> Creating cluster
+#               >>> Performing hash slots allocation on 6 nodes...
+#               Using 3 masters:
+#               192.168.4.51:6351
+#               192.168.4.52:6352
+#               192.168.4.53:6353
+#               ......
+#               [OK] All nodes agree about slots configuration.
+#               >>> Check for open slots...
+#               >>> Check slots coverage...
+#               [OK] All 16384 slots covered.
+           
+#           
+#           集群创建成功后，会显示谁是主 谁是从。 和主从关系  及分配的槽数范围。redis-1   redis-2
+#           
+#            --replicas  1  表示 自动为每一个master节点分配一个slave节点  
+#           
+#           
+#           #/usr/loca/redis/bin/redis-cli  -h
+#           
+#           在redis服务器上自己访问自己
+
+#           #/usr/loca/redis/bin/redis-cli  -c  -p 端口
+
+#           > cluster nodes   #查看本机信息  
+#           > cluster info    #查看集群信息
+#           
+#           获取数据测试方法：在其中任意一台上存储数据 ，在其他任意一台上都可以获取数据。并且会提示从存到那台上了，和从那台上获取的数据
+
+#           存数据  set  name  jerry
+#           取数据  get   name
+#           
+#     工作过程
+
+ 
+
+
+
+          
+#           集群节点选取测试： 把是master 角色主机上的 Redis服务 停止，看对应是slave角色主机 是否能自动升级为master。原先是master服务启动后 身份是slave
+
+#           redis-8  
+#           redis-9
+#           redis-10
+#           redis-11
+#           
+#           二 添加新节点  
+
+#           2.1 添加主节点： 装包 修改配置文件 启动服务 ； 
+#               把主机192.168.2.93添加进集群 做主节点
+#           
+#           添加集群节点                                      新节点            任意写一个就可以
+
+#            ./redis-trib.rb  add-node  192.168.2.93:6393  192.168.2.94:6394
+#           
+#           
+#           检查时 发现主机93 是 M 状态 ，但没有分配槽位。
+
+#            ./redis-trib.rb  check  192.168.2.93:6393 
+#           
+#           连接查看槽位信息 也是没有的
+
+#           /usr/local/redis/bin/redis-cli -c -h 192.168.2.93  -p 6393 
+#           192.168.2.93:6393> cluster nodes
+#           
+#           手动对集群进行重新分片迁移数据
+
+#           ./redis-trib.rb  reshard 192.168.2.94:6394
+
+#           How many slots do you want to move (from 1 to 16384)? 4096    （因为一共有4个主节点 想平均分配 16384/4=4096）
+#           What is the receiving node ID? f6649ea99b2f01faca26217691222c17a3854381 此处输入93主机的ID 意思是给93主机分配4096个槽
+#           Please enter all the source node IDs.
+#             Type 'all' to use all the nodes as source nodes for the hash slots.
+#             Type 'done' once you entered all the source nodes IDs.
+#           Source node #1:all  意思是从所有主节点主机获取  也可以从某个主节点主机获取  出提示信息后输入yes 开始分配
+#           
+#           查看分配的槽位
+#           ./redis-trib.rb  check 192.168.2.93:6393
+#              slots:0-1364,5461-6826,10923-12287 (4096 slots) master       从3个主节点主机上获取的槽位数量
+#           
+#           登录后查看槽位信息
+
+#           /usr/local/redis/bin/redis-cli -c -h 192.168.2.93  -p 6393 
+#           
+#           2.2 添加从节点
+
+#           把主机192.168.2.92添加进集群 做从节点
+#           装包  修改配置文件 启动redis服务，
+
+#           yum -y  install  gcc gcc-c++  ruby  rubygems
+#           tar -zxf redis-3.2.0.tar.gz
+#           cd redis-3.2.0/
+#           make
+#           make install PREFIX=/usr/local/redis
+#           cp redis.conf  /usr/local/redis/
+#           vim /usr/local/redis/redis.conf
+#           /usr/local/redis/bin/redis-server  /usr/local/redis/redis.conf
+#           netstat -utnalp  | grep redis
+#           systemctl  stop firewalld
+#           setenforce 0
+#           rpm -ivh --nodeps ruby-devel-2.0.0.648-30.el7.x86_64.rpm 
+#           gem install redis-3.2.1.gem 
+#           
+#           添加从节点
+
+#           # ./redis-trib.rb add-node --slave --master-id id值  192.168.2.92:6392 192.168.2.94:6394
+#           如果不指定主节点的id 的话，会把新节点 随机添加为 从节点 最少的主的从。
+#           
+#            redis-3.2.0/src/redis-trib.rb  add-node --slave  192.168.2.92:6392  192.168.2.94:6394
+#           
+#           /usr/local/redis/bin/redis-cli -c -h 192.168.2.92 -p 6392
+
+#           三、移除节点
+
+#           3.1 移除主节点  把主节点192.168.2.93移除  ./redis-trib del-node  
+
+#           redis-3.2.0/src/redis-trib.rb  check 192.168.2.94:6394
+
+#           [ERR] Node 192.168.2.97:6397 is not empty! Reshard data away and try again.  提示不是空 不能移除 要先删除槽数。 才可以删除
+#           
+#           redis-3.2.0/src/redis-trib.rb reshard 192.168.2.94:6394
+
+#           How many slots do you want to move (from 1 to 16384)? 4096  移除的槽数
+#           What is the receiving node ID? 8eecda17577349125df9a6fcc37107c6c5f9bdc5 从那个节点上移除
+#           Please enter all the source node IDs.
+#             Type 'all' to use all the nodes as source nodes for the hash slots.
+#             Type 'done' once you entered all the source nodes IDs.
+#           Source node #1:f6649ea99b2f01faca26217691222c17a3854381  #移动到那个节点上
+#           Source node #2:done  输入done
+#           
+#           Do you want to proceed with the proposed reshard plan (yes/no)? yes 输入yes
+#           
+#           查看
+
+#           redis-3.2.0/src/redis-trib.rb check 192.168.2.94:6394
+#              slots:0-6826,10923-12287 (8192 slots) master   有8192个槽位了
+#              slots: (0 slots) master  没有槽位了
+
+#           移除节点
+
+#           redis-3.2.0/src/redis-trib.rb del-node 192.168.2.93:6393 f6649ea99b2f01faca26217691222c17a3854381
+
+#           
+#           查看信息  就会少一个主节点
+
+#           redis-3.2.0/src/redis-trib.rb check 192.168.2.93:6393
+#           [ERR] Sorry, can't connect to node 192.168.2.93:6393
+#           
+#           redis-3.2.0/src/redis-trib.rb check 192.168.2.97:6397
+
+#           
+#           3.2 移除从节点 从节点192.168.3.92 移除
+#                                                    任意IP和端口都可以     
+#           # redis-3.2.0/src/redis-trib.rb del-node 192.168.2.92:6392  被移除主机的ID
+#           
+#           redis-3.2.0/src/redis-trib.rb del-node 192.168.2.92:6392 9c507832f99b9af53563646a06c5b0525e8fcb4a
+
+
+
+
+
+#               cluster reset
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+#   ----------------------------------------------------------------------------
+#   ----------------------MYSQL-day11 NoSQL介绍  搭建Redis服务器-----------------
+#       数据库类型RDBMS
+#         • 关系数据库管理系统
+
+#         – Relational Database Management System
+
+#         – 按照预先设置的组织结构,将数据存储在物理介质上
+#         – 数据之间可以做关联操作RDBMS服务软件
+
+#         • 主流的RDBMS软件
+#         – Oracle
+#         – DB2
+#         – MS SQL Server
+#         – MySQL、MariaDBNoSQL
+
+#         • NoSQL(NoSQL = Not Only SQL)
+
+#         – 意思是“不仅仅是SQL”
+#         – 泛指非关系型数据库
+#         – 不需要预先定义数据存储结构
+#         – 表的每条记录都可以有不同的类型和结构NoSQL服务软件
+
+#         • 主流软件
+#         – Redis
+#         – MongoDB
+#         – Memcached
+#         – CouchDB
+#         – Neo4j
+#         – FlockDB
+
+#       部署Redis服务Redis介绍
+
+#            • Redis
+
+#            – Remote Dictionary Server(远程字典服务器)
+#            – 是一款高性能的(Key/Values)分布式内存数据库
+#            – 支持数据持久化,可以把内存里据保存到硬盘中
+#            – 也支持 list、hash、set、zset 数据类型
+#            – 支持 master-salve 模式数据备份
+#            – 中文网站www.redis.cn装包
+
+#          • 从源码包 编译安装
+
+#            tar -xzf redis-4.0.8.tar.gz
+#            cd redis-4.0.8
+#            make
+#            make install
+
+#             初始化配置
+
+#            • 配置服务运行参数
+#            – 端口
+#            – 主配置文件
+#            – 数据库目录
+#            – pid文件
+#            – 启动程序
+#            #./utils/install_server.sh
+#                 
+#             Selected config:
+#             Port           : 6379
+#             Config file    : /etc/redis/6379.conf
+#             Log file       : /var/log/redis_6379.log
+#             Data dir       : /var/lib/redis/6379
+#             Executable     : /usr/local/bin/redis-server
+#             Cli Executable : /usr/local/bin/redis-cli
+#                 
+
+
+#            //初始化启动/停止服务
+
+#            • 启动服务
+#            # /etc/init.d/redis_<portnumber> start
+
+#            • 停止服务
+#            # /etc/init.d/redis_<portnumber> stop连接Rediss数据库服务
+
+#            • 访问redis服务
+#            # ps -C redis
+#            # netstat -utnlp | grep redis
+#            # redis-cli
+
+#            //连接本机的redis数据库服务常用操作指令
+
+#            – set keyname keyvalue //存储
+#            – get keyname //获取
+#            – select 数据库编号0-15 //切换库
+#            – keys * //打印所有变量
+#            – keys a? //打印指定变量
+#            – EXISTS keyname //测试是否存在
+#            – ttl keyname //查看生存时间
+#            – type keyname //查看类型常用操作指令(续1)
+#            – move keyname dbname //移动变量
+#            – expire keyname 10 //设置有效时间
+#            – del keyname //删除变量
+#            – flushall //删除所有变量
+#            – save //保存所有变量
+#            – shutdown //关闭redis服务
+
+#              配置文件解析数据单位
+#            • 数据单位
+#             – port 6379 //端口
+#             – bind 127.0.0.1 //IP地址
+#             – tcp-backlog 511 //tcp连接总数
+#             – timeout 0 //连接超时时间
+#             – tcp-keepalive 300 //长连接时间
+#             – daemonize yes //守护进程方式运行
+#             – databases 16 //数据库个数
+#             – logfile /var/log/redis_6379.log //日志文件
+#             – maxclients 10000 //并发连接数量
+#             – dir /var/lib/redis/6379 //数据库目录内存管理
+#             • 内存清除策略
+#             – volatile-lru
+#             //最近最少使用 (针对设置了TTL的key)
+#             – allkeys-lru //删除最少使用的key
+#             – volatile-random //在设置了TTL的key里随机移除
+#             – allkeys-random //随机移除key
+#             – volatile-ttl (minor TTL) //移除最近过期的key
+#             – noeviction //不删除,写满时报错内存管理(续1)
+#             • 选项默认设置
+#             – maxmemory <bytes> //最大内存
+#             – maxmemory-policy noeviction //定义使用策略
+#             – maxmemory-samples 5
+#             个数 (针对lru 和 ttl 策略) //选取模板数据的设置连接密码
+#             • 设置密码
+#             [root@localhost ~]# grep -n requirepass /etc/redis/6379.conf
+#             501:requirepass 123456
+#             [root@localhost ~]# redis-cli
+#             127.0.0.1:6379> ping
+#             (error) NOAUTH Authentication required.
+#             127.0.0.1:6379> auth 123456
+#             //输入密码
+#             OK
+#             127.0.0.1:6379> ping
+#             PONG
+#             127.0.0.1:6379>
+#   -----------------------------------------------------------------------
+#   ----------------------MYSQL-day10   分库分表概述  配置mycat-----------------
 
 #         分库分表
 
@@ -56,122 +437,8 @@ my(){
 #                8 编程指定 sharding-by-substring
 #                9 字符串拆分hash解析 sharding-by-stringhash
 #                10 一致性hash sharding-by-murmur
-#              
-#              配置mycat装包
 
-#              • 安装JDK
-#              – 系统自带的即可
 
-#              [root@localhost ~]# rpm -qa | grep -i jdk
-#              java-1.8.0-openjdk-1.8.0.65-3.b17.el7.x86_64
-#              java-1.8.0-openjdk-headless-1.8.0.65-3.b17.el7.x86_64
-
-#              • 安装mycat服务软件包
-
-#              [root@localhost ~]# tar -zxf mycat-server-1.4-beta-
-#              20150604171601-linux.tar.gz
-#              //免安装,解压即可使用
-
-#              [root@localhost ~]# mv mycat/ /usr/local/
-
-#              [root@localhost ~]# ls /usr/local/mycat/
-
-#              bin catlet conf lib logs version.txt修改配置文件
-
-#              • 目录结构说明
-
-#              – bin //mycat命令,如 启动 停止 等
-#              – catlet //扩展功能
-#              – conf //配置文件
-#              – lib //mycat使用的jar
-#              – log //mycat启动日志和运行日志
-#              – wrapper.log //mycat服务启动日志
-#              – mycat.log //记录SQL脚本执行后的报错内容修改配置文件(续1)
-
-#              • 重要配置文件说明
-
-#              – server.xml //设置连mycat的账号信息
-#              – schema.xml //配置mycat的真实库表
-#              – rule.xml //定义mycat分片规则
-
-#              • 配置标签说明
-
-#              – <user>.. ..</user>
-#              //定义连mycat用户信息
-#              – <datanode>.. ..</datanode>
-#              //指定数据节点
-#              – <datahost>.. ..</datahost>
-#              //指定数据库地址及用户信息修改配置文件(续2)
-#              • 修改配置文件/usr/local/mycat/conf/server.xml
-#              <user name=“test”>
-#              //连mycat的用户名
-#              <property name=“password”>test</property> //对应密码
-#              <property name="schemas">TESTDB</property>
-#              </user>
-#              <user name="user">
-#              <property name="password">user</property>
-#              <property name="schemas">TESTDB</property>
-#              <property name="readOnly">true</property>
-#              //定义只读
-#              </user>修改配置文件(续3)
-#              • 修改配置文件/usr/local/mycat/conf/schema.xml
-#              – 定义分片信息
-#              知
-#              识
-#              讲
-#              解修改配置文件(续4)
-#              • 修改配置文件/usr/local/mycat/conf/schema.xml
-#              – 定义分片信息
-#              知
-#              识
-#              讲
-#              解修改配置文件(续5)
-#              • 修改数据库服务器配置文件
-#              – 添加对应设置后重启mysqld服务
-#              知
-#              识
-#              讲
-#              解
-#              – 添加授权用户
-#              – 创建存储数据对应的库db1 、 db2
-#              # vim /etc/my.cnf
-#              [mysqld]
-#              .. ..
-#              lower_case_table_names = 1
-#              //表名忽略大小写
-#              [root@localhost ~]# systemctl restart mysqld
-#              mysql> grant all on *.* to admin@"%" identified by "123456";
-#              //添加授权访问用户启动服务
-#              • 启动服务
-#              – 指定java路径、添加PATH路径、启动服务
-#              知
-#              识
-#              讲
-#              解测试配置
-#              • 在客户端连接mycat服务器
-#              – mysql -h服务器地址 -P端口 -u用户名 -p密码
-#              知
-#              识
-#              讲
-#              解
-#              [root@room9pc17 ~]# mysql -h192.168.4.56 -P8066 -utest -ptest
-#              MySQL [(none)]> show databases;
-#              +----------+
-#              | DATABASE |
-#              +----------+
-#              | TESTDB |
-#              +----------+
-#              1row in set (0.00 sec)案例1:搭建mycat 分片服务器
-#              具体要求如下:
-#              1)数据库主机 192.168.4.55 使用db1库存储数据
-#              课
-#              堂
-#              练
-#              习
-#              2)数据库主机 192.168.4.56 使用db2库存储数据
-#              3)主机 192.168.4.54 运行mycat服务,逻辑库名称为
-#              test,连接用户名为admin,密码123456
-#              4)在主机 192.168.4.254 访问测试配置
 
 # -------------------------------------------------------------------------
 
@@ -2193,6 +2460,7 @@ my(){
 #           
 #           
 #           六、mysql主从同步复制模式 
+
 #           异步复制
 #           全同步复制
 #           半同步复制
@@ -2221,6 +2489,7 @@ my(){
 #           mysql> SET GLOBAL rpl_semi_sync_slave_enabled = 1;
 #           
 #           查看半同步复制模式是否启用
+
 #           mysql>  show  variables  like  "rpl_semi_sync_%_enabled";
 #           
 #           修改配置文件/etc/my.cnf 让安装模块和启用的模式永久生效。
@@ -2563,8 +2832,7 @@ my(){
 #                增量备份的工作过程
 #                恢复完全备份中的当表
 #
-#3.2  安装第3方软件提供备份命令，对数据做增量备份
-#软件介绍 Percona 开源软件  在线热备不锁表  适用于生成环境。
+#3.2  安装第3方软件提供备份命令，对数据做增量备份软件介绍 Percona 开源软件  在线热备不锁表  适用于生产环境。
 #
 #        安装软件
 #            rpm -ivh  libev-4.15-1.el6.rf.x86_64.rpm

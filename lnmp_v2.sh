@@ -322,7 +322,7 @@ EOF
 
 #       修改脚本
 
-      sed  -i  '/-p/s/-p(.*)/-h '$ip' -p '$port'  shutdown/' /etc/init.d/redis_6379
+      sed  -ri  '/-p/s/-p(.*)/-h '$ip' -p '$port'  shutdown/' /etc/init.d/redis_6379
 
 #     sed -ri '/REDISPORT/s/6379/6345/' /etc/init.d/redis_6379       a
 
@@ -383,7 +383,7 @@ echo \$redis->get('school');
     firefox 127.0.0.1/redis.php
 
 
-~  
+  
 
 
 }

@@ -65,29 +65,88 @@ EOF
 #            – maxmemory-policy noeviction //定义使用策略
 #            – maxmemory-samples 5         //个数 (针对lru 和 ttl 策略)
 
+
+#            集群
+
+#            bind IP地址                            //只写物理接口IP地址
+#            daemonize yes                          //守护进程方式运行
+#            port xxxx                              //端口号不要使用默认的6379
+#            cluster-enabled yes                    //启用集群
+#            cluster-config-file nodes-xxxx.conf    //指定集群信息文件
+#            cluster-node-timeout 5000              //请求超时 5 秒
+
     
-     ip=`ifconfig    | awk '/inet/{print $2}' | head -1`
+    ip=`ifconfig    | awk '/inet/{print $2}' | head -1`
 
-     port=63${ip##*.}
+    port=63${ip##*.}
 
-     sed  -i  '/^bind/s/127.0.0.1/'$ip'/'  $conf
+            sed  -i '/^bind/s/127.0.0.1/'$ip'/'  $conf
 
-     sed -i '/^port /s/6379/'${port}'/'   $conf 
-  
+            sed  -i '/^port /s/6379/'${port}'/'  $conf 
+
+            sed -ri '/^# cluster-en/s/# c/c/'    $conf
+
+            sed -ri '/^# cluster-con/s/# c(.*nodes-)(.*)/c\1'$port'.conf/' $conf
+
+            sed -ri '/^# cluster-node/s/# c(.*)15000/c\15000/'          $conf
+ 
 
 #       修改脚本
 
-      sed  -i  '/-p/s/-p(.*)/-h '$ip' -p '$port'  shutdown/' /etc/init.d/redis_6379
+            sed  -ri  '/-p/s/-p(.*)/-h '$ip' -p '$port'  shutdown/' /etc/init.d/redis_6379
 
-      sed -ri '/REDISPORT/s/6379/6345/' /etc/init.d/redis_6379       
+#           sed -ri '/REDISPORT/s/6379/6345/' /etc/init.d/redis_6379       
  
 
 #       重新启动
 
-     /etc/init.d/redis_6379  stop
+          /etc/init.d/redis_6379  stop
    
-     /etc/init.d/redis_6379  start
+          /etc/init.d/redis_6379  start
 }
 
+rejc(){
+
+cd ~
+
+rupm=ruby-devel-2.0.0.648-30.el7.x86_64.rpm  
+
+ruge=redis-3.2.1.gem
+
+         [  !  -f   $rupm   ] &&  echo "don't have $rupm" && exit
+
+  
+         [  !  -f   $ruge   ] &&  echo "don't have $ruge" && exit
+
+   
+         yum -y install ruby rubygems
+
+         rpm -ivh --nodeps $rupm
+
+         gem install $ruge
+
+         mkdir /root/bin/   
+ 
+         cp redis-4.0.8/src/redis-trib.rb  /root/bin/
+ 
+#        redis-trib.rb create --replicas 1 \
+#            192.168.4.51:6351 192.168.4.52:6352 \
+#            192.168.4.53:6353 192.168.4.54:6354 \
+#            192.168.4.55:6355 192.168.4.56:6356 \    
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
 
 redis
