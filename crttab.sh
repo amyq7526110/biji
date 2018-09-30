@@ -9,7 +9,1709 @@ my(){
    mysql -e "$1"
       
 } 
-#   ----------------------MYSQL-day11 创建Redis集群 -----------------------------
+#   ----------------------NoSQL-day15 MongoDB副本集 -------------------------------
+
+
+#           MongoDB副本集
+
+#           环境准备
+
+#           副本集介绍
+
+#           也称为MongoDB复制
+
+#             – 指在多个服务器上存储数据副本,并实现数据同步
+
+#             – 提高数据可用性、安全性,方便数据故障恢复
+
+
+#           MongoDB复制原理
+
+#           副本集工作过程
+
+#           – 至少需要两个节点。其中一个是主节点,负责处理客
+#             户端请求,其余是从节点,负责复制主节点数据
+
+#           – 常见搭配方式:一主一从、一主多从
+
+#           – 主节点记录所有操作oplog,从节点定期轮询主节点获
+#             取这些操作,然后对自己的数据副本执行这些操作,
+#             从而保证从节点的数据与主节点一致副本集实现方式
+#             副本集实现方式
+
+#           MongoDB副本集
+
+#           Master-Slave 主从复制
+
+#           – 启动一台服务器时加上“-master”参数,作为主节点
+
+#           – 启动其他服务器时加上“-slave”和“-source”参数,作为从节点
+
+#           主从复制的优点
+
+#           – 从节点可以提供数据查询,降低主节点的访问压力
+
+#           – 由从节点执行备份,避免锁定主节点数据
+
+#           – 当主节点故障时,可快速切换到从节点,实现高可用
+
+
+#           副本集实现方式(续1)
+
+#           Replica Sets副本集
+
+#           – 从1.6 版本开始支持,优于之前的replication
+
+#           – 支持故障自动切换、自动修复成员节点,降低运维成本
+
+#           – Replica Sets副本集的结构类似高可用集群
+
+
+#           配置Replica Sets
+
+#           运行MongoDB服务
+
+#           配置节点信息
+
+#           初始化Replica Sets环境
+
+#           查看副本集信息
+
+#           验证副本集配置环境准备副本集介绍
+
+#           Replica Sets
+
+#           运行MongoDB服务
+#           • 启动服务时,指定主机所在副本集名称
+#           – 所有副本集成员使用相同的副本集名称
+
+#           – --replSet rs1           //指定副本集名称
+
+#           mkdir -p /data/db
+
+#           ./mongod --bind_ip 192.168.4.61 \
+#           --logpath=/var/log/mongod.log --replSet rs1 &配置节点信息
+
+#           sed -i '$a replSet=rs1' /usr/local/mongodb/etc/mongodb.conf      
+
+
+#           • 在任意一台主机连接mongod服务,执行如下操作
+
+#           ./mongo --host 192.168.4.51  --port 27051
+
+#           config = {
+#           _id:"rs1",
+#           members:[
+#           {_id:0,host:"IP地址:端口"},
+#           {_id:1,host:"IP地址:端口"},
+#           {_id:2,host:"IP地址:端口"}
+#           ]
+#           }
+
+   
+#           config = {
+#           _id:"rs1",
+#           members:[
+#           {_id:0,host:"192.168.4.51:27051"},
+#           {_id:1,host:"192.168.4.52:27052"},
+#           {_id:2,host:"192.168.4.53:27053"}   
+#           ]
+#           }
+
+
+
+
+#           初始化Replica Sets环境
+
+#           • 执行如下命令
+
+#           – > rs.initiate(config)
+
+#           • 查看状态信息
+
+#           – > rs.status( )
+
+#           • 查看是否是master库
+
+#           – > rs .isMaster( )验证副本集配置
+
+#           • 同步数据验证,允许从库查看数据
+
+#           – >db.getMongo( ).setSlaveOk( )
+
+#           • 自动切换主库验证
+
+#           – > rs.isMaster( )
+
+#           – 验证副本集配置
+
+#           MongoDB文档管理
+#           插入文档
+#           save()
+
+#           • 格式
+#            > db.集合名.save({ key:“值”,key:”值”})
+
+#           • 注意
+
+#           – 集合不存在时创建集合,然后再插入记录
+
+#           – _id字段值已存在时,修改文档字段值
+
+#           – _id字段值不存在时,插入文档
+
+#            insert()
+
+#           • 格式
+
+#           > db.集合名.insert({key:"值",key:"值"})
+
+#           • 注意
+
+#           – 集合不存在时创建集合,然后再插入记录
+
+#           – _id字段值已存在时,放弃插入
+
+#           – _id字段值不存在时,插入文档insert()(续1)
+
+#           insert()
+
+#           • 插入多条记录
+
+#              > db.集合名.insertMany(
+#              [
+#              {name:"xiaojiu",age:19} ,
+#              {name:"laoshi",email:"yaya@tedu.cn"}
+#              ]
+
+
+#           查询文档
+
+#           查询语法
+
+#           • 显示所有行(默认输出20行,输入it可显示后续行)
+
+#                > db.集合名.find()
+
+#           • 显示第1行
+
+#                > db.集合名.findOne()
+
+#           • 指定查询条件并指定显示的字段
+
+#                > db.集合名.find({条件},{定义显示的字段})
+#                > db.user.find({},{_id:0,name:1,shell:1})
+#                //0 不显示,1 显示
+
+#            行数显示限制
+
+#           • limit(数字)    //显示前几行
+
+#                db.集合名.find().limit(3)
+
+#                 db.user.find({},{_id:0,name:1,shell:1}).limit(3)
+
+#		 { "name" : "bob", "shell" : "/bin/bash" }
+#		 { "name" : "root", "shell" : "/bin/bash" }
+#		 { "name" : "bin", "shell" : "/sbin/nologin" }
+
+#		  db.user.find({shell:"/sbin/nologin"},{_id:0,name:1,shell:1}).limit(3)
+
+#		 { "name" : "bin", "shell" : "/sbin/nologin" }
+#		 { "name" : "daemon", "shell" : "/sbin/nologin" }
+#		 { "name" : "adm", "shell" : "/sbin/nologin" }
+		 
+  
+#           • count()        //统计个数
+
+#                  > db.user.find({shell:"/sbin/nologin"}).count()
+#		   36
+
+#		   > db.user.find().count()
+#		   42
+#
+
+#           • skip(数字)     //跳过前几行
+
+#                db.集合名.find().skip(2)
+
+#                db.user.find({shell:"/bin/bash"},{_id:0,name:1}).skip()
+#		 { "name" : "bob" }
+#		 { "name" : "root" }
+#		 { "name" : "lisi" }
+
+#	         db.user.find({shell:"/bin/bash"},{_id:0,name:1}).skip(2)
+#		 { "name" : "lisi" }
+
+
+
+#           • sort(字段名)   //1升序,-1降序
+
+#               db.集合名.find().sort({age:1|-1})
+
+#               db.user.find({shell:"/bin/bash"},{_id:0,name:1,uid:1}).sort({uid:1})
+#		{ "name" : "root", "uid" : 0 }
+#		{ "name" : "lisi", "uid" : 1000 }
+#		{ "name" : "bob", "uid" : 2000 }
+
+#	        db.user.find({shell:"/bin/bash"},{_id:0,name:1,uid:1}).sort({uid:-1})
+#		{ "name" : "bob", "uid" : 2000 }
+#		{ "name" : "lisi", "uid" : 1000 }
+#		{ "name" : "root", "uid" : 0 }
+
+           
+#           db.user.find({shell:"/sbin/nologin"},{_id:0,name:1,uid:1,shell:1}).skip(2).limit(2)
+
+
+#           匹配条件
+
+#           • 简单条件
+
+#            db.集合名.find({key:"值"})
+#            db.集合名.find({key:"值",keyname:"值"})
+#            db.user.find({shell:"/bin/bash"})
+#            db.user.find({shell:"/bin/bash",name:"root"})
+
+#            db.user.find({name:"bin"},{_id:0,name:1})
+#	     { "name" : "bin" }
+
+#	     db.user.find({name:"bin"},{_id:0,name:1,uid:1})
+#	     { "name" : "bin", "uid" : 1 }
+	     
+
+
+
+#           匹配条件(续1)
+
+#           • 范围比较
+
+#           – $in 在...里
+#           – $nin 不在...里
+#           – $or 或
+#           > db.user.find({uid:{$in:[1,6,9]}})
+#           > db.user.find({uid:{$nin:[1,6,9]}})
+#           > db.user.find({$or: [{name:"root"},{uid:1} ]})
+
+#             db.user.find({uid:{$in:[1,2,99]}},{_id:0,comment:0,gid:0,homedir:0})
+#	      { "name" : "bin", "password" : "x", "uid" : 1, "shell" : "/sbin/nologin" }
+#	      { "name" : "daemon", "password" : "x", "uid" : 2, "shell" : "/sbin/nologin" }
+#	      { "name" : "nobody", "password" : "x", "uid" : 99, "shell" : "/sbin/nologin" }
+#             db.user.find({shell:{$nin:["/bin/bash","/sbin/nologin"]}},{_id:0,comment:0,gid:0,homedir:0,password:0})
+#	      { "name" : "sync", "uid" : 5, "shell" : "/bin/sync" }
+#	      { "name" : "shutdown", "uid" : 6, "shell" : "/sbin/shutdown" }
+#	      { "name" : "halt", "uid" : 7, "shell" : "/sbin/halt" }
+
+
+#             db.user.find({$or:[{uid:1},{name:"root"}]},{_id:0,uid:1,name:1})
+#             { "name" : "root", "uid" : 0 }
+#             { "name" : "bin", "uid" : 1 }
+
+
+
+#           匹配条件(续2)
+#           • 正则匹配
+
+#              > db.user.find({name: /^a/ })
+
+#              > db.user.find({name:/a/},{_id:0,name:1,shell:1})
+#		 { "name" : "daemon", "shell" : "/sbin/nologin" }
+#		 { "name" : "adm", "shell" : "/sbin/nologin" }
+#		 { "name" : "halt", "shell" : "/sbin/halt" }
+#
+#              > db.user.find({name:/^...$/},{_id:0,name:1})
+#		 { "name" : "bob" }
+#		 { "name" : "bin" }
+#		 { "name" : "adm" }
+#		 { "name" : "ftp" }
+
+ 
+  
+
+#           • 数值比较
+
+#             – $lt $lte $gt $gte $ne
+
+#             – <   <=    >   >=   !=    
+       
+#            db.user.find({uid:{$lt:5}},{_id:0,name:1,uid:1})
+#		{ "name" : "root", "uid" : 0 }
+#		{ "name" : "bin", "uid" : 1 }
+#		{ "name" : "daemon", "uid" : 2 }
+#		{ "name" : "adm", "uid" : 3 }
+#		{ "name" : "lp", "uid" : 4 }
+
+#            db.user.find({uid:{$lt:3}},{_id:0,name:1,uid:1})
+#               { "name" : "root", "uid" : 0 }
+#	        {     { "name" : "bin", "uid" : 1 }
+#	        {     { "name" : "daemon", "uid" : 2 }
+
+#	     db.user.find({uid:{$lte:3}},{_id:0,name:1,uid:1})
+#	        { "name" : "root", "uid" : 0 }
+#	        { "name" : "bin", "uid" : 1 }
+#	        { "name" : "daemon", "uid" : 2 }
+#	        { "name" : "adm", "uid" : 3 }
+
+#            db.user.find( { uid: { $gte:10,$lte:40} } , {_id:0,name:1,uid:1})
+
+#            db.user.find({uid:{$lte:5}})
+
+#          并且
+
+#            db.user.find({name:"root",uid:0},{_id:0,name:1,uid:1})
+#            { "name" : "root", "uid" : 0 }
+
+#            db.user.find({uid:{$gte:10,$lte:20}},{_id:0,name:1,uid:1})
+#            { "name" : "operator", "uid" : 11 }
+#            { "name" : "games", "uid" : 12 }
+#            { "name" : "ftp", "uid" : 14 }
+
+
+
+#           匹配条件(续3)
+
+#           • 匹配null ,也可以匹配没有的字段
+
+#          > db.user.save({name:null,uid:null})
+
+#          > db.user.find({name:null})
+
+#          > db.user.find({"_id":
+#             ObjectId("5afd0ddbd42772e7e458fc75"),"name" : null, "uid" :
+#             null })
+          
+#	   > db.c4.save({name:null})
+
+#	   > db.c4.save({name:null,age:null})
+
+#	   > db.c4.find({name:null},{_id:0})
+#	     { "name" : null }
+#	     { "name" : null, "age" : null }
+
+#          > db.c4.save({shell:"/bin/bash",age:18})
+
+#          > db.c4.find({name:null},{_id:0})
+#	     { "name" : null }
+#	     { "name" : null, "age" : null }
+#	     { "shell" : "/bin/bash", "age" : 18 }
+
+
+#          > db.c4.save({shell:"/bin/bash",uid:18})
+
+#          > db.c4.find({name:null,uid:null},{_id:0})
+#	     { "name" : null }
+#	     { "name" : null, "age" : null }
+#	     { "shell" : "/bin/bash", "age" : 18 }
+           
+#        查询语法
+
+#          更新文档
+
+#           update()
+
+#           • 语法格式
+
+#           > db.集合名.update({条件},{修改的字段})
+   
+#           > db.user2.find({uid:{$lte:4}},{_id:0,name:1,uid:1})
+#           { "name" : "root", "uid" : 0 }
+#           { "name" : "bin", "uid" : 1 }
+#           { "name" : "daemon", "uid" : 2 }
+#           { "name" : "adm", "uid" : 3 }
+#           { "name" : "lp", "uid" : 4 }
+
+#           > db.user2.update({uid:{$lt:4}},{password:"AAA"})
+
+#           > db.user2.find({uid:{$lte:4}},{_id:0,name:1,uid:1})
+#           { "name" : "bin", "uid" : 1 }
+#           { "name" : "daemon", "uid" : 2 }
+#           { "name" : "adm", "uid" : 3 }
+#           { "name" : "lp", "uid" : 4 }
+
+#           > db.user2.find({password:"AAA"})
+#           { "_id" : ObjectId("5bb0632af68f02fadba9a85d"), "password" : "AAA" }
+
+#           注意  把文档的其他字段都删除了,只留下了password字段,
+#                 且只修改与条件匹配的第1行!!!
+
+
+
+
+#           多文档更新
+
+#           • 语法格式:默认只更新与条件匹配的第1行
+
+#           > db.user.update({条件},{$set:{修改的字段}}) //默认只更新与条件匹配的第1行
+
+#           > db.user.update({条件},{$set:{修改的字段}} ,false,true)
+
+#           > db.user.update({name:"bin"},{$set:{password:"abc12123"}},false,true)
+
+
+#           > db.user2.find({uid:{$gte:5,$lte:10}},{_id:0,name:1,uid:1,password:1})
+#	    { "name" : "sync", "password" : "x", "uid" : 5 }
+#	    { "name" : "shutdown", "password" : "x", "uid" : 6 }
+#	    { "name" : "halt", "password" : "x", "uid" : 7 }
+#	    { "name" : "mail", "password" : "x", "uid" : 8 }
+
+#	    > db.user2.update({uid:{$gte:5,$lte:10}},{$set:{password:"ABC"}})
+
+#	    > db.user2.find({uid:{$gte:5,$lte:10}},{_id:0,name:1,uid:1,password:1})
+#	    { "name" : "sync", "password" : "ABC", "uid" : 5 }
+#	    { "name" : "shutdown", "password" : "x", "uid" : 6 }
+#	    { "name" : "halt", "password" : "x", "uid" : 7 }
+#	    { "name" : "mail", "password" : "x", "uid" : 8 }
+
+#	    > db.user2.find({uid:{$gte:5,$lte:10}},{_id:0,name:1,uid:1,password:1},false,true)
+#	    { "name" : "sync", "password" : "ABC", "uid" : 5 }
+#	    { "name" : "shutdown", "password" : "x", "uid" : 6 }
+#	    { "name" : "halt", "password" : "x", "uid" : 7 }
+#	    { "name" : "mail", "password" : "x", "uid" : 8 }
+
+#	    > db.user2.update({uid:{$gte:5,$lte:10}},{$set:{password:"ABC"}},false,true)
+
+#	    > db.user2.find({uid:{$gte:5,$lte:10}},{_id:0,name:1,uid:1,password:1})
+#	    { "name" : "sync", "password" : "ABC", "uid" : 5 }
+#	    { "name" : "shutdown", "password" : "ABC", "uid" : 6 }
+#	    { "name" : "halt", "password" : "ABC", "uid" : 7 }
+#	    { "name" : "mail", "password" : "ABC", "uid" : 8 }
+
+
+#           $set/$unset
+#           $inc
+#           $push/$addToSet
+#           $pop/$pull
+#           删除文档
+#           drop()/remove()插入文档save()
+#           )
+
+
+#           $set/$unset
+
+#           • $set 条件匹配时,修改指定字段的值
+
+#           > db.user.update({条件},$set: {修改的字段})
+#           > db.user3.update({name:"bin"},{$set:{password:"A"}})
+
+#           • $unset 删除与条件匹配文档的字段
+
+#           > db.集合名.update({条件},{$unset:{key:values}})
+#           > db.user3.update({name:"bin"},{$unset:{password:"A"}})
+
+#              > db.user2.find({name:"bin"})
+#     { "_id" : ObjectId("5bb0632af68f02fadba9a85e"), "name" : "bin", "password" : "x", "uid" : 1, "gid" : 1, "comment" : "bin", "homedir" : "/bin", "shell" : "/sbin/nologin" }
+
+
+#	      > db.user2.update({name:"bin"},{$unset:{password:"x"}})
+
+#	      > db.user2.find({name:"bin"})
+
+#	      { "_id" : ObjectId("5bb0632af68f02fadba9a85e"), "name" : "bin", "uid" : 1, "gid" : 1, "comment" : "bin", "homedir" : "/bin", "shell" : "/sbin/nologin" }
+
+
+
+
+#           $inc
+
+#           • $inc 条件匹配时,字段值自加或自减
+
+#           > db.集合名.update({条件},{$inc:{字段名:数字}})
+
+#           > db.user.update({name:"bin"},{$inc:{uid:2}})     //字段值自加2
+#           > db.user.update({name:“bin”},{$inc:{uid:-1}})    //字段值自减1
+
+#           > db.user2.find({name:"bin"})
+#	    { "name" : "bin", "uid" : 1 }
+
+#	    > db.user2.update({name:"bin"},{$inc:{uid:2}})
+
+#	    > db.user2.find({name:"bin"},{_id:0,name:1,uid:1})
+#	    { "name" : "bin", "uid" : 3 }
+
+#           > db.user2.update({name:"bin"},{$inc:{uid:-1}})
+
+#	    > db.user2.find({name:"bin"},{_id:0,name:1,uid:1})
+#	     { "name" : "bin", "uid" : 2 }
+
+
+
+
+#           +num 自增,-num 自减
+
+
+#           $push/$addToSet
+
+#           • $push 向数组中添加新元素
+
+#           > db.集合名.update({条件},{$push:{数组名:"值"}})
+
+#           > db.user.insert({name:"bob",likes:["a","b","c","d","e","f"]})
+
+#           > db.user.update({name:“bob”},{$push:{likes:“w"}})
+
+
+#           > db.user.insert({name:"bob",likes:["a","b","c","d","e","f"]})
+
+#	    > db.user.find({name:"bob"},{_id:0})
+
+#	    {  "name" : "bob", "likes" : [ "a", "b", "c", "d", "e", "f" ] }
+
+#           > db.user.update({name:"bob"},{$push:{likes:"haha"}})
+
+#           > db.user.find({name:"bob"},{_id:0})
+#           { "name" : "bob", "password" : "x", "uid" : 2000, "gid" : 2000, "comment" : "  ", "homedir" : "/home/bob", "shell" : "/bin/bash", "likes" : [ "haha" ] }
+#           { "name" : "bob", "likes" : [ "a", "b", "c", "d", "e", "f" ] }
+
+#           > db.user.update({name:"bob"},{$push:{likes:"haha"}},false,true)
+
+#           > db.user.update({name:"bob"},{$push:{likes:"xixi"}},false,true)
+
+#           > db.user.find({name:"bob"},{_id:0})
+#           { "name" : "bob", "password" : "x", "uid" : 2000, "gid" : 2000, "comment" : "  ", "homedir" : "/home/bob", "shell" : "/bin/bash", "likes" : [ "haha", "haha", "xixi" ] }
+#           { "name" : "bob", "likes" : [ "a", "b", "c", "d", "e", "f", "haha", "xixi" ] }
+#           > 
+
+
+#           • $addToSet 避免重复添加
+
+#           > db.集合名.update({条件},{$addToSet:{数组名:"值"}})
+
+#           > db.user.update({name:"bob"},{$addToSet:{likes:"f"}})
+    
+#           > db.user.update({name:"bob"},{$addToSet:{likes:"xixi"}},false,true)
+
+#           > db.user.find({name:"bob"},{_id:0})
+#           { "name" : "bob", "password" : "x", "uid" : 2000, "gid" : 2000, "comment" : "  ", "homedir" : "/home/bob", "shell" : "/bin/bash", "likes" : [ "haha", "haha", "xixi" ] }
+#           { "name" : "bob", "likes" : [ "a", "b", "c", "d", "e", "f", "haha", "xixi" ] }
+
+
+
+
+
+
+#            $pop/$pull
+
+#           • $pop 从数组头部删除一个元素
+
+
+#           > db.集合名.update({条件},{$pop:{数组名:数字}})
+
+#           > db.user.update({name:"bob"},{$pop:{likes:1}})           1 删除数组尾部元素
+#           > db.user.update({name:"bob"},{$pop:{likes:-1}})         -1 删除数组头部元素
+
+#           > db.user.update({name:"bob"},{$pop:{likes:1}},false,true)
+
+#           > db.user.find({name:"bob"},{_id:0})
+#           { "name" : "bob", "password" : "x", "uid" : 2000, "gid" : 2000, "comment" : "  ", "homedir" : "/home/bob", "shell" : "/bin/bash", "likes" : [ "haha", "haha" ] }
+#           { "name" : "bob", "likes" : [ "a", "b", "c", "d", "e", "f", "haha" ] }
+
+#           > db.user.update({name:"bob"},{$pop:{likes:-1}},false,true)
+
+#           > db.user.find({name:"bob"},{_id:0})
+#	     { "name" : "bob", "password" : "x", "uid" : 2000, "gid" : 2000, "comment" : "  ", "homedir" : "/home/bob", "shell" : "/bin/bash", "likes" : [ "haha" ] }
+#	     { "name" : "bob", "likes" : [ "b", "c", "d", "e", "f", "haha" ] }
+
+
+
+
+
+#           • $pull 删除数组指定元素
+
+#           > db.集合名.update({条件},{$pull:{数组名:值}})
+
+#           > db.user.update({name:"bob"},{$pull:{likes:"b"}})
+
+#           > db.user.update({name:"bob"},{$pull:{likes:"haha"}},false,true)
+
+#           > db.user.find({name:"bob"},{_id:0})
+#           { "name" : "bob", "password" : "x", "uid" : 2000, "gid" : 2000, "comment" : "  ", "homedir" : "/home/bob", "shell" : "/bin/bash", "likes" : [ ] }
+#           { "name" : "bob", "likes" : [ "b", "c", "d", "e", "f" ] }
+
+
+#           > db.user.update({name:"bob"},{$push:{likes:"f"}},false,true)
+
+#           > db.user.find({name:"bob"},{_id:0})
+#           { "name" : "bob", "password" : "x", "uid" : 2000, "gid" : 2000, "comment" : "  ", "homedir" : "/home/bob", "shell" : "/bin/bash", "likes" : [ "f" ] }
+#           { "name" : "bob", "likes" : [ "b", "c", "d", "e", "f", "f" ] }
+
+#           > db.user.update({name:"bob"},{$pull:{likes:"f"}},false,true)
+
+#           > db.user.find({name:"bob"},{_id:0})
+#           { "name" : "bob", "password" : "x", "uid" : 2000, "gid" : 2000, "comment" : "  ", "homedir" : "/home/bob", "shell" : "/bin/bash", "likes" : [ ] }
+#           { "name" : "bob", "likes" : [ "b", "c", "d", "e" ] }
+
+
+
+#           删除文档$drop/$remove
+
+#           • $drop 删除集合的同时删除索引
+
+#           > db.集合名.drop( )
+#           > db.user.drop( )
+
+#           • $remove() 删除文档时不删除索引
+
+#           > db.集合名.remove({})          //删除所有文档
+#           > db.集合名.remove({条件})      //删除与条件匹配的文档
+#           > db.user.remove({uid:{$lte:10}})
+#           > db.user.remove({})
+
+
+#           > db.user2.find({password:"ABC"},{_id:0,name:1,password:1})
+#           { "name" : "sync", "password" : "ABC" }
+#           { "name" : "shutdown", "password" : "ABC" }
+#           { "name" : "halt", "password" : "ABC" }
+#           { "name" : "mail", "password" : "ABC" }
+
+#           > db.user2.remove({password:"ABC"})
+
+#           > db.user2.find({password:"ABC"}).count()
+#           0
+
+
+
+#           总结和答疑
+
+#       更新命令总结
+
+#           类 型       用 途
+#           $set        修改文档指定字段的值
+#           $unset      删除记录中的字段
+#           $push       向数组内添加新元素
+#           $pull       删除数组中的指定元素
+#           $pop        删除数组头尾部元素
+#           $addToSet   避免数组重复赋值
+#           $inc        字段自加或自减
+#           
+#      
+
+
+#   ---------------------------------------------------------------------------------
+#   ----------------------NoSQL-day14 部署MongoDB服务 -------------------------------
+#                NoSQL数据库管理
+
+#                MongoDB概述
+
+#                MongoDB介绍
+
+#                相关概念
+
+#                部署MongoDB服务
+#                搭建MDB服务器
+#                安装软件
+#                创建配置文件
+#                启动服务
+#                连接服务MongoDB概述MongoDB介绍
+#                • 介于关系数据库和非关系数据库之间的产品
+#                – 一款基于分布式文件存储的数据库,旨在为WEB应用
+#                提供可扩展的高性能数据存储解决方案
+#                – 将数据存储为一个文档(类似于JSON对象),数据结
+#                构由键值(key=>value)对组成
+#                – 支持丰富的查询表达,可以设置任何属性的索引
+#                – 支持副本集,分片相关概念
+#                • 免安装,解压后即可使用
+#                [root@bogon ~]# mkdir /usr/local/mongodb
+#                [root@bogon ~]# tar -zxf mongodb-linux-x86_64-rhel70-3.6.3.tgz
+#                [root@bogon ~]# cp -r mongodb-linux-x86_64-rhel70-3.6.3/bin
+#                /usr/local/mongodb/
+#                [root@bogon ~]# cd /usr/local/mongodb/
+#                [root@bogon mongodb]# mkdir -p etc log data/db创建配置文件
+#                • 手动创建服务主配置文件
+#                [root@bogon ~]# vim mongodb.conf
+#                logpath=/usr/local/mongodb/log/mongodb.log
+#                logappend=true
+#                //追加的方式记录日志信息
+#                dbpath=/usr/local/mongodb/data/db
+#                //数据库目录
+#                fork=true
+#                //守护进程方式运行启动服务
+#                • 启动服务
+#                # ./bin/mongod -f /usr/local/mongodb/etc/mongodb.conf
+#                • 查看进程
+#                # ps -C mongod
+#                • 查看端口
+#                # netstat -utnlp | grep :27017连接服务
+#                • 本地连接,默认没有密码
+#                [root@bogon ~]# /usr/local/mongodb/bin/mongo
+#                MongoDB shell version v3.6.3
+#                connecting to: mongodb://127.0.0.1:27017
+#                MongoDB server version: 3.6.3
+#                .. ..
+#                > show dbs
+#                //显示已有的库
+#                admin 0.000GB
+#                config 0.000GB
+#                local 0.000GB
+#                > exit
+#                //断开连接
+#                bye
+#                [root@bogon ~]#案例1:搭建MongoDB服务器
+#                满足以下要求:
+#                – 在主机192.168.4.51上部署MongoDB服务
+#                MongoDB基本使用
+#                常用管理命令
+#                数据库管理
+#                集合管理
+#                文档基本管理
+#                MongoDB基本使用
+#                基本数据类型
+#                字符string/布尔bool/空null
+#                数值/数组array
+#                代码/日期/对象
+#                内嵌/正则表达式
+#                数据导入导出
+#                数据导出
+#                数据导入
+#                数据备份与恢复
+#                数据备份
+#                数据恢复常用管理命令数据库管理
+#                • 查看、创建、切换、 删除库
+#                – show dbs //查看已有的库
+#                – db //显示当前所在的库
+#                – use 库名 //切换库,若库不存在延时创建库
+#                – show collections 或 show tables //查看库下已有集合
+#                – db.dropDatabase()
+#                //删除当前所在的库数据库管理(续1)
+#                • 数据库名称规范
+#                – 不能是空字符串("")
+#                – 不得含有' '(空格)、. 、$、/、\和\0 (空字符)
+#                – 应全部小写
+#                – 最多64字节集合管理
+#                • 查看、创建、删除集合
+#                – show collections 或 show tables
+#                #查看集合
+#                – db.集合名.drop() #删除集合
+#                – db.集合名.save({'',''})
+#                在时,创建并添加文档 #创建集合,集合不存
+#                > db.user.save({'name':'bob','age':'21'})
+#                WriteResult({ "nInserted" : 1 })集合管理(续1)
+#                • 集合名命名规范
+#                – 不能是空字符串""
+#                – 不能含有\0字符(空字符),此字符表示集合的结尾
+#                – 不能以“system.”开头,这是为系统集合保留的前缀
+#                – 用户创建的集合名字不能含有保留字符文档基本管理
+#                • 文档 : 类似于MySQL表里的记录
+#                 文档基本管理(续1)
+#                • 查看 、统计、添加 、删除文档
+#                – db.集合名.find()
+#                – db.集合名.count()
+#                – db.集合名.insert({“name”:”jim”})
+#                – db.集合名.find({条件})
+#                – db.集合名.findOne() //返回一条文档
+#                – db.集合名.remove({}) //删除所有文档
+#                – db.集合名.remove({条件}) //删除匹配的所有文档文档管理(续2)
+#                • 插入记录
+#                > db.col.insert(
+#                { title: 'MongoDB 教程',
+#                description: 'MongoDB 是一个 Nosql 数据库',
+#                by: 'MongoDB中文网',
+#                url: 'http://www.mongodb.org.cn',
+#                tags: ['mongodb', 'database', 'NoSQL'],
+#                likes: 100
+#                }
+#                )
+#                > db.col.remove({‘title’:‘MongoDB 教程’})
+#                //删除记录
+
+#                案例2:MongoDB常用管理操作
+#                要求如下:
+#                – 练习库的创建、查看、切换、删除
+#                – 练习集合的创建、查看、删除
+#                – 练习文档的查看、插入、删除
+
+#                  基本数据类型字符s
+
+#                  tring/布尔bool/空null
+
+#                • 字符串string
+
+#                – UTF-8字符串都可以表示为字符串类型的数据
+
+#                – {name:"张三"} 或 { school:"tarena"}
+
+#                • 布尔bool
+
+#                – 布尔类型有两个值true和false,{x:true}
+
+#                • 空null
+#                – 用于表示空值或者不存在的字段,{x:null}数值/数组array
+
+#                • 数值
+
+#                – shell默认使用64位浮点型数值。{x:3.14}或{x:3}。
+
+#                – NumberInt(4字节整数){x:NumberInt(3)}
+#                – NumberLong(8字节整数){x:NumberLong(3)}
+
+#                • 数组array
+
+#                – 数据列表或数据集可以表示为数组
+#                – {x: ["a","b", "c"]}代码/日期/对象
+
+#                • 代码
+
+#                – 查询和文档中可以包括任何JavaScript代码
+#                – {x: function( ){/* 代码 */}}
+
+#                • 日期
+
+#                – 日期被存储为自新纪元以来经过的毫秒数,不含时区
+#                – {x:new Date( )}
+
+#                • 对象
+
+#                – 对象id是一个12字节的字符串,是文档的唯一标识
+#                – {x: ObjectId() }内嵌/正则表达式
+
+#                • 内嵌
+
+#                – 文档可以嵌套其他文档,被嵌套的文档作为值来处理
+#                – {tarena:
+#                {address:"Beijing",tel:"888888",person:"hansy" }}
+
+#                • 正则表达式
+
+#                – 查询时,使用正则表达式作为限定条件
+#                – {x:/正则表达式/}数据导入导出数据导出
+
+#                • 语法格式1
+#                # mongoexport [--host IP地址 --port 端口 ] \
+#                -d 库名 -c 集合名 -f 字段名1,字段名2 \
+#                --type=csv > 目录名/文件名.csv
+#                • 语法格式2
+#                # mongoexport --host IP地址 --port 端口 \
+#                -库名 -c 集合名 -q '{条件}' -f 字段名1,字段名2 \
+#                --type=csv > 目录名/文件名.csv
+#                注意:导出为csv格式必须使用-f 指定字段名列表!!!数据导出(续1)
+#                • 语法格式3
+#                # mongoexport [ --host IP地址 --port 端口 ] \
+#                -d 库名 -c 集合名 [ -q ‘{ 条件 }’ –f 字段列表 ] \
+#                --type=json > 目录名/文件名.json数据导入
+#                • 语法格式1
+#                # mongoimport --host IP地址 --port 端口 \
+#                -d 库名 –c 集合名 \
+#                --type=json 目录名/文件名.json
+#                • 语法格式2
+#                # mongoimport --host IP地址 --port 端口 \
+#                -d 库名 -c 集合名 \
+#                --type=csv [--headerline] [--drop] 目录名/文件名.csv
+#                1. 导入数据时,若库和集合不存在,则先创建库和集合后再导入数据;
+#                2. 若库和集合已存在,则以追加的方式导入数据到集合里;
+#                3. 使用--drop选项可以删除原数据后导入新数据,--headerline 忽略标题数据备份恢复数据备份
+#                • 备份数据所有库到当前目录下的dump目录下
+#                # mongodump [ --host ip地址 --port 端口 ]
+#                • 备份时指定备份的库和备份目录
+#                # mongodump [ --host ip地址 --port 端口 ] -d 数据库名 -c 集
+#                合名 -o 目录
+#                • 查看bson文件内容
+#                # bsondump ./dump/bbs/t1.bson数据恢复
+#                • 语法格式
+#                # mongorestore --host IP地址 --port 端口 -d 数据库名 [ -c 集
+#                合名 ] -o 备份目录名
+#                案例3:数据导入导出/备份/恢复
+#                要求如下:
+#                – 练习数据导入导出
+#                – 练习数据备份恢复总结和答疑
+#                数据类型 Mongodb数据类型总结
+#                数据导出 问题现象
+#                总结和答疑
+#                故障分析与排除数据类型数据类型总结
+#                • mongodb数据类型总结
+#                – 字符串类型
+#                – 数值类型、布尔类型
+#                – 空 /正则/代码
+#                – 数组、数值、日期
+#                – 对象
+#                – 内嵌数据导出问题现象
+#                • 数据导出为csv格式时报错
+#                [root@host50 bin]# ./mongoexport -d mdb -c t1 --type=csv >
+#                /root/t1.csv
+#                2018-05-27T14:36:04.084+0800 Failed: CSV mode requires a
+#                field list故障分析及排除
+#                • 原因分析:
+#                – csv格式导出数据时,必须指定导出的字段名
+#                [root@host50 bin]# ./mongoexport -d mdb -c t1 -f
+#                name,shell,uid --type=csv > /root/t1.csv
+
+
+
+#   ---------------------------------------------------------------------------------------
+#   ----------------------NoSQL-day13 Redis 主从复制 持久化 (RDB/AOF)数据类型 -------------
+
+
+#            主从复制概述主从复制结构模式
+
+#               • 结构模式
+
+#               – 一主一从
+#               master
+#               slave
+
+#               – 一主多从
+#               master
+#               slave
+#               slave
+
+#               – 主从从
+#               master
+#               slave
+#               slave
+
+#            主从复制工作原理
+
+#            • 工作原理
+
+#            – Slave 向 maste 发送 sync 命令
+#            – Master 启动后台存盘进程,同时收集所有修改数据命
+#            令
+#            – Master 执行完后台存盘进程后,传送整个数据文件到
+#            slave 。
+#            – Slave 接收数据文件后,将其存盘并加载到内存中完成
+#            首次完全同步
+#            – 后续有新数据产生时, master 继续将新的所以收集到
+#            的修改命令依次传给 slave ,完成同步。
+
+
+#            主从复制缺点
+#            • 缺点
+#             
+#            – 网络繁忙,会产生数据同步延时问题
+#            – 系统繁忙,会产生数据同步延时问题
+
+
+#            配置主从复制拓扑结构
+#            • 主服务器数据自动同步到从服务器
+
+#            Master 服务器  复制 / 同步 Slave 服务器
+#            192.168.4.51/24            192.168.4.52/24
+#            
+#                                      Linux 客户机  
+#                                      192.168.4.50/24
+#            
+#             配置从库
+
+#             查看主库信息
+
+#             192.168.4.51:6351> info replication 
+
+#            • 配置从库 192.168.4.52/24
+
+#              – redis 服务运行后,默认都是 master 服务器
+
+
+#             redis-cli -h 192.168.4.52 -p 6352
+
+#             192.168.4.52:6352> info replication // 查看主从配置信息
+#             # Replication
+#               role:master
+
+#            命令行指定主库
+#            SLAVEOF 主库 IP 地址 端口号
+
+#            connected_slaves:0
+#            ......
+#            192.168.4.52:6352> SLAVEOF 192.168.4.51 6351
+#            OK
+#            192.168.4.52:6352> info replication
+#            # Replication
+#            role:slave
+
+#            主从从
+
+             
+#            redis-cli -h 192.168.4.53 -p 6353
+
+#            192.168.4.53:6353> SLAVEOF 192.168.4.52 6352
+#            OK
+
+
+#            192.168.4.53:6353> info replication
+#            # Replication
+#            role:slave
+
+#            永久配置
+
+#            主 192.168.4.51
+#            vim /etc/redis/6379.conf
+#            requirepass 123456
+              
+#            从 192.168.4.52
+#            vim /etc/redis/6379.conf
+#            slaveof  192.168.4.51 6351
+#            masterauth  123456
+     
+#            从 192.168.4.53
+#            vim /etc/redis/6379.conf
+#            slaveof  192.168.4.52 6352
+
+
+
+
+
+#            • 反客为主
+#            – 主库宕机后,手动将从库设置为主库
+
+#            redis-cli -h 192.168.4.53
+
+#            192.168.4.53:6353> SLAVEOF no one // 设置为主库
+#            OK
+
+#            192.168.4.52:6379> info replication
+
+
+#            • 哨兵模式
+
+#            – 主库宕机后,从库自动升级为主库
+
+#            – 在 slave 主机编辑 sentinel.conf 文件
+
+#            – 在 slave 主机运行哨兵程序
+
+#            vim /etc/sentinel.conf
+#            sentinel monitor redis51 192.168.4.51 6351 1
+#            sentinel auth-pass host51 123456
+
+#            redis-sentinel /etc/sentinel.conf
+
+
+#            sentinel myid ef35147c34ddbe77d1ca9036061e4ad5bfe00007
+#            sentinel monitor host51 192.168.4.52 6352 1
+#            port 26379
+#            dir "/root"
+#            sentinel auth-pass host51 123456
+#            sentinel config-epoch host51 1
+#            sentinel leader-epoch host51 1
+#            sentinel known-slave host51 192.168.4.51 6351
+#            sentinel known-slave host51 192.168.4.53 6353
+#            sentinel current-epoch 1
+
+
+
+ 
+#            sentinel monitor 主机名 ip 地址 端口 票数
+#            主机名:自定义
+#            IP 地址: master 主机的 IP 地址
+#            端 口: master 主机 redis 服务使用的端口
+#            票 数:主库宕机后, 票数大于 1 的主机被升级为主库配置带验证的主从复制
+#            • 配置 master 主机
+#            – 设置连接密码 ,启动服务,连接服务
+#            [root@redis51 ~]# sed -n '70p;501p' /etc/redis/6379.conf
+#            bind 192.168.4.51
+#            requirepass 123456 // 密码
+#            [root@redis51 ~]#
+#            [root@redis51 ~]# /etc/init.d/redis_6379 start
+#            Starting Redis server...
+#            [root@redis51 ~]# redis-cli -h 192.168.1.111 -a 123456 -p 6379
+#            192.168.4.51:6379>配置带验证的主从复制 ( 续 1 )
+#            • 配置 slave 主机
+#            – 指定主库 IP ,设置连接密码,启动服务
+#            [root@redis52 ~]# sed -n '70p;282p;289p' /etc/redis/6379.conf
+#            bind 192.168.4.52
+#            slaveof 192.168.4.51 6379 // 主库 IP 与端口
+#            masterauth 123456 // 主库密码
+#            [root@redis52 ~]#
+#            [root@redis52 ~]# /etc/init.d/redis_6379 start
+#            Starting Redis server...
+#            [root@redis52 ~]# redis-cli -h 192.168.4.52
+#            192.168.4.52:6379> INFO replication
+#            # Replication
+#            role:slave
+#            master_host:192.168.4.51
+#            master_port:6379案例 1 :配置 redis 主从复制
+#            具体要求如下:
+#            – 将主机 192.168.4.52 配置主机 192.168.4.51 的从库
+
+
+
+
+#----------------        持久化 RDB/AOF       --------------------------------------
+
+#            持久化之 RDB
+
+#            RDB 介绍
+
+#            • 全称 Reids DataBase
+
+#            – 数据持久化方式之一
+#            – 在指定时间间隔内,将内存中的数据集快照写入硬盘
+#            – 术语叫 Snapshot 快照。
+#            – 恢复时,将快照文件直接读到内存里。
+
+
+#           备份恢复redis
+
+#                cp /var/lib/redis/6379/dump.rdb /root/
+#                rm -rf /var/lib/redis/6379/dump.rdb
+#                redis
+#                redis_6379       redis-check-aof  redis-cli        redis-server     
+#                redis-benchmark  redis-check-rdb  redis-sentinel   
+#                dis_6379 restart
+#                Stopping ...
+#                Waiting for Redis to shutdown ...
+#                Redis stopped
+#                Starting Redis server...
+#                ls /var/lib/redis/6379/dump.rdb 
+#                redis-cli -h 192.168.4.50 -p 6350
+#                192.168.4.50:6350> keys *
+#                1) "name"
+#                192.168.4.50:6350> get name
+#                "boy"
+#                192.168.4.50:6350> exit
+#                [root@host50 ~]# redis_6379 stop
+#                Stopping ...
+#                Redis stopped
+#                [root@host50 ~]# rm -rf /var/lib/redis/6379/dump.rdb
+#                [root@host50 ~]# redis_6379 restart
+#                /var/run/redis_6379.pid does not exist, process is not running
+#                Starting Redis server...
+#                [root@host50 ~]# redis-cli -h 192.168.4.50 -p 6350
+#                192.168.4.50:6350> keys *
+#                (empty list or set)
+#                192.168.4.50:6350> exit
+#                [root@host50 ~]# redis_6379 stop
+#                Stopping ...
+#                Redis stopped
+#                cp /root/dump.rdb  /var/lib/redis/6379/
+#                cp：是否覆盖"/var/lib/redis/6379/dump.rdb"？ y
+#                redis_6379 restart
+#                /var/run/redis_6379.pid does not exist, process is not running
+#                Starting Redis server...
+#                redis-cli -h 192.168.4.50 -p 6350
+#                192.168.4.50:6350> keys *
+#                1) "name"
+#                192.168.4.50:6350> 
+
+
+
+#            相关配置参数
+
+#            • 文件名
+
+#            – dbfilename dump.rdb  // 文件名
+
+#            •  禁用 RDB
+
+#            – save  "" 
+
+#            •  数据从内存保存到硬盘的频率
+#            
+#            – save 900  1            // 900 秒内且有 1 次修改存盘
+#            – save 60   10000        // 60  秒内且有 10000 修改存盘
+#            – save 300  10           // 300 秒内且有 10 次修改存盘
+#            
+#            • 手动立刻存盘
+#            
+#            –    > save              // 阻塞写存盘
+#            –    > bgsave            // 不阻塞写存盘相关配置参数 ( 续 1)
+
+#            • 压缩
+
+#            – rdbcompression yes | no
+
+#            • 在存储快照后,使用 crc16 算法做数据校验
+
+#            – rdbchecksum yes|no
+
+#            • bgsave 出错停止写操作 , 对数据一致性要求不高设置为 no
+
+#            – stop-writes-on-bgsave-error yes|no使用 RDB 文件恢复数据
+
+#            Redis 持久化
+#            RDB/AOF
+#            持久化之 AOF
+#            AOF 介绍
+#            相关配置参数
+#            使用 AOF 文件恢复数据
+#            RDB 优点与缺点持久化之 RDBRDB 介绍
+#            。
+#            • 备份数据
+#            使用 RDB 文件恢复数据
+#            – 备份 dump.rdb 文件到其他位置
+#            – ~]# cp 数据库目录 /dump.rdb
+#            备份目录
+#            • 恢复数据
+#            – 把备份的 dump.rdb 文件拷贝回数据库目录 , 重启 red
+#            is 服务
+#            – cp 备份目录 /dump.rdb 数据库目录 /
+#            – /etc/redid/redis_ 端口 startRDB 
+
+
+
+#            RDB 优点与缺点
+
+#            • RDB 优点
+#            – 持久化时, Redis 服务会创建一个子进程来进行持久
+#            化,会先将数据写入到一个临时文件中,待持久化过
+#            程都结束了,再用这个临时文件替换上次持久化好的
+#            文件;整个过程中主进程不做任何 IO 操作,这就确保
+#            了极高的性能。
+#            – 如果要进程大规模数据恢复,且对数据完整行要求不
+#            是非常高,使用 RDB 比 AOF 更高效。
+
+#            • RDB 的缺点
+
+#            – 意外宕机,最后一次持久化的数据会丢失。
+
+
+
+#            – 使用 RDB 文件恢复数据
+
+#             持久化之 AOF
+
+#             AOF 介绍
+
+#            • 只追加操作的文件
+
+#            – Append Only File
+#            – 记录 redis 服务所有写操作。
+#            – 不断的将新的写操作,追加到文件的末尾。
+#            – 使用 cat 命令可以查看文件内容相关配置参数
+
+#            • 文件名
+
+#            – appendfilename "appendonly.aof" // 文件名
+
+#            – appendonly yes // 启用 aof ,默认 no
+
+#            • AOF 文件记录,写操作的三种方式
+
+#            – appendfsync always  // 有新的写操作立即记录,性能差,完整性好。
+
+#            – appendfsync everysec // 每秒记录一次,宕机时会丢失 1 秒的数据
+
+#            – appendfsync no       // 从不记录相关配置参数 ( 续 1)
+
+#            • 日志重写 ( 日志文件会不断增大 ) ,何时会触发日志重写?
+
+#            – redis  会记录上次重写时 AOF 文件的大小,默认配置
+#            是当aof文件是上次 rewrite 后大小的 1 倍且文件大于64M 时触发。
+
+#            – auto-aof-rewrite-percentage 100 
+#            – auto-aof-rewrite-min-size 64mb
+
+#            数据库目录 /AOF 优点 / 缺点
+
+#            • RDB 优点
+
+#            – 可以灵活的设置同步持久化 appendfsync alwayls 或
+#            异步持久化 appendfsync everysec
+
+#            – 宕机时,仅可能丢失 1 秒的数据
+
+#            • RDB 的缺点
+
+#            – AOF 文件的体积通常会大于 RDB 文件的体积。执行 fs
+#            ync 策略时的速度可能会比 RDB 慢。
+
+#            – 把文件恢复时间长
+
+#            • 修复 AOF 文件,
+
+#            – 把文件恢复到最后一次的正确操作
+
+#             cp /var/lib/redis/6379/appendonly.aof /root/
+
+#             redis-cli -h 192.168.4.50 -p 6350
+
+#             192.168.4.50:6350> flushall
+#             OK
+
+#             192.168.4.50:6350> keys *
+#             (empty list or set)
+
+#             192.168.4.50:6350> exit
+
+#             redis_6379 stop
+#             Stopping ...
+#             Redis stopped
+#             redis_6379 start
+#             Starting Redis server...
+
+#             redis-cli -h 192.168.4.50 -p 6350
+
+#             192.168.4.50:6350> keys *
+#             (empty list or set)
+
+#             192.168.4.50:6350> exit
+
+#             redis_6379 stop
+#             Stopping ...
+#             Redis stopped
+
+#             cp appendonly.aof /var/lib/redis/6379/
+#             cp：是否覆盖"/var/lib/redis/6379/appendonly.aof"？ y
+
+#             redis_6379 start
+#             Starting Redis server...
+
+#             redis-cli -h 192.168.4.50 -p 6350
+
+#             192.168.4.50:6350> keys *
+#             1) "sex"
+#             2) "age"
+#             3) "name"
+
+#    ---------------        数据类型     ----------------------------------
+
+#            String 字符串 字符串操作
+
+#            List 列表 List 列表简介
+              
+#            set 集合
+#             
+#            List 列表操作
+#            Hash 表
+#            Hash 表简介
+#            Hash 表操作String 
+
+
+#             字符串字符串操作
+
+#            • set key value [ex seconds] [px milliseconds] [nx|xx]
+
+#            – 设置 key 及值
+
+#            — ex,px 过期时间可以设置为秒或毫秒为单位
+
+#            – nx 只有 key 不存在,才对 key 进行操作
+
+#            – xx 只有 key 已存在,才对 key 进行操作
+
+#            set name pop nx
+#            (nil)
+
+#            set name pop xx
+#            OK
+
+#            set haha pop xx
+#            (nil)
+
+
+#            • setrange key offset value
+
+#            – 从偏移量开始复写 key 的特定位的值
+
+#             set first "hello world"
+
+#             setrange first 6 "Redis"  // 改写为 hello Redis
+
+#             set tel 1233113333
+#             OK
+
+#             get tel
+#             "1233113333"
+
+#             SETRANGE tel 3 ****
+#             (integer) 10
+
+#             get tel
+#             "123****333"
+
+
+
+
+
+
+#            • strlen key
+
+#            – 统计字串长度
+
+#               strlen name
+#               (integer) 3
+
+#            • append key value
+
+#            – 字符存在则追加,不存在则创建 key 及 value
+
+#            – 返回值为 key 的长度
+
+#             append myname jacob
+
+#            • setbit key offset value
+
+#            – 对 key 所存储字串,设置或清除特定偏移量上的位 (bit)
+
+#            – Value 值可以为 1 或 0 , offset 为 0~2^32 之间
+
+#            – key 不存在,则创建新 key
+
+#            >setbit bit 0 1
+#            >setbit bit 1 0
+
+#            bit: 第 0 位为 1 ,第一位为 0字符串操作(续 2 )
+
+#            • bitcount key
+#            – 统计字串中被设置为 1 的比特位数量
+
+#            >setbit bits 0 1 //0001
+#            
+#            >setbit bits 3 1 //1001
+#            
+#            >bitcount bits   //结果为 2
+#            
+#            记录网站用户上线频率,如用户 A 上线了多少天等类似的数据
+#            如用户在某天上线,则使用 setbit ,以用户名为 key ,将网站上线
+#            日为 offset ,并在该 offset 上设置 1 ,最后计算用户总上线次数时
+#            ,使用 bitcount 用户名即可
+#            这样,即使网站运行 10 年,每个用户仅占用 10*365 比特位即 456
+#            字节即可
+#            >setbit peter 100 1 // 网站上线 100 天用户登录了一次
+
+#            >setbit peter 105 1 // 网站上线 105 天用户登录了一次
+
+#            >bitcount peter字符串操作(续 3 )
+
+#            • decr key
+#            – 将 key 中的值减 1 , key 不存在则先初始化为 0 ,再减 1
+
+#            set test 10
+#            decr test
+#            • decrby key decrement
+#            – 将 key 中的值,减去 decrement
+#            set count 100
+#            decrby count 20
+#            • get key
+#            – 返回 key 所存储的字符串值
+#            – 如果 key 不存在则返回特殊值 nil
+#            – 如果 key 的值不是字串,则返回错误, get 只能处理字串字符串操作(续 4 )
+#            • getrange key start end
+#            – 返回字串值中的子字串,截取范围为 start 和 end
+#            – 负数偏移量表述从末尾计数, -1 表示最后一个字符, -2
+#            表示倒数第二个字符
+#            set first “hello,the world”
+#            getrange first -5 -1
+#            getrange first 0 4字符串操作(续 5 )
+#            • incr key
+#            – 将 key 的值加 1 ,如果 key 不存在,则初始为 0 后再加 1
+#            – 主要应用为计数器
+#            >set page 20
+#            >incr page
+#            • incrby key increment
+#            – 将 key 的值增加 increment字符串操作(续 6 )
+#            • incrbyfloat key increment
+#            – 为 key 中所储存的值加上浮点数增量 increment
+#            >set num 16.1
+#            >incrbyfloat num 1.1
+#            • mget key [key...]
+#            – 一次获取一个或多个 key 的值,空格分隔, < 具有原子性
+#            >
+#            • mset key value [key value ...]
+#            – 一次设置多个 key 及值,空格分隔, < 具有原子性 >
+
+
+
+#            Hash 表Hash 表简介
+#            • Redis hash 是一个 string 类型的 field 和 value 的映
+#            射表
+#            • 一个 key 可对应多个 field ,一个 field 对应一个 valu
+#            e
+#            • 将一个对象存储为 hash 类型,较于每个字段都存储成
+#            string 类型更能节省内存Hash 表操作
+#            • hset key field value
+#            – 将 hash 表中 field 值设置为 value
+#            >hset site google 'www.g.cn‘
+#            >hset site baidu 'www.baidu.com'
+#            • hget key filed
+#            – 获取 hash 表中 field 的值
+#            >hget site googleHash 表操作(续 1 )
+#            • hmset key field value [field value...]
+#            – 同时给 hash 表中的多个 field 赋值
+#            >hmset site google www.g.cn baidu www.baidu.com
+#            • hmget key field [field...]
+#            – 返回 hash 表中多个 field 的值
+#            >hmget site google baidu
+#            • hkeys key
+#            – 返回 hash 表中所有 field 名称
+#            >hmset site google www.g.cn baidu www.baidu.com
+#            >hkeys siteHash 表操作(续 2 )
+#            • hgetall key
+#            – 返回 hash 表中所有 field 的值
+#            • hvals key
+#            – 返回 hash 表中所有 filed 的值
+#            >hvals key
+#            • hdel key field [field...]
+#            – 删除 hash 表中多个 field 的值,不存在则忽略
+#            >hdel site google baiduList 
+
+#             列表List 列表简介
+
+#              • Redis 的 list 是一个字符队列
+ 
+#              • 先进后出
+
+#              • 一个 key 可以有多个值List
+
+#             列表操作
+
+#            • lpush key value [value...]
+
+#                 – 将一个或多个值 value 插入到列表 key 的表头
+
+#                 – Key 不存在,则创建 key
+
+#             >lpush list a b c //list1 值依次为 c b a等同于 lpush list a; lpush list b; lpush list c
+
+
+#            • lrange key start stop
+
+#                – 从开始位置读取 key 的值到 stop 结束
+
+#                >lrange list 0 2  // 从 0 位开始,读到 2 位为止
+#                >lrange list 0 -1 // 从开始读到结束为止
+#                >lrange list 0 -2 // 从开始读到倒数第 2 位值List 列表操作(续 1 )
+            
+#            • lpop key
+
+#                – 移除并返回列表头元素数据, key 不存在则返回 nil
+
+#                >lpop list   // 删除表头元素,可以多次执行
+#            • llen key
+
+#                – 返回列表 key 的长度List 列表操作(续 2 )
+
+#            • lindex key index
+
+#                – 返回列表中第 index 个值
+
+#            如 lindex key 0 ; lindex key 2; lindex key -2
+#            • lset key index value
+#            – 将 key 中 index 位置的值修改为 value
+#            >lset list 3 test
+#            // 将 list 中第 3 个值修改为 testList 列表操作(续 3 )
+#                – 返回列表中第 index 个值
+
+#            如 lindex key 0 ; lindex key 2; lindex key -2
+#            • lset key index value
+#            – 将 key 中 index 位置的值修改为 value
+#            >lset list 3 test
+#            // 将 list 中第 3 个值修改为 testList 列表操作(续 3 )
+#                – 返回列表中第 index 个值
+
+#            如 lindex key 0 ; lindex key 2; lindex key -2
+#            • lset key index value
+#            – 将 key 中 index 位置的值修改为 value
+#            >lset list 3 test
+#            // 将 list 中第 3 个值修改为 testList 列表操作(续 3 )
+#            • rpush key value [value...]
+#            – 将 value 插入到 key 的末尾
+#            知
+#            识
+#            讲
+#            解
+#            >rpush list3 a b c
+#            >rpush list3 d
+#            //list3 值为 a b c
+#            // 末尾插入 d
+#            • rpop key
+#            – 删除并返回 key 末尾的值
+#            – >rpush list3 a b c //list3 值为 a b c
+#            >rpush list3 d
+#            // 末尾插入 d其他操作其他操作指令
+#            • del key [key...]
+#            – 删除一个或多个 key
+#            知
+#            识
+#            讲
+#            解
+#            • exists key
+#            – 测试一个 key 是否存在
+#            • expire key seconds
+#            – 设置 key 的生存周期
+#            • persist key
+#            – 设置 key 永不过期
+#            • ttl key
+#            – 查看 key 的生存周期其他操作指令(续 1 )
+#            • keys 匹配
+#            – 找符合匹配条件的 key ,特殊符号用 \ 屏蔽
+#            知
+#            识
+#            讲
+#            解
+#            >keys *
+#            // 显示所有 key
+#            >keys h?llo // 匹配 hello,hallo,hxllo 等
+#            >keys h*llo // 匹配 hllo 或 heeello 等
+#            >keys h[ae]lo // 匹配 hello 和 hallo
+#            • flushall
+#            – 清空所有数据
+#            • select id
+#            – 选择数据库, id 用数字指定,默认数据库为 0
+#            >select 0
+#            >select 2其他操作指令(续 2 )
+#            • move key db_id
+#            – 将当前数据库的 key 移动到 db_id 数据库中
+#            知
+#            识
+#            讲
+#            解
+#            >move key 1
+#            // 将 key 移动到 1 数据库中
+#            • rename key newkey
+#            – 给 key 改名为 newkey , newkey 已存在时,则覆盖
+#            其值
+#            • renamenx key newkey
+#            – 仅当 newkey 不存在时,才将 key 改名为 newkey其他操作指令(续 3 )
+#            • sort key
+#            – 对 key 进行排序
+#            知
+#            识
+#            讲
+#            解
+#            >lpush cost 1 8 7 2 5
+#            >sort cost
+#            // 默认对数字排序,升序
+#            >sort cost desc
+#            // 降序
+#            >lpush test “about” “site” “rename”
+#            >sort test alpha
+#            // 对字符排序
+#            >sort cost alpha limit 0 3
+#            // 排序后提取 0-3 位数据
+#            >sort cost alpha limit 0 3 desc
+#            >sort cost STORE cost2 // 对 cost 排序并保存为 cost2
+#            • type key
+#            – 返回 key 的数据类型案例 3 :常用 Redis 数据库操作指
+#            令
+#            • 对 Redis 数据库各数据类型进行增删改查操作
+#            课
+#            堂
+#            练
+#            习
+#            – 数据类型分别为 Strings 、 Hash 表、 List 列表
+#            – 设置数据缓存时间
+#            – 清空所有数据
+#            – 对数据库操作总结和答疑
+#            数据类型 数据类型总结
+#            管理命令 管理命令总结
+#            总结和答疑数据类型数据类型总结
+#            知
+#            识
+#            讲
+#            解
+#            • 字符类型
+#            • hash 表类型
+#            • List 列表类型管理命令管理命令总结
+#            • del key [key...]
+#            – 删除一个或多个 key
+#            知
+#            识
+#            讲
+#            解
+#            • exists key
+#            – 测试一个 key 是否存在
+#            • expire key seconds
+#            – 设置 key 的生存周期
+#            • persist key
+#            – 设置 key 永不过期
+#            • ttl key
+#            – 查看 key 的生存周期
+
+
+
+
+# -------------------------------------------------------------------------------------
+
+
+#   ----------------------NoSQL-day11 创建Redis集群 -----------------------------
 #           redis 服务器 ip 地址及端口规划
 
 #           192.168.4.51    6351
@@ -3808,7 +5510,475 @@ my(){
 #                 my "commit;"     提交数据
 #
 #
-#   -----------------------------------------------------------
+#   ---------------------------------------------------------------------------
+
+#           数据类型的关键字   存储范围  赋值方式  合理使用数据类型
+#           *******划重点*****
+#           数值类型的宽度 是显示宽度，不能够给字段赋值的大小。字段的值由类型决定。
+
+
+#   ----------------------MYSQL-day02 mysql字段约束条件、修改表结构 --------------
+
+#              一 、字段约束条件
+
+#              1.1  作用： 限制如何给字段赋值的
+
+#              1.2  包括内容有：  NULL    Key    Default     Extra 
+
+#              NULL  是否允许给字段赋null值  
+
+#                         null           默认允许赋null值    
+#                         not  null   不允许赋null值
+
+#              key     键值类型：普通索引   唯一索引  全文索引  主键  外 键
+
+#              
+#              Default 默认值 作用：当不被字段赋值时，使用默认值给字段赋值
+#                           不设置默认值是  系统定义的是null
+#                           default   值   
+#              Extra    额外设置  ，字段是否设置为自动增加,默认没有自动增长功能
+#              
+#              
+#              二、修改表结构
+#              2.1 修改表结构的命令
+#              mysql>  alter  table  库.表    执行动作 ；
+#              
+#              添加新字段      add   字段名    类型(宽度)  [ 约束条件]
+#              
+#              删除已有字段  drop   字段名
+#              
+#              修改已有字段的类型宽度及约束条件
+#              ***划重点****  修改时不能与已经存储的数据矛盾的话不允许修改
+#                                   modify   字段名    类型(宽度)  [ 约束条件]
+#              
+#              修改字段名
+#                                 change   源字段名   新字段名   类型(宽度)  [ 约束条件]
+#              
+#              修改表名
+#                                 alter  table  源表名  rename   [to]   新表名；
+#              
+#              三、mysql键值
+#              设置在表中字段上的，作用是约束如何给字段赋值。同时会给字段做索引。
+#              
+#              索引介绍： 树状目录结构  类似与书的“目录”
+#              优点：加快查询表记录的速度
+#              缺点 : 会减慢编辑表记录的速度，且占用磁盘的物理存储空间
+#                        (delete  insert   update)
+#              
+#              字典  总页面数  1000页
+#              
+#              目录信息  
+#              1------100页     记录目录信息
+#              101---1000页   正文
+#              
+#              查字典的方法
+#              笔画
+#              部首
+#              拼音
+#              
+#              修正内容时，修改内容 添加内容  删除内容          
+#              
+#              
+#              stuinfo   /var/lib/mysql/db2/stuinfo.*
+#              name   age   home   class
+#              DBA
+#              
+#              
+#              
+#              3.1 键值：普通索引   唯一索引  全文索引  主键  外 键
+#                                  *                                          *        *
+#              3.1.1普通索引的使用（index）
+#              使用规则?
+#              
+#              查看
+#              desc  表名;
+#              show   index  from   表名;
+#              Table: t2
+#              Key_name: aaa
+#              Column_name: age
+#              Index_type: BTREE  (二叉树)
+#              
+#              创建
+#              在已有表创建
+#              create   index   索引名  on   表名（字段名）；
+#              
+#              
+#              
+#              建表是时创建
+#              create  table  表名（
+#              字段列表，
+#              index(字段名)，
+#              index(字段名)，
+#              ）;
+#              
+#              删除
+#              drop   index   索引名  on   表名；
+#              
+#              +++++++++++++++++++++++++++++++
+#              3.1.2主键 primary   key 
+#              （普通主键    复合主键    主键+auto_increment）
+#              
+#              使用规则?
+#              
+#              查看   desc   表；  key ----> PRI
+#              
+#              创建
+#              在已有表创建     alter  table   表   add   primary  key(字段名)；
+#              
+#              建表时创建
+#              create  table  表名（
+#              字段列表，
+#              primary  key(字段名)
+#              ）；
+#              
+#              
+#              创建复合主键的使用：多个字段一起做主键，插入记录时，只要做主键字段的
+#              值不同时重复，就可以插入记录。
+#              desc  mysql.db;
+#              desc  mysql.user;
+#              
+#              主键primary  key  通常和auto_increment连用。
+#                                                    让字段的值自动增长  i++
+#                                                       数值类型               i=i+1
+#              
+#              
+#              删除主键   mysql>  alter  table   表   drop    primary  key；
+#              ++++++++++++++++++++++++++++++++++++++
+#              3.1.3外 键(作用 限制如何给字段赋值的)
+#              给当前表中字段赋值时，值只能在其他表的指定字段值的范围里选择。
+#              
+#              使用规则?
+#              
+#              创建外键 foreign  key 的命令格式：
+#              create   table   表（
+#              字段名列表，
+#              foreign  key(字段名)   references  表名（字段名） 
+#              on  update cascade    on  delete  cascade
+#              ）engine=innodb;
+#              
+#              缴费表
+#              use studb;
+#              create  table  jfb(
+#              jfb_id    int(2)  primary key  auto_increment,
+#              name   char(15),
+#              pay   float(7,2)
+#              )engine=innodb;
+#              
+#              insert into  jfb (name,pay)values("bob",26800);
+#              insert into  jfb (name,pay)values("tom",26000);
+#              
+#              select  *  from  jfb;
+#              
+#              班级表 
+#              create  table  bjb(
+#              bjb_id   int(2),
+#              name   char(15),
+#              foreign  key(bjb_id)   references  jfb(jfb_id) 
+#              on  update cascade    on  delete  cascade
+#              )engine=innodb;
+#              
+#              
+#              insert  into   bjb values(3,"lucy");
+#              insert  into   bjb values(1,"bob");
+#              insert  into   bjb values(2,"tom");
+#              select  * from bjb;
+#              
+#              mysql> update  jfb set jfb_id=9 where name="bob";
+#              mysql> delete from jfb where jfb_id=2;
+#              select  * from jfb;
+#              select  * from bjb;
+#              
+#              
+#              查看  mysql> show create table 表名;
+#              
+#              删除外键   
+#              alter  table  表名  drop  foreign key  外键名;
+#              alter  table  bjb  drop  foreign key  bjb_ibfk_1;
+#              
+#              在已有表创建  
+#              mysql> delete from bjb;
+#              mysql> alter  table  bjb  add  foreign  key(bjb_id)   references  jfb
+#              (jfb_id)  on  update cascade    on  delete  cascade;
+#              
+  
+
+
+
+#   -----------------------------------------------------------------------------------
+#   ----------------------MYSQL-day01 mysql数据库管理 -----------------------------
+#            相关概念问题
+
+#            数据库介绍  存储数据的仓库
+#            
+#            数据库服务都那些公司在使用？ 
+
+#            购物网站    游戏网站      金融网站           
+#             
+#            数据服务存储的是什么数据？
+
+#            帐号信息   对应的数据信息
+#            
+#            提供数据库服务的软件有那些
+
+#            开源软件  mysql 、  mongodb  、  redis  
+
+#            商业软件  oracle 、 db2  、 SQL  SERVER
+
+#            
+#            软件是否跨平台 Linux    Unix     Windows
+
+#                   
+#            软件包的来源： 官网下载      使用操作系统安装光盘自带软件包
+#               
+#          mysql软件介绍
+
+#            mysql   mariadb
+
+#            关系型数据型软件： 要按照一定组织结构存储数据，并且数据和数据之间可以互相关联操作。 
+
+#            跨平台 Linux    Unix     Windows
+
+#            可移植性强
+
+#            支持多种语言Python/Java/Perl/PHP
+#                           
+#            生产环境中，数据服务和网站服务一起使用 构建网站运行平台
+
+#            LNMP    LAMP   WNMP    WAMP
+#            
+#            mysql软件包的封包类型： rpm包     源码包    可以自定义安装信息
+
+#            +++++++++++++++++++++++++++++++
+
+#            非关系型数据库软件（NoSQL）mongodb、redis、 memcached
+
+#            key  =  值
+
+#            微信名    消息内容
+#            
+#            day01学习内容：
+
+#            1  搭建mysql数据库服务器
+
+
+#               服务名  mysqld
+#               服务的主配置文件  /etc/my.cnf
+#               数据目录  /var/lib/mysql
+#               日志文件   /var/log/mysqld.log
+
+
+#            2  mysql服务基本使用
+
+#            3  mysql数据类型
+#            
+#            一、搭建mysql数据库服务器 192.168.4.51
+
+#                1装包
+#                1 删除系统自带mariadb mysql数据库软件
+
+#                  rpm   -qa  |  grep   -i  mariadb
+
+#                  systemctl  stop  mariadb
+
+#                  rpm   -e  --nodeps   mariadb-server   mariadb
+
+#                  rm  -rf  /etc/my.cnf
+
+#                  rm  -rf  /var/lib/mysql
+
+#                2 安装mysql软件
+
+#                 tar  -xf  mysql-5.7.17-1.el7.x86_64.rpm-bundle.tar
+
+#                 ls  *.rpm
+
+#                 rm  -rf   mysql-community-server-minimal-5.7.17-1.el7.x86_64.rpm
+#                
+#                 yum   -y   install    perl-JSON   
+
+#                 rpm  -Uvh    mysql-community-*.rpm
+
+#                 rpm  -qa   | grep  -i   mysql
+
+#            修改配置文件(不需要修改配置文件 按默认配置运行即可)
+
+#                 ls  /etc/my.cnf  
+#            启动服务
+
+#                 systemctl   start  mysqld
+#                 systemctl   enable  mysqld
+#            
+#            查看服务进程和端口号
+
+#              ps   -C   mysqld
+#            
+#              netstat  -utnlp  | grep  mysqld
+#            
+
+
+#            
+#            二、数据库服务的基本使用
+#            2.1 使用初始密码在本机连接数据库服务
+
+#                mysql   [-h数据库服务器ip地址   -u用户名    -p'密码'  
+
+#                grep password /var/log/mysqld.log
+
+#                mysql   -hlocalhost   -uroot   -p'hqToPwaqf5,g!><'
+#            
+#            2.2 重置本机连接密码 
+
+#                mysql> alter  user   
+#                root@"localhost"  identified by "密码"；
+
+#                mysql>set global validate_password_policy=0;  只检查密码的长度
+#                mysql>set global validate_password_length=6;  密码长度
+#                
+#                不能小于6个字符
+#                
+#                mysql>alter  user   root@"localhost"  identified by "123456"；
+#                mysql>quit
+#                
+#                ]# mysql   -hlocalhost   -uroot   -p123456
+#                mysql>  show   databases;
+#                
+#                让密码策略永久生效
+
+#                vim  /etc/my.cnf
+#                [mysqld]
+#                validate_password_policy=0
+#                validate_password_length=6
+#                :wq
+#                systemctl   restart  mysqld
+
+
+#            
+#            2.3 把数据存储到数据库服务器上的过程？
+
+#               连接数据库服务器（命令行   API    图形工具）
+#               选择库 （存放数据的文件夹）
+#               选择表 （就是文件）
+#               插入记录  （文件中的行）
+#               断开连接
+
+#            2.4 sql命令分类? 
+
+#                  DDL   DML    DTL    DCL
+
+#            2.5 sql命令使用规则?
+
+#            2.6 管理数据库的sql命令 及 库名的命名规则
+
+#                查看  show  databases;
+#                创建  create  database  库名；
+#                切换  use  库名；  
+#                删除  drop   database  库名；   
+#                显示当前所在的库      select  database();
+
+#            2.7 管理表的 sql命令
+
+#                建表的语法格式？
+#                create   table  库名.表名（
+#                字段名   类型（宽度）  约束条件，
+#                字段名   类型（宽度）  约束条件，
+#                .....
+#                ）;
+#            
+#            2.8  管理记录的sql命令
+
+#            查看   select   *  from   库名.表名   ; 
+
+#            插入   insert    into   库名.表名  values(字段值列表);
+
+#            insert into  gamedb.stuinfo values ("tom","beijing");
+#            insert into  gamedb.stuinfo values ("bob","beijing");
+#            
+#            修改  update  库名.表名  set   字段名=值 where  条件；
+
+#            update  gamedb.stuinfo  set  addr="shanghai" where 
+#            
+#            name="tom";
+#            
+#            删除
+#            delete  from   库名.表名;
+#            delete  from  gamedb.stuinfo;
+
+
+#            +++++++++++++++++++++++++
+
+#            三、mysql数据类型
+
+#            3.1  数值类型   （成绩  年龄   工资  ）
+
+#            每种类型的存储数据的范围都是固定
+
+#            整数类型 （只能存储整数）
+
+#            微小整型    小整型         中整型                   大整型    极大整型
+
+#            tinyint      smallint      MEDIUMINT        INT        bigint
+
+#            *****unsigned    使用数值类型有符号的范围。
+#            
+#            浮点型 （存储小数）
+
+#            float(M,N)     
+#            double(M,N)
+#            
+#            M  设置总位数
+#            N   设置小数位位数
+#            
+#            正数.小数          总位数   整数位    小数位
+#            18088.88            7           5             2                           
+#            
+#            3.2  字符类型   （商品名称   籍贯   姓名   生产厂家）
+
+#            char  (255)   固定长度字符类型
+#            varchar (65532)   变长字符类型
+#            
+#            大文本类型 （音频文件 视频文件  图片文件）
+
+#            blob
+#            text
+#            
+#            3.3 日期时间类型 
+
+#            （注册时间    约会时间   开会时间   入职时间   生日）
+#            
+#            年       year   YYYY            2018
+#            日期     date   YYYYMMDD        20180423
+#            时间     time   HHMMSS          161958
+#            日期时间 datetime/timestamp   YYYYMMDDHHMMSS     20180423161958
+#            
+#            获取日期时间给对应的日期时间类型的字段赋值
+#            获取日期时间函数
+#            now() 获取当期系统的时间
+#            year(日期时间)获取指定时间中的年
+#            month(日期时间)获取指定时间中的月
+#            date(日期时间)获取指定时间中的日期
+#            day(日期时间)获取指定时间中的号（天）
+#            time(日期时间)获取指定时间中的时间
+#            
+#            可以使用2位数字给year类型的字段赋值，规律如下：
+
+#            01-69   20XX
+#            70-99   19XX
+#            
+#            datetime与timestamp 的区别？
+                  
+                 
+#            
+#            3.4 枚举类型（插入记录 时 记录的值 在列举的范围内选择）
+
+#                                  性别    爱好    专业
+#            
+#            enum(值列表)          单选
+#            set(值列表)           多选                  
+#            
+
+
+
+# ------------------------------------------------------------------------
 #
 #    把/etc/passwd文件的内容存储到teadb库下的usertab表里，并做如下配置：
 #
@@ -4115,17 +6285,3 @@ my(){
 #          +------+------+
 #          | A    | c    |
 #          +------+------+
-#          1 row in set (0.00 sec)
-#           
-#          原因如下:
-#          字段值的大小写由mysql的校对规则来控制。提到校对规则，就不得不说字符集。字符集是一套符号和编码，校对规则是在字符集内用于比较字符的一套规则  .
-#          一般而言，校对规则以其相关的字符集名开始，通常包括一个语言名，并且以_ci（大小写不敏感）、_cs（大小写敏感）或_bin（二元）结束 。比如 utf8字符集，utf8_general_ci,表示不区分大小写，这个是utf8字符集默认的校对规则；utf8_general_cs表示区分大小写，utf8_bin表示二进制比较，同样也区分大小写 。
-#
-#
-#
-#
-#
-#
-#
-#
-#

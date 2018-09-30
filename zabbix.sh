@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #   安装zabbix_server
-
 myzabbix(){
 
 #     判断是否安装lnmp 环境

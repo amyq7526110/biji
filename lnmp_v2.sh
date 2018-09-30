@@ -96,6 +96,8 @@ mylnmp(){
         sed  -i   '65,71s/^.*#/        /'  $conf
         sed  -i   '70s/_.*$/.conf;/'       $conf
         sed  -i   '69d'                    $conf
+        sed -ri '/^ +index/s/index/index       index.php/'  $conf
+    
 
 #       启动服务
                  
@@ -315,7 +317,7 @@ EOF
 
      port=63${ip##*.}
 
-     sed  -i  '/^bind/s/$/ '$ip'/'  $conf
+     sed  -i  '/^bind/s/127.0.0.1/ '$ip'/'  $conf
 
      sed -i '/^port /s/6379/'${port}'/'   $conf
 
@@ -326,6 +328,7 @@ EOF
 
 #     sed -ri '/REDISPORT/s/6379/6345/' /etc/init.d/redis_6379       a
 
+      ln -n /etc/init.d/redis_6379  /bin/
 #       重新启动
 
      /etc/init.d/redis_6379  stop
