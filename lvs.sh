@@ -155,13 +155,13 @@ keep_lvs_dr(){
     
      E_ZC=65    
   
-     if [ $zc!=m -o $zc!=s  ];then
+     if [ "$zc" != "m" -a "$zc" != "s"  ];then
 
         exit $E_ZC
 
      fi
 
-     vip=192.168.4.253     
+     vip=192.168.4.252     
 
      yum -y install keepalived
 
@@ -177,7 +177,7 @@ keep_lvs_dr(){
 
      sed -i  's/VI_1/lvsha/'  $kecnf
   
-     if [ "$zc"=="s"   ];then
+     if [ "$zc" == "s"   ];then
  
          sed -i  's/MASTER/BACKUP/'  $kecnf
  
@@ -192,14 +192,14 @@ keep_lvs_dr(){
      sed -i  's/1111/123456/'  /etc/keepalived/keepalived.conf
 
      
-echo "virtual_server 192.168.4.253 80 {
+echo "virtual_server $vip 80 {
     delay_loop 6
     lb_algo rr
     lb_kind DR
 #    persistence_timeout 50
     protocol TCP
 
-    real_server 192.168.4.52 80 {
+    real_server 192.168.4.82 80 {
         weight 1
         TCP_CHECK {
         connect_timeout 3
@@ -207,7 +207,7 @@ echo "virtual_server 192.168.4.253 80 {
         delay_before_retry 3
         }
     }
-    real_server 192.168.4.53 80 {
+    real_server 192.168.4.83 80 {
         weight 1
         TCP_CHECK {
         connect_timeout 3
